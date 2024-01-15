@@ -8,11 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    use HasRoles;
+    // use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -44,8 +46,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+      
 
-    
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }  
+
+    public function authorized($action)
+    {
+        return $this->role->hasPermissionTo($action);
+    }  
+
     public function expenses()
     {
         return $this->hasMany(Expense::class);

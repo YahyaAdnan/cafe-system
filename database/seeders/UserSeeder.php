@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 use App\Models\User;
+use Spatie\Permission\Models\Role;
+
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -19,6 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@admin.com',
             'password' => Hash::make('admin'),
+            'role_id' => Role::where('name', 'admin')->first()->id
         ]);
     }
 }
