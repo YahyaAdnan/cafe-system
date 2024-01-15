@@ -42,4 +42,50 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function isDeletable()
+    {
+        if($this->expenses->isNotEmpty())
+        {
+            return false;
+        }
+
+        if($this->orders->isNotEmpty())
+        {
+            return false;
+        }
+
+        if($this->payments->isNotEmpty())
+        {
+            return false;
+        }
+
+        if($this->transactions->isNotEmpty())
+        {
+            return false;
+        }
+        
+        return true;
+    }
 }
