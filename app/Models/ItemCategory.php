@@ -10,7 +10,10 @@ class ItemCategory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title'
+        'title',
+        'title_ar',
+        'title_ku',
+        'image'
     ];
     
     public function items()
