@@ -16,12 +16,18 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class IngredientResource extends Resource
 {
     protected static ?string $model = Ingredient::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->authorized('create ingredients');
+    }
 
     public static function form(Form $form): Form
     {

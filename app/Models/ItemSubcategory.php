@@ -10,8 +10,11 @@ class ItemSubcategory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
         'item_category_id',
+        'title',
+        'title_ar',
+        'title_ku',
+        'image',
     ];
     
     public function items()
