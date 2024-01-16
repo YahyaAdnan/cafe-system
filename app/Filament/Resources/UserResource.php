@@ -18,6 +18,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Get;
 
 class UserResource extends Resource
 {
@@ -34,9 +36,17 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required()->minLength(3),
-                TextInput::make('email')->required()->email()->unique(table: User::class),
-                TextInput::make('password')->required()->password(),
+                TextInput::make('name')->required()->minLength(3)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('name', $get('name'));
+                    }, ignoreRecord: true
+                ),
+                TextInput::make('email')->required()->email()->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('email', $get('email'));
+                    }, ignoreRecord: true
+                ),
+                TextInput::make('password')->required()->password()->hiddenOn('edit'),
                 Select::make('role_id')->options(Role::pluck('name','id'))
                 ->label('Role')->native(false)->required()
             ]);
@@ -54,7 +64,7 @@ class UserResource extends Resource
                 SelectFilter::make('Role')->options(Role::pluck('name','id'))->attribute('role_id')
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->disabled(),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

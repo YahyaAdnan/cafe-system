@@ -11,6 +11,9 @@ class ItemType extends Model
 
     protected $fillable = [
         'title',
+        'title_ar',
+        'title_ku',
+        'image'
     ];
     
     public function items()
