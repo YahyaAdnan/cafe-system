@@ -7,11 +7,18 @@ use App\Filament\Resources\ItemTypeResource\RelationManagers;
 use App\Models\ItemType;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class ItemTypeResource extends Resource
 {
@@ -19,19 +26,36 @@ class ItemTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->authorized('create item_types');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                //
-            ]);
+        ->schema([
+            FileUpload::make('image')
+                ->required()
+                ->avatar()
+                ->directory('ItemCategories')
+                ->storeFileNamesIn('ItemCategories'),
+            TextInput::make('title')->required()->minLength(3)->label('Title (EN)')->columns(1),
+            TextInput::make('title_ar')->required()->minLength(3)->label('Title (AR)'),
+            TextInput::make('title_ku')->required()->minLength(3)->label('Title (KU)'),
+        ])->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                ImageColumn::make('image')->circular(),
+                TextColumn::make('title')->label('Title (EN)')->sortable(),
+                TextColumn::make('title_ar')->label('Title (AR)')->sortable(),
+                TextColumn::make('title_ku')->label('Title (KU)')->sortable(),
+                TextColumn::make('items.title')
             ])
             ->filters([
                 //
