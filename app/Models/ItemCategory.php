@@ -10,12 +10,18 @@ class ItemCategory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'item_type_id',
         'title',
         'title_ar',
         'title_ku',
         'image'
     ];
     
+    public function itemType()
+    {
+        return $this->belongsTo(ItemType::class);
+    }
+
     public function items()
     {
         return $this->hasMany(Item::class);

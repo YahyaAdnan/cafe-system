@@ -40,8 +40,8 @@ class ItemSubcategoryResource extends Resource
                 FileUpload::make('image')
                     ->required()
                     ->avatar()
-                    ->directory('ItemCategories')
-                    ->storeFileNamesIn('ItemCategories'),
+                    ->directory('ItemSubcategories')
+                    ->storeFileNamesIn('ItemSubcategories'),
                 Select::make('item_category_id')->options(ItemCategory::pluck('title','id'))
                     ->label('Item Category')->native(false)->required(),
                 TextInput::make('title')->required()->minLength(3)->label('Title (EN)')->columns(1),

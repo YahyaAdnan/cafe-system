@@ -14,6 +14,15 @@ return new class extends Migration
         Schema::create('item_categories', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+
+            $table->unsignedBigInteger('item_type_id');
+            $table
+                ->foreign('item_type_id')
+                ->references('id')
+                ->on('item_types')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+
             $table->timestamps();
         });
     }

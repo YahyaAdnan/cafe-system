@@ -16,6 +16,11 @@ class ItemType extends Model
         'image'
     ];
     
+    public function itemCategories()
+    {
+        return $this->hasMany(ItemCategory::class);
+    }
+
     public function items()
     {
         return $this->hasMany(Item::class);

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ItemCategoryResource\Pages;
 use App\Filament\Resources\ItemCategoryResource\RelationManagers;
 use App\Models\ItemCategory;
+use App\Models\ItemType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -40,6 +41,8 @@ class ItemCategoryResource extends Resource
                     ->avatar()
                     ->directory('ItemCategories')
                     ->storeFileNamesIn('ItemCategories'),
+                Select::make('item_type_id')->options(ItemType::pluck('title','id'))
+                    ->label('Item Type')->native(false)->required(),
                 TextInput::make('title')->required()->minLength(3)->label('Title (EN)')->columns(1),
                 TextInput::make('title_ar')->required()->minLength(3)->label('Title (AR)'),
                 TextInput::make('title_ku')->required()->minLength(3)->label('Title (KU)'),
