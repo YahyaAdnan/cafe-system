@@ -10,7 +10,7 @@ class PaymentMethod extends Model
     use HasFactory;
 
     protected $fillable = [
-        'invoice_id',
+        'title',
     ];
 
     public function payments()
