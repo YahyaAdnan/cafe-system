@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\PaymentController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -21,4 +22,5 @@ Route::post('/login', [AuthController::class,'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('invoices', InvoiceController::class);
+    Route::resource('payments', PaymentController::class);
 });
