@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 Route::post('/login', [AuthController::class,'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('invoices', InvoiceController::class);
+    Route::resource('invoices', InvoiceController::class)->only(['store']);
+    Route::put('invoices/{local_invoice}', [InvoiceController::class, 'update']);
     Route::resource('payments', PaymentController::class);
 });

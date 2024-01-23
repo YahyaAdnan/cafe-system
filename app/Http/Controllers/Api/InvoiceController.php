@@ -58,13 +58,16 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(InvoiceUpdateRequest $request, Invoice $invoice)
+    public function update(InvoiceUpdateRequest $request, $local_invoice)
     {
         if(!Auth::user()->authorized('update invoices'))
         {
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
+        $invoice = Invoice::where('local_id', $local_invoice)->latest()->first();
+        $invoice->updateAmount();
+        
         $validated = $request->validated();
 
         $invoice->update($validated);
