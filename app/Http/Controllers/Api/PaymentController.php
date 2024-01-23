@@ -30,16 +30,17 @@ class PaymentController extends Controller
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
-        $validated = $request->validated();
+        $invoice = Invoice::where('local_id', $request->local_id)->latest()->first();
 
-        $payment = Payment::create(
-            array_merge(
-                $validated,
-                ['user_id' => Auth::id()]
-            )
-        );
-
-        $invoice = Invoice::find($request->invoice_id);
+        $payment = Payment::create([
+            'invoice_id' => $invoice->id,
+            'amount' => $request->amount,
+            'paid' => $request->paid,
+            'remaining' => $request->paid - $request->amount,
+            'payment_method_id' => $request->payment_method_id,
+            'user_id' => Auth::id(),
+        ]);
+        
         $invoice->update([
             'remaining' => $invoice->remaining - $request->amount
         ]);

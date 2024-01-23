@@ -13,16 +13,16 @@ class InvoiceAmount implements ValidationRule
      *
      * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
      */
-    protected $invoice_id;
+    protected $local_id;
 
-    public function __construct($invoice_id = null)
+    public function __construct($local_id = null)
     {
-        $this->invoice_id = $invoice_id;
+        $this->local_id = $local_id;
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $invoice = Invoice::find($this->invoice_id);
+        $invoice = Invoice::where('local_id', $this->local_id)->latest()->first();
 
         if($invoice->remaining < $value)
         {

@@ -23,10 +23,9 @@ class PaymentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'invoice_id' => 'required|exists:invoices,id',
-            'amount' => ['required', 'numeric', 'min:0', new InvoiceAmount($this->input('invoice_id'))],
-            'paid' => 'required|numeric|min:0',
-            'remaining' => 'required',
+            'local_id' => 'required|exists:invoices,local_id',
+            'amount' => ['required', 'numeric', 'min:0', new InvoiceAmount($this->input('local_id'))],
+            'paid' => "required|numeric|min:{$this->input('amount')}",
             'payment_method_id' => 'required|exists:payment_methods,id',
             'note' => 'nullable|max:255',
         ];
