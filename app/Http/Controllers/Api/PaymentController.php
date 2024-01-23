@@ -40,11 +40,9 @@ class PaymentController extends Controller
             'payment_method_id' => $request->payment_method_id,
             'user_id' => Auth::id(),
         ]);
-        
-        $invoice->update([
-            'remaining' => $invoice->remaining - $request->amount
-        ]);
 
+        $invoice->updateAmount();
+        
         $transactions = Transaction::create([
             'amount' => $request->amount,
             'user_id' => Auth::id(),

@@ -15,4 +15,14 @@ class Setting extends Model
         'value',
         'validation'
     ];
+
+    public static function getTaxes()
+    {
+        return Setting::where('title', 'Taxes')->first()->value;
+    }
+
+    public static function getServices()
+    {
+        return Setting::where('title', 'Services')->first()->value;
+    }
 }

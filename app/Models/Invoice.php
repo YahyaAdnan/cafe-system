@@ -23,6 +23,32 @@ class Invoice extends Model
         'note',
     ];
     
+    public function updateAmount()
+    {
+        $amount = $this->orders->pluck('amount')->sum();
+        $paid = $this->payments->pluck('amount')->sum();
+
+        if($this->discount_rate)
+        {
+            $amount = $amount * ((100 - $this->discount_rate) / 100);
+        }
+
+        if($this->discount_fixed)
+        {
+            $amount = $amount - $this->discount_fixed;
+        }
+
+        $taxes = $amount * ((100 + Setting::getTaxes()) / 100) - $amount;
+        $services = $amount * ((100 + Setting::getServices()) / 100) - $amount ;
+
+        $total_amount = $amount + $taxes + $services;
+
+        $this->update([
+            'amount' => $total_amount,
+            'remaining' => $total_amount - $paid,
+        ]);
+    }
+
     public function table()
     {
         return $this->belongsTo(Table::class);
