@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
 use Illuminate\Support\Facades\Route;
@@ -22,8 +23,11 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
+    // Items
+    Route::resource('items', ItemController::class);
+
     // Invoices
-    Route::resource('invoices', InvoiceController::class)->only(['store', 'update']);
+    Route::resource('invoices', InvoiceController::class)->only(['store']);
     Route::put('invoices/{local_invoice}', [InvoiceController::class, 'update']);
 
     // Orders
