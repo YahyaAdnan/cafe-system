@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\TableController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Controller; 
 use App\Http\Controllers\Api\PaymentController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +27,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     // Items
     Route::resource('items', ItemController::class)->only(['index']);
+
+    // Items
+    Route::resource('tables', TableController::class)->only(['index']);
 
     // Invoices
     Route::resource('invoices', InvoiceController::class)->only(['store']);
