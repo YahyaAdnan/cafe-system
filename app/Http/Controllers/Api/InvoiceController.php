@@ -78,8 +78,16 @@ class InvoiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invoice $invoice)
+    public function destroy($local_invoice)
     {
-        //
+        if(!Auth::user()->authorized('delete invoices'))
+        {
+            return response()->json(['errors' => 'Not Authorized.'], 403);
+        }
+
+        $invoice = Invoice::where('local_id', $local_invoice)->latest()->first();
+        $invoice->delete();
+        
+        return response()->json(['invoice' => $invoice], 200);
     }
 }

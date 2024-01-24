@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +17,20 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::post('/login', [AuthController::class,'login']);
+// Public routes
+Route::post('/login', [AuthController::class, 'login']);
 
+// Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('invoices', InvoiceController::class)->only(['store']);
+    // Invoices
+    Route::resource('invoices', InvoiceController::class)->only(['store', 'update']);
     Route::put('invoices/{local_invoice}', [InvoiceController::class, 'update']);
+
+    // Orders
+    Route::resource('orders', OrderController::class)->only(['store']);
+    Route::put('orders/{local_invoice}', [OrderController::class, 'update']);
+    Route::delete('orders/{local_invoice}', [OrderController::class, 'destroy']);
+
+    // Payments
     Route::resource('payments', PaymentController::class);
 });

@@ -25,7 +25,7 @@ class Invoice extends Model
     
     public function updateAmount()
     {
-        $amount = $this->orders->pluck('amount')->sum();
+        $amount = $this->orders->pluck('total_amount')->sum();
         $paid = $this->payments->pluck('amount')->sum();
 
         if($this->discount_rate)
