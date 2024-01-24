@@ -12,13 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        dd('hey');
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -52,29 +45,5 @@ class PaymentController extends Controller
         ]);
 
         return response()->json(['invoice' => $invoice], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
     }
 }

@@ -24,7 +24,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
     // Items
-    Route::resource('items', ItemController::class);
+    Route::resource('items', ItemController::class)->only(['index']);
 
     // Invoices
     Route::resource('invoices', InvoiceController::class)->only(['store']);
@@ -36,5 +36,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('orders/{local_invoice}', [OrderController::class, 'destroy']);
 
     // Payments
-    Route::resource('payments', PaymentController::class);
+    Route::resource('payments', PaymentController::class)->only(['store']);
 });

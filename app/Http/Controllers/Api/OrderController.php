@@ -13,14 +13,6 @@ use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(OrderStoreRequest $request)
@@ -41,14 +33,6 @@ class OrderController extends Controller
         $invoice->updateAmount();
 
         return response()->json(['order' => $order], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
-    {
-        //
     }
 
     /**

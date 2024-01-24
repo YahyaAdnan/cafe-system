@@ -13,14 +13,6 @@ use Illuminate\Support\Facades\Auth;
 class InvoiceController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        dd('hello');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(InvoiceStoreRequest $request)
@@ -45,14 +37,6 @@ class InvoiceController extends Controller
         ]);
 
         return response()->json(['invoice' => $invoice], 200);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Invoice $invoice)
-    {
-        //
     }
 
     /**
