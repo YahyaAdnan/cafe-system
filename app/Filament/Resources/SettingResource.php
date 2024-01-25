@@ -29,33 +29,13 @@ class SettingResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // $rules = explode('|', $form->model->validation);
-
-        // $input = TextInput::make('value');
-
-        // START: ADD VALIDATIONS FROM DATABASE
-        // if(isset($rules['required']))
-        // {
-        //     $input = $input->required();
-        // }
-
-        // if(isset($rules['numeric']))
-        // {
-        //     $input = $input->numeric();
-        // }
-
-        // if(isset($rules['max']))
-        // {
-        //     $input = $input->numeric();
-        // }
-
-        // END: ADD VALIDATIONS FROM DATABASE
-
+        $validation = $form->model->validation;
+        $valueInput = SettingResource::getInputValidation($validation);
         return $form
             ->schema([
                 TextInput::make('title')->disabled(),
                 TextArea::make('description')->disabled(),
-                TextInput::make('value'),
+                $valueInput,
             ]);
     }
 
@@ -90,8 +70,57 @@ class SettingResource extends Resource
         ];
     }
 
-    // private function getInputValidation()
-    // {
+    private static function getInputValidation($validation)
+    {
+        $rules = explode('|', $validation);
 
-    // }
+        $input = TextInput::make('value');
+        
+        foreach ($rules as $key => $rule) 
+        {
+            // START: ADD VALIDATIONS FROM DATABASE
+            if($rule == 'required')
+            {
+                $input = $input->required();
+            }
+
+            if($rule == 'numeric')
+            {
+                $input = $input->numeric();
+            }
+
+            if (strpos($rule, 'max:') === 0 && in_array('numeric', $rules)) 
+            {
+                $maxValue = intval(substr($rule, 4));
+
+                $input = $input->maxValue($maxValue);
+            }
+    
+            if (strpos($rule, 'min:') === 0 && in_array('numeric', $rules)) 
+            {
+                $minValue = intval(substr($rule, 4));
+
+                $input = $input->minValue($minValue);
+            }
+
+
+            if (strpos($rule, 'max:') === 0 && !in_array('numeric', $rules)) 
+            {
+                $maxValue = intval(substr($rule, 4));
+
+                $input = $input->maxValue($maxValue);
+            }
+    
+            if (strpos($rule, 'min:') === 0 && !in_array('numeric', $rules)) 
+            {
+                $minValue = intval(substr($rule, 4));
+
+                $input = $input->minValue($minValue);
+            }
+
+            // END: ADD VALIDATIONS FROM DATABASE  
+        }
+
+        return $input;
+    }
 }
