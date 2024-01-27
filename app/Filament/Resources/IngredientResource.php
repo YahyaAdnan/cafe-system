@@ -5,11 +5,14 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\IngredientResource\Pages;
 use App\Filament\Resources\IngredientResource\RelationManagers;
 use App\Models\Ingredient;
+use App\Models\Item;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -36,7 +39,22 @@ class IngredientResource extends Resource
                 TextInput::make('title')->required()->label('Title (EN)')->minLength(3),
                 TextInput::make('title_ar')->required()->label('Title (EN)')->minLength(3),
                 TextInput::make('title_ku')->required()->label('Title (EN)')->minLength(3),
-                Toggle::make('is_available')->onColor('success')->offColor('danger')
+                Toggle::make('is_available')->onColor('success')->offColor('danger'),
+                // START: REPEATER for Ingredient
+                Repeater::make('itemIngredient')
+                    ->relationship()
+                    ->schema([
+                        Select::make('item_id')->options(Item::pluck('title', 'id'))
+                            ->searchable()->label('Item')->columnSpan(4)->required(),                      
+                        Select::make('main')->options([
+                            '0' => 'Not Main',
+                            '1' => 'Main',
+                        ])->native(false)->required()->columnSpan(4),
+                        TextInput::make('note')->columnSpan(4),
+                    ])->columns(12)
+                    ->reorderableWithButtons()
+                    ->columnSpanFull(),
+                // END: REPEATER for Ingredient
             ])->columns(3);
     }
 
