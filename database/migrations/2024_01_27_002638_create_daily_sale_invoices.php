@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('invoice_id');
             $table
-                ->foreign('invoice_id')
+                ->foreign('GenerateDailySale')
                 ->references('id')
                 ->on('invoices')
                 ->onUpdate('CASCADE')

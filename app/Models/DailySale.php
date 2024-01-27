@@ -11,10 +11,11 @@ class DailySale extends Model
 
     protected $fillable = [
         'title',
+        'active'
     ];
 
     public function invoices()
     {
-        return $this->belongsToMany(Invoices::class, 'daily_sale_invoices', 'daily_sale_id', 'invoice_id');
+        return $this->belongsToMany(Invoice::class, 'daily_sale_invoices', 'daily_sale_id', 'invoice_id');
     }
 }

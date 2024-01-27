@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Http\Requests\InvoiceUpdateRequest;
 use App\Services\GenerateInovice;
+use App\Services\GenerateDailySale;
 use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
@@ -35,6 +36,8 @@ class InvoiceController extends Controller
             'discount_fixed' => 0,
             'note' => '',
         ]);
+
+        GenerateDailySale::getInvoice($invoice);
 
         return response()->json(['invoice' => $invoice], 200);
     }
