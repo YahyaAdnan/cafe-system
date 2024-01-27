@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->unsignedBigInteger('total_amount');
-            $table->unsignedBigInteger('quantity');
             $table->unsignedBigInteger('local_id')->nullable();
+            $table->unsignedBigInteger('total_amount');
         });
     }
 
@@ -24,9 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('total_amount');
-            $table->dropColumn('quantity');
             $table->dropColumn('local_id');
+            $table->dropColumn('total_amount');
         });
     }
 };

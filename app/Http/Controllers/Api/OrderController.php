@@ -27,7 +27,7 @@ class OrderController extends Controller
 
         $validated['invoice_id'] = $invoice->id;
         $validated['user_id'] = Auth::id();
-        $validated['total_amount'] = $validated['quantity'] * $validated['amount'] -  $validated['discount_fixed'];
+        $validated['total_amount'] = $validated['amount'] -  $validated['discount_fixed'];
 
         $order = Order::create($validated);
         $invoice->updateAmount();
