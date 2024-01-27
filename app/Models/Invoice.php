@@ -49,6 +49,11 @@ class Invoice extends Model
         ]);
     }
 
+    public function invoices()
+    {
+        return $this->belongsToMany(DailySale::class, 'daily_sale_invoices', 'invoice_id', 'daily_sale_id');
+    }
+
     public function table()
     {
         return $this->belongsTo(Table::class);
