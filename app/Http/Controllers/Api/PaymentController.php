@@ -23,7 +23,7 @@ class PaymentController extends Controller
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
-        $invoice = Invoice::where('local_id', $request->local_id)->latest()->first();
+        $invoice = Invoice::findLocal($request->local_id);
 
         $payment = Payment::create([
             'invoice_id' => $invoice->id,

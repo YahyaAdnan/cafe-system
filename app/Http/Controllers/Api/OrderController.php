@@ -23,7 +23,7 @@ class OrderController extends Controller
         }
 
         $validated = $request->validated();
-        $invoice = Invoice::where('local_id', $request->local_invoice)->latest()->first();
+        $invoice = Invoice::findLocal($request->local_invoice);
 
         $validated['invoice_id'] = $invoice->id;
         $validated['user_id'] = Auth::id();
@@ -46,9 +46,10 @@ class OrderController extends Controller
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
-        $order = Order::where('local_id', $local_id)->latest()->first();
+        $order = Order::findLocal($local_id);
 
         $validated = $request->validated();
+
         $validated['total_amount'] = $order->amount - $validated['discount_fixed'];
 
         $order->update($validated);
@@ -68,7 +69,7 @@ class OrderController extends Controller
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
-        $order = Order::where('local_id', $local_id)->latest()->first();
+        $order = Order::findLocal($local_id);
         $order->delete();
 
         $invoice = $order->invoice;

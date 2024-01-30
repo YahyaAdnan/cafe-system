@@ -22,6 +22,12 @@ class Order extends Model
         'note',
     ];
 
+
+    public static function findLocal($local_id)
+    {
+        return Order::where('local_id', $local_id)->latest()->first();
+    }
+
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);

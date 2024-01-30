@@ -22,6 +22,11 @@ class Invoice extends Model
         'discount_fixed',
         'note',
     ];
+
+    public static function findLocal($local_id)
+    {
+        return Invoice::where('local_id', $local_id)->latest()->first();
+    }
     
     public function updateAmount()
     {

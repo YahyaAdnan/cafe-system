@@ -52,7 +52,7 @@ class InvoiceController extends Controller
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
-        $invoice = Invoice::where('local_id', $local_invoice)->latest()->first();
+        $invoice = Invoice::findLocal($local_invoice);
         $invoice->updateAmount();
         
         $validated = $request->validated();
@@ -72,7 +72,7 @@ class InvoiceController extends Controller
             return response()->json(['errors' => 'Not Authorized.'], 403);
         }
 
-        $invoice = Invoice::where('local_id', $local_invoice)->latest()->first();
+        $invoice = Invoice::findLocal($local_invoice);
         $invoice->delete();
         
         return response()->json(['invoice' => $invoice], 200);
