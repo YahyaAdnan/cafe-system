@@ -23,7 +23,7 @@ class GenerateInovice
 
         // Get the current order count for today (assuming you have a database)
         $order_count = Invoice::whereDate('created_at', today())
-            ->when($table_id !== null, function ($query) {
+            ->when($table_id != null, function ($query) use ($table_id) {
                 $query->where('table_id', $table_id);
             })
             ->when($table_id === null, function ($query) {

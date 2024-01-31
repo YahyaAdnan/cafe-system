@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('invoices/{local_invoice}', [InvoiceController::class, 'update']);
 
     Route::post('invoices/migrate', [InvoiceActionController::class, 'migrate']);
+    Route::post('invoices/separate', [InvoiceActionController::class, 'separate']);
     
     // Orders
     Route::resource('orders', OrderController::class)->only(['store']);

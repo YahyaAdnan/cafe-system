@@ -56,11 +56,6 @@ class Invoice extends Model
 
     public function cancelInvoice()
     {
-        if($this->orders->isNotEmpty())
-        {
-            return;
-        }
-
         $this->update([
             'active' => 0,
             'amount' => 0,
