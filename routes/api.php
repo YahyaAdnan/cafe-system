@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\InvoiceActionController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\TableController;
 use App\Http\Controllers\Api\OrderController;
@@ -35,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('invoices', InvoiceController::class)->only(['store']);
     Route::put('invoices/{local_invoice}', [InvoiceController::class, 'update']);
 
+    Route::post('invoices/migrate', [InvoiceActionController::class, 'migrate']);
+    
     // Orders
     Route::resource('orders', OrderController::class)->only(['store']);
     Route::put('orders/{local_invoice}', [OrderController::class, 'update']);

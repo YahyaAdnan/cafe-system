@@ -27,7 +27,7 @@ class Invoice extends Model
     {
         return Invoice::where('local_id', $local_id)->latest()->first();
     }
-    
+
     public function updateAmount()
     {
         $amount = $this->orders->pluck('total_amount')->sum();
@@ -51,6 +51,20 @@ class Invoice extends Model
         $this->update([
             'amount' => $total_amount,
             'remaining' => $total_amount - $paid,
+        ]);
+    }
+
+    public function cancelInvoice()
+    {
+        if($this->orders->isNotEmpty())
+        {
+            return;
+        }
+
+        $this->update([
+            'active' => 0,
+            'amount' => 0,
+            'remaining' => 0,
         ]);
     }
 

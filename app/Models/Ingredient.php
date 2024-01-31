@@ -16,6 +16,15 @@ class Ingredient extends Model
         'is_available',
     ];
     
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($ingredient) {
+            
+        });
+    }
+
     public function itemIngredient()
     {
         return $this->hasMany(ItemIngredient::class);
