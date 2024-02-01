@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Requests\InvoiceMigrateRequest;
 use App\Http\Requests\InvoiceSeperateRequest;
+use App\Services\InvoiceAction;
 use App\Services\GenerateInovice;
 use App\Services\GenerateDailySale;
 use App\Http\Controllers\Controller; 
@@ -28,11 +29,11 @@ class InvoiceActionController extends Controller
         $invoices = json_decode($request->invoices);
         $migrated_invoice =  Invoice::findLocal($request->migrated_to);
 
-        $this->cancelInvoices([
+        InvoiceAction::cancelInvoices([
             'invoices' => $invoices,
         ]);
 
-        $this->moveOrders([
+        InvoiceAction::moveOrders([
             'invoices' => $invoices,
             'migrated_invoice' => $migrated_invoice,
         ]);
@@ -72,7 +73,7 @@ class InvoiceActionController extends Controller
 
         GenerateDailySale::getInvoice($new_invoice);
 
-        $this->moveOrders([
+        InvoiceAction::moveOrders([
             'orders' => $orders,
             'migrated_invoice' => $new_invoice,
         ]);
@@ -83,40 +84,4 @@ class InvoiceActionController extends Controller
         return response()->json(['message' => 'Separated Succefully.'], 200);
     }
 
-
-    private function moveOrders($inputs) // array{"invoices" => array() or orders => array(),"migrated_invoice" => ''}
-    {
-        if(isset($inputs['orders']))
-        {
-            foreach ($inputs['orders'] as $key => $order) 
-            {
-                Order::findLocal($order)->update([
-                    'invoice_id' => $inputs['migrated_invoice']->id
-                ]);
-            }
-
-            return;
-        }
-
-        foreach ($inputs['invoices'] as $key => $local_invoice) 
-        {
-            $invoice = Invoice::findLocal($local_invoice);
-            foreach ($invoice->orders as $key => $order) 
-            {
-                $order->update([
-                    'invoice_id' => $inputs['migrated_invoice']->id
-                ]);
-            }
-        }
-    }
-
-    private function cancelInvoices($inputs) // array{"invoices" => }
-    {
-        foreach ($inputs['invoices'] as $key => $local_invoice) 
-        {
-            $invoice = Invoice::findLocal($local_invoice);
-            $invoice->cancelInvoice();
-        }
-    }
-    
 }
