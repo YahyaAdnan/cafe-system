@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Requests\InvoiceMigrateRequest;
 use App\Http\Requests\InvoiceSeperateRequest;
+use App\Http\Requests\InvoiceMoveRequest;
 use App\Services\InvoiceAction;
 use App\Services\GenerateInovice;
 use App\Services\GenerateDailySale;
@@ -84,4 +85,27 @@ class InvoiceActionController extends Controller
         return response()->json(['message' => 'Separated Succefully.'], 200);
     }
 
+        /**
+    * Separate Invoice into two.
+    */
+
+    public function move(InvoiceMoveRequest $request)
+    {
+        if(!Auth::user()->authorized('update invoices'))
+        {
+            return response()->json(['errors' => 'Not Authorized.'], 403);
+        }
+
+        $orders = json_decode($request->orders);
+
+        InvoiceAction::moveOrders([
+            'orders' => $orders,
+            'migrated_invoice' => Invoice::findLocal($request->to),
+        ]);
+
+        Invoice::findLocal($request->from)->updateAmount();
+        Invoice::findLocal($request->to)->updateAmount();
+
+        return response()->json(['message' => 'Moved Succefully.'], 200);
+    }
 }

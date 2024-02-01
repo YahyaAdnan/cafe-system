@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('invoices/migrate', [InvoiceActionController::class, 'migrate']);
     Route::post('invoices/separate', [InvoiceActionController::class, 'separate']);
+    Route::post('invoices/move', [InvoiceActionController::class, 'move']);
     
     // Orders
     Route::resource('orders', OrderController::class)->only(['store']);
