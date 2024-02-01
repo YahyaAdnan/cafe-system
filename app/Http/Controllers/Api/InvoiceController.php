@@ -53,11 +53,11 @@ class InvoiceController extends Controller
         }
 
         $invoice = Invoice::findLocal($local_invoice);
-        $invoice->updateAmount();
         
         $validated = $request->validated();
 
         $invoice->update($validated);
+        $invoice->updateAmount();
 
         return response()->json(['invoice' => $invoice], 200);
     }

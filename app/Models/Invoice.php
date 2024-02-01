@@ -32,25 +32,24 @@ class Invoice extends Model
     {
         $amount = $this->orders->pluck('total_amount')->sum();
         $paid = $this->payments->pluck('amount')->sum();
-
-        if($this->discount_rate)
-        {
+    
+        if ($this->discount_rate) {
             $amount = $amount * ((100 - $this->discount_rate) / 100);
         }
-
-        if($this->discount_fixed)
-        {
-            $amount = $amount - $this->discount_fixed;
+    
+        if ($this->discount_fixed) {
+            $amount = max(0, $amount - $this->discount_fixed);
         }
-
-        $taxes = $amount * ((100 + Setting::getTaxes()) / 100) - $amount;
-        $services = $amount * ((100 + Setting::getServices()) / 100) - $amount ;
-
+    
+        $taxes = max(0, $amount * ((100 + Setting::getTaxes()) / 100) - $amount);
+        $services = max(0, $amount * ((100 + Setting::getServices()) / 100) - $amount);
+    
         $total_amount = $amount + $taxes + $services;
+        $remaining = max(0, $total_amount - $paid);
 
         $this->update([
             'amount' => $total_amount,
-            'remaining' => $total_amount - $paid,
+            'remaining' => $remaining,
         ]);
     }
 

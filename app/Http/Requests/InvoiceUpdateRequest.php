@@ -22,8 +22,7 @@ class InvoiceUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'active' => 'boolean',
-            'dinning_in' => 'boolean',
+            'title' => 'required|min:1|max:32',
             'table_id' => 'nullable|exists:tables,id',
             'discount_rate' => 'required|numeric|min:0|max:100',
             'discount_fixed' => 'required|numeric|min:0',
