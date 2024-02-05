@@ -26,6 +26,16 @@ class GenerateDailySale
         ]);
     }
 
+    public static function getTitle()
+    {
+        $today = DailySale::where('title', 'like', date('Y-m-d') . '%');
+        $title = $today->exists() ? 
+            date('Y-m-d') . ' (' . ($today->count() + 1) . ')'
+        : date('Y-m-d');
+
+        return $title;
+    }
+
     public static function getInvoice(Invoice $invoice)
     {
         if(!DailySale::where('active', true)->exists())
