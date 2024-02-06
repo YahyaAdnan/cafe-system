@@ -20,6 +20,8 @@ class Invoice extends Model
         'remaining',
         'discount_rate',
         'discount_fixed',
+        'deliver_type_id',
+        'employee_id',
         'note',
     ];
 
@@ -70,6 +72,16 @@ class Invoice extends Model
     public function table()
     {
         return $this->belongsTo(Table::class);
+    }
+
+    public function deliverType()
+    {
+        return $this->belongsTo(DeliverType::class);
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
     }
 
     public function orders()
