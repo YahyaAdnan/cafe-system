@@ -24,6 +24,8 @@ class InvoiceUpdateRequest extends FormRequest
         return [
             'title' => 'required|min:1|max:32',
             'table_id' => 'nullable|exists:tables,id',
+            'employee_id' => 'nullable|exists:employees,id',
+            'deliver_type_id' => 'nullable|exists:deliver_types,id',
             'discount_rate' => 'required|numeric|min:0|max:100',
             'discount_fixed' => 'required|numeric|min:0',
             'note' => 'nullable|max:255',

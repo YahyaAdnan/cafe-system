@@ -25,6 +25,8 @@ class InvoiceStoreRequest extends FormRequest
             'local_id' => 'required|min:0',
             'dinning_in' => 'boolean',
             'table_id' => 'nullable|exists:tables,id',
+            'employee_id' => 'nullable|exists:employees,id',
+            'deliver_type_id' => 'nullable|exists:deliver_types,id',
         ];
     }
 }
