@@ -40,9 +40,7 @@ class DeliverTypeResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('title')->label('Title')->sortable()->searchable(),
-                IconColumn::make('cash')->sortable()->boolean()
-                    ->trueIcon('heroicon-o-check-badge')
-                    ->falseIcon('heroicon-o-x-mark'),
+                IconColumn::make('cash')->sortable()->boolean(),
             ])
             ->filters([
                 //
