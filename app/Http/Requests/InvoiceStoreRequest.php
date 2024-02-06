@@ -22,6 +22,7 @@ class InvoiceStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'local_id' => 'required|min:0',
             'dinning_in' => 'boolean',
             'table_id' => 'nullable|exists:tables,id',
         ];

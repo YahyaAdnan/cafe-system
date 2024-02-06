@@ -24,7 +24,7 @@ class InvoiceController extends Controller
         }
 
         $invoice = Invoice::create([
-            'inovice_no' => GenerateInovice::getInovice($request->id),
+            'inovice_no' => GenerateInovice::getInovice($request->table_id),
             'title' => GenerateInovice::generateTitle(),
             'local_id' =>  $request->local_id,
             'active' => true,
