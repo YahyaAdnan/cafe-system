@@ -34,7 +34,7 @@ class InvoiceController extends Controller
             'remaining' => 0,
             'discount_rate' => 0,
             'discount_fixed' => 0,
-            'discount_fixed' => $request->employee_id,
+            'employee_id' => $request->employee_id,
             'deliver_type_id' => $request->deliver_type_id,
             'note' => '',
         ]);

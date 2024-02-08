@@ -9,6 +9,7 @@ use App\Models\ItemType;
 use App\Models\ItemCategory;
 use App\Models\ItemSubcategory;
 use App\Models\Ingredient;
+use App\Models\Extra;
 use Filament\Tables\Columns\Layout\Grid;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -103,8 +104,21 @@ class ItemResource extends Resource
                     ->minItems(1)
                     ->columns(12)
                     ->reorderableWithButtons()
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
                 // END: REPEATER for Prices
+                // START: Select Extra
+                Select::make('extras')
+                    ->columnSpan(12)
+                    ->multiple()
+                    ->relationship(name: 'extras', titleAttribute: 'title')
+                    ->createOptionForm([
+                        TextInput::make('title')
+                            ->required()->minLength(3),
+                        TextInput::make('amount')
+                            ->numeric()->required(),
+                    ])->searchable()
+                    ->preload()
+                // END: Select Extra
             ])->columns(12);
     }
 

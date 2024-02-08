@@ -82,6 +82,7 @@ class InvoiceActionController extends Controller
         $new_invoice->updateAmount();
         Invoice::findLocal($request->local_invoice)->updateAmount();
 
+        // TODO: *** The reamining in case it's more ***
         return response()->json(['message' => 'Separated Succefully.'], 200);
     }
 
