@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\InvoiceActionController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\TableController;
@@ -31,6 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Items
     Route::resource('tables', TableController::class)->only(['index']);
+
+    // Items
+    Route::resource('employees', EmployeeController::class)->only(['index']);
 
     // Invoices
     Route::resource('invoices', InvoiceController::class)->only(['store']);
