@@ -21,6 +21,7 @@ class ExtraResource extends Resource
     protected static ?string $model = Extra::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Item Settings';
 
     public static function form(Form $form): Form
     {

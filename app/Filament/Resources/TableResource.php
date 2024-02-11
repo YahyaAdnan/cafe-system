@@ -25,6 +25,7 @@ class TableResource extends Resource
     protected static ?string $model = Seating::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?string $navigationGroup = 'Managment Settings';
 
     public static function canCreate(): bool
     {

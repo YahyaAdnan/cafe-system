@@ -26,6 +26,7 @@ class IngredientResource extends Resource
     protected static ?string $model = Ingredient::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationGroup = 'Item Settings';
 
     public static function canCreate(): bool
     {

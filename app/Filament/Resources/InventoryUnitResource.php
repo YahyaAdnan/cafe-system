@@ -19,7 +19,10 @@ class InventoryUnitResource extends Resource
 {
     protected static ?string $model = InventoryUnit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
+    protected static ?string $navigationGroup = 'Inventory';
+    protected static ?int $navigationSort = 1;
+
 
     public static function form(Form $form): Form
     {
