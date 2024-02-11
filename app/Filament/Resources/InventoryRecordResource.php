@@ -22,6 +22,8 @@ use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InventoryRecordResource extends Resource
@@ -85,19 +87,74 @@ class InventoryRecordResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('inventory.title')->label('Title')->sortable()->searchable(),
+                TextColumn::make('supplier.title')->label('supplier')->sortable()->toggleable(),
+                TextColumn::make('quantity')->badge()->label('quantity')
+                    ->suffix(fn(InventoryRecord $record) => ' ' . $record->inventory->inventoryUnit->title)
+                    ->color(fn(InventoryRecord $record) => $record->type == "Increase" ?  "success" : "danger")
+                    ->sortable(),
+                TextColumn::make('created_at')->label('Date')->datetime(),
             ])
             ->filters([
-                //
+                Filter::make('filter')
+                ->form([
+                    Select::make('inventories')
+                        ->multiple()
+                        ->options(Inventory::pluck('title', 'id')),
+                    // START: TYPE OF RECORD
+                    Select::make('type')->required()
+                    ->native(false)->options([
+                        'Increase' => 'Increase',
+                        'Decrease' => 'Decrease',
+                    ])->live(),
+                    // END: TYPE OF RECORD
+                    Select::make('suppliers')
+                        ->multiple()
+                        ->label('suppliers')
+                        ->options(Supplier::pluck('title', 'id'))
+                        ->visible(fn(Get $get):bool => $get('type') == "Increase"),
+
+                    TextInput::make('minimum_quantity')->numeric()->minValue(0),
+                    TextInput::make('maximum_quantity')->numeric()->minValue(0),
+
+                    DatePicker::make('created_from'),
+                    DatePicker::make('created_until'),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query
+                        ->when(
+                            $data['created_from'],
+                            function (Builder $query, $date)
+                            {
+                                return $query->whereDate('created_at', '>=', $date);
+                            }
+                        )
+                        ->when(
+                            $data['created_until'],
+                            function (Builder $query, $date) 
+                            {
+                                return $query->whereDate('created_until', '<=', $date);
+                            }
+                        )
+                        ->when(
+                            $data['inventories'],
+                            function (Builder $query, $inventories)
+                            {
+                                return $query->whereIn('inventory_id', $inventories);
+                            }
+                        )
+                        ->when(
+                            $data['type'],
+                            function (Builder $query, $type) 
+                            { 
+                                return $query->where('type', $type);
+                            }
+                        );
+                })   
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                // Tables\Actions\EditAction::make(),
+            ])->recordUrl(null);
     }
 
     public static function getRelations(): array
@@ -112,7 +169,7 @@ class InventoryRecordResource extends Resource
         return [
             'index' => Pages\ListInventoryRecords::route('/'),
             'create' => Pages\CreateInventoryRecord::route('/create'),
-            'edit' => Pages\EditInventoryRecord::route('/{record}/edit'),
+            // 'edit' => Pages\EditInventoryRecord::route('/{record}/edit'),
         ];
     }
 }
