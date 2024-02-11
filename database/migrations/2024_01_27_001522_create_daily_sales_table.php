@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('daily_sales', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->boolean('GenerateDailySale')->default(1);
+            $table->boolean('active')->default(1);
             $table->timestamps();
         });
     }
