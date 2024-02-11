@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class InventoryRecord extends Model
 {
@@ -18,6 +19,33 @@ class InventoryRecord extends Model
         'type'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) 
+        {
+            $model->user_id = Auth::id();
+        });
+
+        static::created(function ($model) {
+            if($model->type == "Increase")
+            {
+                $inventory = Inventory::find($model->inventory_id);
+                $inventory->update([
+                    'quantity' => $inventory->quantity + $model->quantity
+                ]);
+            }
+            else
+            {
+                $inventory = Inventory::find($model->inventory_id);
+                $quantity = $inventory->quantity - $model->quantity;
+                $inventory->update([
+                    'quantity' => $quantity > 0 ? $quantity : 0
+                ]);
+            }
+        });
+    }
 
     public function supplier()
     {

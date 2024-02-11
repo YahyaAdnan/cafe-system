@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InventoryRecordResource\Pages;
 use App\Filament\Resources\InventoryRecordResource\RelationManagers;
 use App\Models\InventoryRecord;
+use App\Models\PaymentMethod;
+use App\Models\Supplier;
 use App\Models\Inventory;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -44,29 +46,37 @@ class InventoryRecordResource extends Resource
                     ->searchable()->options(
                         Inventory::pluck('title', 'id')
                     )->live(),
+                TextInput::make('supplier_id_to_hide')->label('supplier')
+                    ->columnSpan(6)
+                    ->disabled(fn(Get $get) => $get("type") != "Increase")
+                    ->hidden(fn(Get $get) => $get("type") == "Increase"),
                 Select::make('supplier_id')
                     ->label('supplier')
+                    ->options(supplier::pluck('title', 'id'))
                     ->columnSpan(6)
-                    ->searchable()
                     ->relationship(name: 'supplier', titleAttribute: 'title')
                     ->createOptionForm([
                         TextInput::make('title')->minLength(3)->required(),
-                    ])->disabled(fn(Get $get) => $get("type") != "Increase"),
+                    ])->searchable()->preload()
+                    ->hidden(fn(Get $get) => $get("type") != "Increase"),
                 TextInput::make('quantity')->columnSpan(6)
                     ->suffix(fn(Get $get) => $get("inventory_id") ? Inventory::find($get("inventory_id"))->inventoryUnit->title : "")
                     ->numeric()->minValue(0)->required(),
                 // END: RECORD DETAILS
                 // START: CHECK IF THEY PAID.
-                Toggle::make('paid')->live(),
+                Toggle::make('paid')->disabled(fn(Get $get) => $get("type") != "Increase")->live(),
                 Fieldset::make('expense')
                     ->relationship('expense')
                     ->schema([
-                        TextInput::make('title')->hidden(1)
-                            ->default(fn(Get $get) => $get("inventory_id") ? Inventory::find($get("inventory_id"))->inventoryUnit->title : ""),
-                        DatePicker::make('date')->default(today()),
+                        Hidden::make('title')
+                            ->default(fn(Get $get) => "-"),
+                        DatePicker::make('date')->required()->default(today()),
                         TextInput::make('amount')->numeric()->minValue(0)->required(),
-                        TextInput::make('expense_category_id')->hidden(1)->default(1),
-                    ])->disabled(fn(Get $get) => ! $get("paid")),
+                        Hidden::make('expense_category_id')->default(1),
+                        Select::make('payment_method_id')->required()
+                            ->options(PaymentMethod::pluck('title', 'id'))
+                            ->searchable()
+                    ])->hidden(fn(Get $get) => !$get("paid")),
                 // END: CHECK IF THEY PAID.
             ])->columns(12);
     }
