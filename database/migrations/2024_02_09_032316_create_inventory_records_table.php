@@ -26,6 +26,8 @@ return new class extends Migration
             
             $table->unsignedInteger('quantity')->default(0);
             
+            $table->enum('type', ['Increase', 'Decrease']);
+
             $table->unsignedBigInteger('user_id');
             $table
                 ->foreign('user_id')

@@ -42,7 +42,7 @@ class InventoryResource extends Resource
                     InventoryUnit::pluck('title', 'id')
                 )->searchable(),
                 TextInput::make('note')->columnSpan(12)->maxLength(250),
-                ])->columns(12);
+            ])->columns(12);
     }
 
     public static function table(Table $table): Table

@@ -27,6 +27,7 @@ class ItemCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-tag';
 
+    // TODO: ADD ALL AUTH.
     public static function canCreate(): bool
     {
         return Auth::user()->authorized('create item_categories');
@@ -67,9 +68,13 @@ class ItemCategoryResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    Tables\Actions\DeleteBulkAction::make()
+                ])
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                // TODO: ADD ALL DISABLED DELETING.
+                fn(ItemCategory $itemCategory) => $itemCategory->isDeletable()
+            );
     }
 
     public static function getRelations(): array

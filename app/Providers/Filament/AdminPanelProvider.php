@@ -10,6 +10,8 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Filament\Navigation\NavigationItem;
+use Filament\Pages\Dashboard;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -53,6 +55,19 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])->navigationItems([
+              
             ])->spa();
+    }
+
+    private function getNavigation()
+    {
+        return array(
+            NavigationItem::make()
+                ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
+                ->url(fn (): string => Dashboard::getUrl())
+                ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard')),
+            // ...
+        );
     }
 }

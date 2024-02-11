@@ -45,7 +45,7 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->label('Title')->searchable(),
+                TextColumn::make('title')->sortable()->label('Title')->searchable(),
                 TextColumn::make('inovice_no')->label('Inovice No')->toggleable(true)->sortable(),
                 TextColumn::make('table.title')->toggleable()->sortable(),
                 TextColumn::make('amount')->label('amount')->badge()->color("success")

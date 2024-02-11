@@ -25,6 +25,7 @@ class DeliverTypeResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // TODO: CHECK ALL MAX.
         return $form
             ->schema([
                 TextInput::make('title')->required()->minLength(3),
