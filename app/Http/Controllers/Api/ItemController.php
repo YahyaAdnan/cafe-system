@@ -20,6 +20,7 @@ class ItemController extends Controller
         }
 
         $items = Item::with([
+            'extras',
             'itemCategory',
             'itemType',
             'itemSubcategory',
