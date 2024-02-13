@@ -37,7 +37,7 @@ return new class extends Migration
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 
-            $table->unsignedBigInteger('item_subcategory_id');
+            $table->unsignedBigInteger('item_subcategory_id')->nullable();
             $table
                 ->foreign('item_subcategory_id')
                 ->references('id')
