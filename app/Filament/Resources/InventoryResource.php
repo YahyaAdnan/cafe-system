@@ -34,7 +34,6 @@ class InventoryResource extends Resource
     {
         return $form
             ->schema([         
-                // TODO: ADD UNIQUE TO UNITS
                 TextInput::make('title')->columnSpan(6)->required()->minLength(3)->maxLength(32)->unique(
                     modifyRuleUsing: function (Unique $rule, Get $get) {
                         return $rule->where('title', $get('title'));

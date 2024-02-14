@@ -14,6 +14,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Get;
 
 class InventoryUnitResource extends Resource
 {
@@ -28,7 +30,11 @@ class InventoryUnitResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->minLength(1)->maxLength(32),
+                TextInput::make('title')->required()->minLength(1)->maxLength(32)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('title', $get('title'));
+                    }, ignoreRecord: true
+                ),
             ]);
     }
 

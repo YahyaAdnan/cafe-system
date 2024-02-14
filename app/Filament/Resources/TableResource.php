@@ -19,6 +19,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Get;
 
 class TableResource extends Resource
 {
@@ -36,7 +38,11 @@ class TableResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->columnSpan(6)->required()->minLength(1)->maxLength(4),
+                TextInput::make('title')->columnSpan(6)->required()->minLength(1)->maxLength(4)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('title', $get('title'));
+                    }, ignoreRecord: true
+                ),
                 TextInput::make('chairs')->numeric()->columnSpan(6)->required()->minValue(0)->minValue(99),
                 Textarea::make('note')->columnSpan(12)
             ])->columns(12);

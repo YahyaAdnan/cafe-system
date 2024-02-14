@@ -20,6 +20,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Get;
 
 class IngredientResource extends Resource
 {
@@ -37,9 +39,21 @@ class IngredientResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->label('Title (EN)')->minLength(3)->maxLength(32),
-                TextInput::make('title_ar')->required()->label('Title (EN)')->minLength(3)->maxLength(32),
-                TextInput::make('title_ku')->required()->label('Title (EN)')->minLength(3)->maxLength(32),
+                TextInput::make('title')->required()->label('Title (EN)')->minLength(3)->maxLength(32)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('title', $get('title'));
+                    }, ignoreRecord: true
+                ),
+                TextInput::make('title_ar')->required()->label('Title (AR)')->minLength(3)->maxLength(32)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('title_ar', $get('title_ar'));
+                    }, ignoreRecord: true
+                ),
+                TextInput::make('title_ku')->required()->label('Title (KU)')->minLength(3)->maxLength(32)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('title_ku', $get('title_ku'));
+                    }, ignoreRecord: true
+                ),
                 Toggle::make('is_available')->onColor('success')->offColor('danger'),
                 // START: REPEATER for Ingredient
                 Repeater::make('itemIngredient')

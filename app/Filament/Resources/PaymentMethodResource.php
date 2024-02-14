@@ -15,6 +15,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Get;
 
 class PaymentMethodResource extends Resource
 {
@@ -32,7 +34,12 @@ class PaymentMethodResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->label('Title')->minLength(3)->maxLength(32),
+                TextInput::make('title')->required()->label('Title')->minLength(3)
+                ->maxLength(32)->unique(
+                    modifyRuleUsing: function (Unique $rule, Get $get) {
+                        return $rule->where('title', $get('title'));
+                    }, ignoreRecord: true
+                ),
             ]);
     }
 
