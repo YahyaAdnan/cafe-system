@@ -116,6 +116,60 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update users']);
         Permission::create(['name' => 'delete users']);
 
+        Permission::create(['name' => 'list daily_sales']);
+        Permission::create(['name' => 'view daily_sales']);
+        Permission::create(['name' => 'create daily_sales']);
+        Permission::create(['name' => 'update daily_sales']);
+        Permission::create(['name' => 'delete daily_sales']);
+
+        Permission::create(['name' => 'list deliver_types']);
+        Permission::create(['name' => 'view deliver_types']);
+        Permission::create(['name' => 'create deliver_types']);
+        Permission::create(['name' => 'update deliver_types']);
+        Permission::create(['name' => 'delete deliver_types']);
+
+        Permission::create(['name' => 'list employees']);
+        Permission::create(['name' => 'view employees']);
+        Permission::create(['name' => 'create employees']);
+        Permission::create(['name' => 'update employees']);
+        Permission::create(['name' => 'delete employees']);
+
+        Permission::create(['name' => 'list inventories']);
+        Permission::create(['name' => 'view inventories']);
+        Permission::create(['name' => 'create inventories']);
+        Permission::create(['name' => 'update inventories']);
+        Permission::create(['name' => 'delete inventories']);
+
+        Permission::create(['name' => 'list inventory_records']);
+        Permission::create(['name' => 'view inventory_records']);
+        Permission::create(['name' => 'create inventory_records']);
+        Permission::create(['name' => 'update inventory_records']);
+        Permission::create(['name' => 'delete inventory_records']);
+
+        Permission::create(['name' => 'list inventory_units']);
+        Permission::create(['name' => 'view inventory_units']);
+        Permission::create(['name' => 'create inventory_units']);
+        Permission::create(['name' => 'update inventory_units']);
+        Permission::create(['name' => 'delete inventory_units']);
+
+        Permission::create(['name' => 'list extras']);
+        Permission::create(['name' => 'view extras']);
+        Permission::create(['name' => 'create extras']);
+        Permission::create(['name' => 'update extras']);
+        Permission::create(['name' => 'delete extras']);
+
+        Permission::create(['name' => 'list suppliers']);
+        Permission::create(['name' => 'view suppliers']);
+        Permission::create(['name' => 'create suppliers']);
+        Permission::create(['name' => 'update suppliers']);
+        Permission::create(['name' => 'delete suppliers']);
+
+        Permission::create(['name' => 'list transactions']);
+        Permission::create(['name' => 'view transactions']);
+        Permission::create(['name' => 'create transactions']);
+        Permission::create(['name' => 'update transactions']);
+        Permission::create(['name' => 'delete transactions']);
+
         // Create admin role and assign all permissions
         $allPermissions = Permission::all();
         $adminRole = Role::create(['name' => 'admin']);
