@@ -28,7 +28,8 @@ class ExtraResource extends Resource
         return $form
             ->schema([
                 TextInput::make('title')->columnSpan(6)->required()->minLength(3),
-                TextInput::make('amount')->columnSpan(6)->numeric()->required(),
+                TextInput::make('amount')->suffix("IQD")->columnSpan(6)
+                    ->numeric()->minValue(0)->required(),
                 TextInput::make('note')->columnSpan(12),
                 Select::make('items')
                     ->columnSpan(12)

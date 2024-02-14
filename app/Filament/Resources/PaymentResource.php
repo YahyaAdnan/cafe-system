@@ -9,6 +9,7 @@ use App\Models\DailySale;
 use App\Models\Invoice;
 use App\Models\Employee;
 use App\Models\DeliverType;
+use App\Models\PaymentMethod;
 use App\Models\Table as Seating;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -36,6 +37,7 @@ class PaymentResource extends Resource
     protected static ?string $model = Payment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Finance';
 
     public static function canCreate(): bool
     {
@@ -46,7 +48,7 @@ class PaymentResource extends Resource
     {
         return $form
             ->schema([
-                //
+                //TODO: MAKE CHANGE
             ]);
     }
 
@@ -55,17 +57,19 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('invoice.inovice_no')->sortable()->searchable(),
-                TextColumn::make('amount')->sortable()->summarize([
+                TextColumn::make('amount')->money('IQD')->sortable()->summarize([
                     Average::make(),
                     Range::make(),
                     Sum::make(),
                 ]),
-                TextColumn::make('paid')->toggleable(true)->sortable()->summarize([
+                TextColumn::make('paid')->money('IQD')->toggleable(true)
+                ->sortable()->summarize([
                     Average::make(),
                     Range::make(),
                     Sum::make(),
                 ]),
-                TextColumn::make('remaining')->label('returned')->toggleable(true)->sortable()->summarize([
+                TextColumn::make('remaining')->money('IQD')->label('returned')
+                ->toggleable(true)->sortable()->summarize([
                     Average::make(),
                     Range::make(),
                     Sum::make(),
@@ -96,6 +100,9 @@ class PaymentResource extends Resource
                         Select::make('deliver_type')->options(DeliverType::pluck('title', 'id'))->multiple()
                             ->visible(fn(Get $get):bool => $get('dinning_in') == 1),
                         // *** END: FIND BY ORDER DETAILS *** 
+                        // *** START: FIND BY ORDER Payment *** 
+                        Select::make('payment_method')->options(PaymentMethod::pluck('title', 'id'))->multiple(),
+                        // *** END: FIND BY ORDER Payment *** 
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -157,6 +164,12 @@ class PaymentResource extends Resource
                                     if(!$data['dinning_in'] == 1) {return;}
                                     $invoices = Invoice::whereIn('deliver_type_id', $deliver_type_id)->pluck('id');
                                     return $query->whereIn('invoice_id', $invoices);
+                                }
+                            )->when(
+                                $data['payment_method'],
+                                function (Builder $query, $payment_method)
+                                { 
+                                    return $query->whereIn('payment_method_id', $payment_method);
                                 }
                             );
                     }),

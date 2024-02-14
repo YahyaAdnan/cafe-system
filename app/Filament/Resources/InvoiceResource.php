@@ -48,7 +48,7 @@ class InvoiceResource extends Resource
                 TextColumn::make('title')->sortable()->label('Title')->searchable(),
                 TextColumn::make('inovice_no')->label('Inovice No')->toggleable(true)->sortable(),
                 TextColumn::make('table.title')->toggleable()->sortable(),
-                TextColumn::make('amount')->label('amount')->badge()->color("success")
+                TextColumn::make('amount')->money('IQD')->label('amount')->badge()->color("success")
                     ->money('IQD')->sortable()->summarize([
                         Average::make(),
                         Range::make(),

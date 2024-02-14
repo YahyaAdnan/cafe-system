@@ -76,7 +76,7 @@ class InventoryRecordResource extends Resource
                         Hidden::make('title')
                             ->default(fn(Get $get) => "-"),
                         DatePicker::make('date')->required()->default(today()),
-                        TextInput::make('amount')->numeric()->minValue(0)->required(),
+                        TextInput::make('amount')->suffix('IQD')->numeric()->minValue(0)->required(),
                         Hidden::make('expense_category_id')->default(1),
                         Select::make('payment_method_id')->required()
                             ->options(PaymentMethod::pluck('title', 'id'))

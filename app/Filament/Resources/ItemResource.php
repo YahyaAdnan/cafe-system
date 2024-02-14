@@ -100,7 +100,7 @@ class ItemResource extends Resource
                     ->relationship()
                     ->schema([
                         TextInput::make('title')->columnSpan(6)->required()->minLength(3)->distinct(),
-                        TextInput::make('amount')->columnSpan(6)->required()->numeric(),
+                        TextInput::make('amount')->suffix('IQD')->columnSpan(6)->required()->numeric(),
                     ])
                     ->minItems(1)
                     ->columns(12)
@@ -116,7 +116,8 @@ class ItemResource extends Resource
                         TextInput::make('title')
                             ->required()->minLength(3),
                         TextInput::make('amount')
-                            ->numeric()->required(),
+                            ->suffix('IQD')->numeric()
+                            ->required(),
                     ])->searchable()
                     ->preload()
                 // END: Select Extra

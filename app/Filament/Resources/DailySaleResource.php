@@ -24,6 +24,7 @@ class DailySaleResource extends Resource
     protected static ?string $model = DailySale::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Finance';
 
     public static function form(Form $form): Form
     {
