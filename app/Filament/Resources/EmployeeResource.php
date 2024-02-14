@@ -24,6 +24,11 @@ class EmployeeResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Managment Settings';
 
+    public static function canCreate(): bool
+    {
+        return Auth::user()->authorized('create employees');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

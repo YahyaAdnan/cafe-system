@@ -34,6 +34,10 @@ class InventoryRecordResource extends Resource
     protected static ?string $navigationGroup = 'Inventory';
     protected static ?int $navigationSort = 2;
 
+    public static function canCreate(): bool
+    {
+        return Auth::user()->authorized('create inventory_records');
+    }
 
     public static function form(Form $form): Form
     {

@@ -23,6 +23,11 @@ class ExtraResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Item Settings';
 
+    public static function canCreate(): bool
+    {
+        return Auth::user()->authorized('create extras');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

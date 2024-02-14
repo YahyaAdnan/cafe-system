@@ -26,6 +26,11 @@ class DailySaleResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Finance';
 
+    public static function canCreate(): bool
+    {
+        return Auth::user()->authorized('create daily_sales');
+    }
+
     public static function form(Form $form): Form
     {
         $title = GenerateDailySale::getTitle();
