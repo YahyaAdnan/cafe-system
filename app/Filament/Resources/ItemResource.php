@@ -84,7 +84,8 @@ class ItemResource extends Resource
                     ->relationship()
                     ->schema([
                         Select::make('ingredient_id')->options(Ingredient::pluck('title', 'id'))
-                            ->searchable()->label('Ingredient')->columnSpan(4)->required(),                      
+                            ->searchable()->label('Ingredient')->columnSpan(4)->required()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),                      
                         Select::make('main')->options([
                             '0' => 'Not Main',
                             '1' => 'Main',
@@ -98,7 +99,7 @@ class ItemResource extends Resource
                 Repeater::make('prices')
                     ->relationship()
                     ->schema([
-                        TextInput::make('title')->columnSpan(6)->required()->minLength(3),
+                        TextInput::make('title')->columnSpan(6)->required()->minLength(3)->distinct(),
                         TextInput::make('amount')->columnSpan(6)->required()->numeric(),
                     ])
                     ->minItems(1)

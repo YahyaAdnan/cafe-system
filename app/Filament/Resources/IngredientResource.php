@@ -46,7 +46,8 @@ class IngredientResource extends Resource
                     ->relationship()
                     ->schema([
                         Select::make('item_id')->options(Item::pluck('title', 'id'))
-                            ->searchable()->label('Item')->columnSpan(4)->required(),                      
+                            ->searchable()->label('Item')->columnSpan(4)->required()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),                      
                         Select::make('main')->options([
                             '0' => 'Not Main',
                             '1' => 'Main',
