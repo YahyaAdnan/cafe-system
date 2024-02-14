@@ -25,6 +25,8 @@ class InventoryUnitResource extends Resource
     protected static ?string $navigationGroup = 'Inventory';
     protected static ?int $navigationSort = 1;
 
+    // TODO: MAKE RELATIONS
+
     public static function canCreate(): bool
     {
         return Auth::user()->authorized('create inventory_units');

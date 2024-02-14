@@ -22,4 +22,19 @@ class PaymentMethod extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function isDeletable()
+    {
+        if($this->payments->isNotEmpty())
+        {
+            return false;
+        }
+
+        if($this->transactions->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

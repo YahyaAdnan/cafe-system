@@ -63,7 +63,11 @@ class ExtraResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(Extra $extra) => $extra->isDeletable()
+            )
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

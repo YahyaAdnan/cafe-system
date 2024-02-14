@@ -14,10 +14,19 @@ class DeliverType extends Model
         'cash'
     ];
 
-
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function isDeletable()
+    {
+        if($this->invoices->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
     }
     
 }

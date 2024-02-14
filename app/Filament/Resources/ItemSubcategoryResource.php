@@ -71,7 +71,11 @@ class ItemSubcategoryResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(ItemSubcategory $itemSubcategory) => $itemSubcategory->isDeletable()
+            )
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

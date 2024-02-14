@@ -35,6 +35,8 @@ class InventoryResource extends Resource
         return Auth::user()->authorized('create inventories');
     }
 
+    // TODO: MAKE RELATIONS
+
     public static function form(Form $form): Form
     {
         return $form

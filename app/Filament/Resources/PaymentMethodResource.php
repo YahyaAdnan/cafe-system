@@ -59,7 +59,11 @@ class PaymentMethodResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])            
+            ->checkIfRecordIsSelectableUsing(
+                fn(PaymentMethod $paymentMethod) => $paymentMethod->isDeletable()
+            )
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

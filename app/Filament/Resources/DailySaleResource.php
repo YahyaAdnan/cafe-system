@@ -77,7 +77,11 @@ class DailySaleResource extends Resource
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
-            ])->recordUrl(null);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(DailySale $dailySale) => $dailySale->isDeletable()
+            )
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

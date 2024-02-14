@@ -58,7 +58,11 @@ class DeliverTypeResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(DeliverType $deliverType) => $deliverType->isDeletable()
+            )
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array

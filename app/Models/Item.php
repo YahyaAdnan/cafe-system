@@ -53,4 +53,21 @@ class Item extends Model
         return $this->hasMany(Price::class);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+
+    public function isDeletable()
+    {
+        if($this->orders->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

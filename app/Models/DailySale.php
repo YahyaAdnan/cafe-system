@@ -30,9 +30,19 @@ class DailySale extends Model
         });
     }
 
-
     public function invoices()
     {
         return $this->belongsToMany(Invoice::class, 'daily_sale_invoices', 'daily_sale_id', 'invoice_id');
     }
+
+    public function isDeletable()
+    {
+        if($this->invoices->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 }

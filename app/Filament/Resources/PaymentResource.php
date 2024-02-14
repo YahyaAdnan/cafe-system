@@ -47,9 +47,7 @@ class PaymentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                //TODO: MAKE CHANGE
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table

@@ -19,4 +19,15 @@ class Extra extends Model
     {
         return $this->belongsToMany(Item::class, 'extra_items', 'extra_id', 'item_id');
     }
+
+    public function isDeletable()
+    {
+        if($this->items->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 }

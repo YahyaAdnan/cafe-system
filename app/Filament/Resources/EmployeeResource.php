@@ -58,7 +58,11 @@ class EmployeeResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(Employee $employee) => $employee->isDeletable()
+            )
+            ->recordUrl(null);
     }
 
     public static function getRelations(): array
