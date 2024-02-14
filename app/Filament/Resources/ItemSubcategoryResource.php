@@ -45,9 +45,9 @@ class ItemSubcategoryResource extends Resource
                     ->storeFileNamesIn('ItemSubcategories'),
                 Select::make('item_category_id')->options(ItemCategory::pluck('title','id'))
                     ->label('Item Category')->searchable()->required(),
-                TextInput::make('title')->required()->minLength(3)->label('Title (EN)')->columns(1),
-                TextInput::make('title_ar')->required()->minLength(3)->label('Title (AR)'),
-                TextInput::make('title_ku')->required()->minLength(3)->label('Title (KU)'),
+                TextInput::make('title')->required()->minLength(3)->maxLength(32)->label('Title (EN)')->columns(1),
+                TextInput::make('title_ar')->required()->minLength(3)->maxLength(32)->label('Title (AR)'),
+                TextInput::make('title_ku')->required()->minLength(3)->maxLength(32)->label('Title (KU)'),
             ])->columns(1);
     }
 

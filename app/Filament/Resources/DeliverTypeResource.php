@@ -29,11 +29,11 @@ class DeliverTypeResource extends Resource
         // TODO: CHECK ALL MAX.
         return $form
             ->schema([
-                TextInput::make('title')->required()->minLength(3),
+                TextInput::make('title')->required()->minLength(3)->maxLength(32),
                 Select::make('cash')->options([
                     "1" => "Cash",
                     "0" => "Post-Paid",
-                ])->native(false)
+                ])->native(false)->required()
             ]);
     }
 

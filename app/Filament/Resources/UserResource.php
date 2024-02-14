@@ -36,19 +36,19 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required()->minLength(3)->unique(
+                TextInput::make('name')->required()->minLength(3)->minLength(32)->unique(
                     modifyRuleUsing: function (Unique $rule, Get $get) {
                         return $rule->where('name', $get('name'));
                     }, ignoreRecord: true
                 ),
-                TextInput::make('email')->required()->email()->unique(
+                TextInput::make('email')->required()->email()->minLength(64)->unique(
                     modifyRuleUsing: function (Unique $rule, Get $get) {
                         return $rule->where('email', $get('email'));
                     }, ignoreRecord: true
                 ),
                 TextInput::make('password')->required()->password()->hiddenOn('edit'),
                 Select::make('role_id')->options(Role::pluck('name','id'))
-                ->label('Role')->native(false)->required()
+                    ->label('Role')->native(false)->required()
             ]);
     }
 

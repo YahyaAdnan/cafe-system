@@ -56,9 +56,9 @@ class ItemResource extends Resource
                     ->storeFileNamesIn('items'),
                 // END: IMAGE
                 // START: TITLE IN (AR, EN and KU)
-                TextInput::make('title')->label('Title (EN)')->columnSpan(4)->required()->minLength(3),
-                TextInput::make('title_ar')->label('Title (AR)')->columnSpan(4)->required()->minLength(3),
-                TextInput::make('title_ku')->label('Title (KU)')->columnSpan(4)->required()->minLength(3),
+                TextInput::make('title')->label('Title (EN)')->columnSpan(4)->required()->minLength(3)->maxLength(32),
+                TextInput::make('title_ar')->label('Title (AR)')->columnSpan(4)->required()->minLength(3)->maxLength(32),
+                TextInput::make('title_ku')->label('Title (KU)')->columnSpan(4)->required()->minLength(3)->maxLength(32),
                 // END: TITLE IN (AR, EN and KU)
                 // START: SELECT TYPE, CATEGORY and Subcategory
                 Select::make('item_type_id')->options(ItemType::pluck('title', 'id'))
@@ -90,7 +90,7 @@ class ItemResource extends Resource
                             '0' => 'Not Main',
                             '1' => 'Main',
                         ])->native(false)->required()->columnSpan(4),
-                        TextInput::make('note')->columnSpan(4),
+                        TextInput::make('note')->columnSpan(4)->maxLength(250),
                     ])->columns(12)
                     ->reorderableWithButtons()
                     ->columnSpanFull(),
@@ -99,7 +99,7 @@ class ItemResource extends Resource
                 Repeater::make('prices')
                     ->relationship()
                     ->schema([
-                        TextInput::make('title')->columnSpan(6)->required()->minLength(3)->distinct(),
+                        TextInput::make('title')->columnSpan(6)->required()->minLength(3)->maxLength(32)->distinct(),
                         TextInput::make('amount')->suffix('IQD')->columnSpan(6)->required()->numeric(),
                     ])
                     ->minItems(1)
@@ -114,9 +114,9 @@ class ItemResource extends Resource
                     ->relationship(name: 'extras', titleAttribute: 'title')
                     ->createOptionForm([
                         TextInput::make('title')
-                            ->required()->minLength(3),
+                            ->required()->minLength(3)->maxLength(32),
                         TextInput::make('amount')
-                            ->suffix('IQD')->numeric()
+                            ->suffix('IQD')->numeric()->minValue(0)
                             ->required(),
                     ])->searchable()
                     ->preload()

@@ -32,7 +32,7 @@ class PaymentMethodResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->label('Title')->minLength(3),
+                TextInput::make('title')->required()->label('Title')->minLength(3)->maxLength(32),
             ]);
     }
 

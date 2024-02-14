@@ -37,9 +37,9 @@ class IngredientResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->label('Title (EN)')->minLength(3),
-                TextInput::make('title_ar')->required()->label('Title (EN)')->minLength(3),
-                TextInput::make('title_ku')->required()->label('Title (EN)')->minLength(3),
+                TextInput::make('title')->required()->label('Title (EN)')->minLength(3)->maxLength(32),
+                TextInput::make('title_ar')->required()->label('Title (EN)')->minLength(3)->maxLength(32),
+                TextInput::make('title_ku')->required()->label('Title (EN)')->minLength(3)->maxLength(32),
                 Toggle::make('is_available')->onColor('success')->offColor('danger'),
                 // START: REPEATER for Ingredient
                 Repeater::make('itemIngredient')
@@ -52,7 +52,7 @@ class IngredientResource extends Resource
                             '0' => 'Not Main',
                             '1' => 'Main',
                         ])->native(false)->required()->columnSpan(4),
-                        TextInput::make('note')->columnSpan(4),
+                        TextInput::make('note')->columnSpan(4)->maxLength(255),
                     ])->columns(12)
                     ->reorderableWithButtons()
                     ->columnSpanFull(),

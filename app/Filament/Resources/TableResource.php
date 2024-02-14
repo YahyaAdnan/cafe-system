@@ -36,8 +36,8 @@ class TableResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->columnSpan(6)->required()->minLength(1),
-                TextInput::make('chairs')->numeric()->columnSpan(6)->required()->minValue(0),
+                TextInput::make('title')->columnSpan(6)->required()->minLength(1)->maxLength(4),
+                TextInput::make('chairs')->numeric()->columnSpan(6)->required()->minValue(0)->minValue(99),
                 Textarea::make('note')->columnSpan(12)
             ])->columns(12);
     }

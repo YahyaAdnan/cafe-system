@@ -42,9 +42,9 @@ class ItemTypeResource extends Resource
                 ->avatar()
                 ->directory('ItemTypes')
                 ->storeFileNamesIn('ItemTypes'),
-            TextInput::make('title')->required()->minLength(3)->label('Title (EN)')->columns(1),
-            TextInput::make('title_ar')->required()->minLength(3)->label('Title (AR)'),
-            TextInput::make('title_ku')->required()->minLength(3)->label('Title (KU)'),
+            TextInput::make('title')->required()->minLength(3)->maxLength(32)->label('Title (EN)')->columns(1),
+            TextInput::make('title_ar')->required()->minLength(3)->maxLength(32)->label('Title (AR)'),
+            TextInput::make('title_ku')->required()->minLength(3)->maxLength(32)->label('Title (KU)'),
         ])->columns(1);
     }
 

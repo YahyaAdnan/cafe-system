@@ -28,11 +28,11 @@ class EmployeeResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->required()->minLength(3),
+                TextInput::make('name')->required()->minLength(3)->maxLength(32),
                 Select::make('active')->options([
                     "1" => "Active",
                     "0" => "Deactive",
-                ])->native(false)
+                ])->native(false)->required()
             ]);
     }
 

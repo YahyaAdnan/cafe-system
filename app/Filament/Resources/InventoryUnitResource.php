@@ -28,7 +28,7 @@ class InventoryUnitResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->minLength(1),
+                TextInput::make('title')->required()->minLength(1)->maxLength(32),
             ]);
     }
 
