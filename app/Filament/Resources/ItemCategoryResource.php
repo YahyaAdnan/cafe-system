@@ -39,7 +39,6 @@ class ItemCategoryResource extends Resource
             ->schema([
                 FileUpload::make('image')
                     ->required()
-                    ->avatar()
                     ->directory('ItemCategories')
                     ->storeFileNamesIn('ItemCategories'),
                 Select::make('item_type_id')->options(ItemType::pluck('title','id'))
