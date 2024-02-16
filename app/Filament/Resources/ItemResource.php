@@ -50,7 +50,6 @@ class ItemResource extends Resource
                 // START: IMAGE
                 FileUpload::make('image')
                     ->columnSpan(12)
-                    ->avatar()
                     ->required()
                     ->directory('items')
                     ->storeFileNamesIn('items'),
