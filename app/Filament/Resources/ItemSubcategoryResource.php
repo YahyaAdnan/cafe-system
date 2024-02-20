@@ -39,9 +39,7 @@ class ItemSubcategoryResource extends Resource
         return $form
             ->schema([
                 FileUpload::make('image')
-                    ->required()
-                    ->directory('ItemSubcategories')
-                    ->storeFileNamesIn('ItemSubcategories'),
+                    ->required(),
                 Select::make('item_category_id')->options(ItemCategory::pluck('title','id'))
                     ->label('Item Category')->searchable()->required(),
                 TextInput::make('title')->required()->minLength(3)->maxLength(32)->label('Title (EN)')->columns(1),

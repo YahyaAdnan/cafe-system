@@ -50,9 +50,7 @@ class ItemResource extends Resource
                 // START: IMAGE
                 FileUpload::make('image')
                     ->columnSpan(12)
-                    ->required()
-                    ->directory('items')
-                    ->storeFileNamesIn('items'),
+                    ->required(),
                 // END: IMAGE
                 // START: TITLE IN (AR, EN and KU)
                 TextInput::make('title')->label('Title (EN)')->columnSpan(4)->required()->minLength(3)->maxLength(32),

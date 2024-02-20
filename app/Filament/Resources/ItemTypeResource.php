@@ -38,9 +38,7 @@ class ItemTypeResource extends Resource
         return $form
         ->schema([
             FileUpload::make('image')
-                ->required()
-                ->directory('ItemTypes')
-                ->storeFileNamesIn('ItemTypes'),
+                ->required(),
             TextInput::make('title')->required()->minLength(3)->maxLength(32)->label('Title (EN)')->columns(1),
             TextInput::make('title_ar')->required()->minLength(3)->maxLength(32)->label('Title (AR)'),
             TextInput::make('title_ku')->required()->minLength(3)->maxLength(32)->label('Title (KU)'),

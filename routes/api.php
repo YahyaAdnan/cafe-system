@@ -25,6 +25,39 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 
+use App\Models\Item;
+use App\Models\ItemCategory;
+
+Route::post('/update-image', function () {
+    $categories = ItemCategory::all();
+
+    // Iterate over each category
+    foreach ($categories as $category) {
+        // Check if the 'image' column exists in the category
+        if ($category->image) {
+            // If the 'image' column exists, remove 'ItemCategory\' from the beginning of the image path
+            $category->image = str_replace('ItemCategory\\', '', $category->image);
+            // Save the updated category
+            $category->save();
+        }
+    }
+
+    $items = Item::all();
+    
+    // Iterate over each item
+    foreach ($items as $item) {
+        // Check if the 'image' column exists in the item
+        if ($item->image) {
+            // If the 'image' column exists, remove 'Item\\' from the beginning of the image path
+            $item->image = str_replace('Item\\', '', $item->image);
+            // Save the updated item
+            $item->save();
+        }
+    }
+
+    return response()->json(['message' => 'Item image paths updated successfully']);
+});
+
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
     // Items

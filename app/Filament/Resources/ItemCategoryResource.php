@@ -38,9 +38,7 @@ class ItemCategoryResource extends Resource
         return $form
             ->schema([
                 FileUpload::make('image')
-                    ->required()
-                    ->directory('ItemCategories')
-                    ->storeFileNamesIn('ItemCategories'),
+                    ->required(),
                 Select::make('item_type_id')->options(ItemType::pluck('title','id'))
                     ->label('Item Type')->searchable()->required(),
                 TextInput::make('title')->required()->minLength(3)->maxLength(32)->label('Title (EN)')->columns(1),
