@@ -74,9 +74,9 @@ class ItemResource extends Resource
                     )->searchable()->label('Item Category')->columnSpan(4)->live(),
                 // END: SELECT TYPE, CATEGORY and Subcategory
                 // START: Info availablity
-                Toggle::make('is_available')->onColor('success')->offColor('gray')->columnSpan(4),
-                Toggle::make('show')->onColor('success')->offColor('gray')->columnSpan(4),
-                Toggle::make('show_ingredients')->onColor('success')->offColor('gray')->columnSpan(4),
+                Toggle::make('is_available')->default('1')->onColor('success')->offColor('gray')->columnSpan(4),
+                Toggle::make('show')->default('1')->onColor('success')->offColor('gray')->columnSpan(4),
+                Toggle::make('show_ingredients')->default('1')->onColor('success')->offColor('gray')->columnSpan(4),
                 // END: Info availablity
                 // START: REPEATER for Ingredient
                 Repeater::make('itemIngredients')
@@ -88,7 +88,8 @@ class ItemResource extends Resource
                         Select::make('main')->options([
                             '0' => 'Not Main',
                             '1' => 'Main',
-                        ])->native(false)->required()->columnSpan(4),
+                        ])->default('1')
+                        ->native(false)->required()->columnSpan(4),
                         TextInput::make('note')->columnSpan(4)->maxLength(250),
                     ])->columns(12)
                     ->reorderableWithButtons()
@@ -98,8 +99,8 @@ class ItemResource extends Resource
                 Repeater::make('prices')
                     ->relationship()
                     ->schema([
-                        TextInput::make('title')->columnSpan(6)->required()->minLength(3)->maxLength(32)->distinct(),
-                        TextInput::make('amount')->suffix('IQD')->columnSpan(6)->required()->numeric(),
+                        TextInput::make('title')->columnSpan(6)->required()->minLength(3)->maxLength(32)->distinct()->default("Price"),
+                        TextInput::make('amount')->suffix('IQD')->columnSpan(6)->required()->numeric()->minValue(0)->maxValue(100000000),
                     ])
                     ->minItems(1)
                     ->columns(12)
