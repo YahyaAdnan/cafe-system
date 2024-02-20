@@ -11,6 +11,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\PaymentController;
 use Illuminate\Support\Facades\Route;
 
+use App\Models\Item;
+use App\Models\ItemCategory;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,9 +27,6 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
-
-use App\Models\Item;
-use App\Models\ItemCategory;
 
 Route::post('/update-image', function () {
     $categories = ItemCategory::all();
