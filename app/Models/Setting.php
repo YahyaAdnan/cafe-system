@@ -16,6 +16,11 @@ class Setting extends Model
         'validation'
     ];
 
+    public static function get($title)
+    {
+        return Setting::where('title', $title)->first()->value;
+    }
+
     public static function getTaxes()
     {
         return Setting::where('title', 'Taxes')->first()->value;

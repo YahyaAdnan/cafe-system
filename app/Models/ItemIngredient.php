@@ -21,8 +21,8 @@ class ItemIngredient extends Model
         return $this->hasMany(Item::class);
     }
 
-    public function ingredients()
+    public function ingredient()
     {
-        return $this->hasMany(Ingredient::class);
+        return $this->belongsTo(Ingredient::class);
     }
 }

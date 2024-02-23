@@ -10,7 +10,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextArea;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,10 +76,21 @@ class SettingResource extends Resource
     {
         $rules = explode('|', $validation);
 
+
         $input = TextInput::make('value');
         
         foreach ($rules as $key => $rule) 
         {
+            if($rule == 'image')
+            {
+                return FileUpload::make('value')->required()->image();
+            }
+
+            if($rule == 'color')
+            {
+                return ColorPicker::make('value')->required();
+            }
+    
             // START: ADD VALIDATIONS FROM DATABASE
             if($rule == 'required')
             {

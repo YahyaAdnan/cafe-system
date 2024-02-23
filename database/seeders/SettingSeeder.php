@@ -21,6 +21,27 @@ class SettingSeeder extends Seeder
         ]);
 
         Setting::create([
+            'title' => 'Image',
+            'description' => '',
+            'value' => '0',
+            'validation' => 'nullable|image',
+        ]);
+
+        Setting::create([
+            'title' => 'Color',
+            'description' => '',
+            'value' => '0',
+            'validation' => 'required|color',
+        ]);
+    
+        Setting::create([
+            'title' => 'description',
+            'description' => '',
+            'value' => '0',
+            'validation' => 'required|min:2|max:64',
+        ]);
+
+        Setting::create([
             'title' => 'Password',
             'description' => 'Password used for the ',
             'value' => '1234',

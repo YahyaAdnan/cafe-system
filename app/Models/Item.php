@@ -23,6 +23,24 @@ class Item extends Model
         'note',
     ];
     
+    public function available()
+    {
+        if(!$this->is_available)
+        {
+            return false;
+        }
+
+        foreach($this->itemIngredients->where('main', 1) as $itemIngredient)
+        {
+            if(!$itemIngredient->ingredient->is_available)
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     public function itemCategory()
     {
         return $this->belongsTo(ItemCategory::class);
