@@ -28,36 +28,6 @@ use App\Models\ItemCategory;
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/update-image', function () {
-    $categories = ItemCategory::all();
-
-    // Iterate over each category
-    foreach ($categories as $category) {
-        // Check if the 'image' column exists in the category
-        if ($category->image) {
-            // If the 'image' column exists, remove 'ItemCategory\' from the beginning of the image path
-            $category->image = str_replace('ItemCategory\\', '', $category->image);
-            // Save the updated category
-            $category->save();
-        }
-    }
-
-    $items = Item::all();
-    
-    // Iterate over each item
-    foreach ($items as $item) {
-        // Check if the 'image' column exists in the item
-        if ($item->image) {
-            // If the 'image' column exists, remove 'Item\\' from the beginning of the image path
-            $item->image = str_replace('Item\\', '', $item->image);
-            // Save the updated item
-            $item->save();
-        }
-    }
-
-    return response()->json(['message' => 'Item image paths updated successfully']);
-});
-
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
     // Items
@@ -72,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Invoices
     Route::resource('invoices', InvoiceController::class)->only(['store']);
     Route::put('invoices/{local_invoice}', [InvoiceController::class, 'update']);
+    Route::delete('invoices/{local_invoice}', [InvoiceController::class, 'destroy']);
 
     Route::post('invoices/migrate', [InvoiceActionController::class, 'migrate']);
     Route::post('invoices/separate', [InvoiceActionController::class, 'separate']);
