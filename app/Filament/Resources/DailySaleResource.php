@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use  App\Services\GenerateDailySale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class DailySaleResource extends Resource
 {

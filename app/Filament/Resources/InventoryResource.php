@@ -21,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Get;
+use Illuminate\Support\Facades\Auth;
 
 class InventoryResource extends Resource
 {
