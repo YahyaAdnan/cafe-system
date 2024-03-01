@@ -17,6 +17,6 @@ Route::get('/intro', function () {
     return view('app.menu.intro');
 });
 
-Route::get('/menu', function () {
+Route::get('/home', function () {
     return view('app.menu.show');
 });

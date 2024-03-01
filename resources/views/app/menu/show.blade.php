@@ -1,6 +1,6 @@
 @extends('layouts/app')
 
-@section('title', 'Menu')
+@section('title', 'Home')
 
 @section('content')
 <center>
