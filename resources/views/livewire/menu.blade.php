@@ -37,7 +37,25 @@
                     </div>
 
                 </div>
+            @else
 
+                <div class=" z-50  "
+                            style="
+                        position: fixed;
+                        margin-top: -40px;
+                        margin-right: 50px;
+                        left: 80px;
+                        font-size: 20px;
+                ">
+                    <div class="grid grid-cols-2 gap-0 ">
+                        <x-icon name="fas.house"
+                                class=" h-12 w-12   p-3 -ml-16  -mt-2 rounded-xl   animate__animated animate__fadeInLeft bg-transparent transition-all border-1 border-white text-white  "
+                                wire:click="backHome()"
+                                style="
+
+                                        "/>
+                    </div>
+                </div>
             @endif
 
         </div>
@@ -54,7 +72,7 @@
 
     @if($lang == "")
 
-        <img src="{{@asset('friends-stuff/logo-text.png')}}" height="300" width="300"
+        <img src="{{ asset('storage/' . 'Central-Perk-Logo.png')}}" height="300" width="300" alt="cafe"
              class="absolute m-5  rounded-xl p-3 bottom-0 right-0" style="background-color: {{  $getColor}}">
 
 
@@ -111,7 +129,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
                         class=" h-16 w-16   p-3 -ml-5 rounded-xl   animate__animated animate__fadeInUp bg-transparent transition-all border-1 border-white text-white  "
 
                         style="
-   background: rgba(189, 16, 224, 0.11);
+                        background: rgba(189, 16, 224, 0.11);
                         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
                         backdrop-filter: blur(9px);
                         -webkit-backdrop-filter: blur(9px);
@@ -195,7 +213,7 @@ height: 7rem;
                     ">
                                 <x-slot name="figure" class="">
                                     <img class="rounded-xl shadow-lg border-transparent border-1 h-16 -mt-4 w-24"
-                                         src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                         src="{{ asset('storage/' . $itemCategoryNav->image) }}"
                                          alt="{{ $itemCategoryNav->$lang }}" width="150" height="150"
                                          style="opacity: 1 "
                                     />
@@ -212,17 +230,17 @@ height: 7rem;
                             <x-card class=" shadow-xl transition-all text-center text-white w-44 "
                                     wire:click="selectCategory({{$itemCategoryNav->id}})"
                                     style="align-items: center; font-size: 15px;
-background: transparent;
-box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 4px );
--webkit-backdrop-filter: blur( 9px );
-border-radius: 10px;
-border: 1px solid rgba( 255, 255, 255, 0.18 );
-height: 7rem;
-                    ">
+                                        background: transparent;
+                                        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+                                        backdrop-filter: blur( 4px );
+                                        -webkit-backdrop-filter: blur( 9px );
+                                        border-radius: 10px;
+                                        border: 1px solid rgba( 255, 255, 255, 0.18 );
+                                        height: 7rem;
+                                        ">
                                 <x-slot name="figure" class="">
                                     <img class="rounded-xl shadow-lg border-transparent border-1 h-16 -mt-4 w-24"
-                                         src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                        src="{{ asset('storage/' . $itemCategoryNav->image) }}"
                                          alt="{{ $itemCategoryNav->$lang }}" width="150" height="150"
                                          style="opacity: 1 "
                                     />
@@ -279,7 +297,7 @@ height: 7rem;
                             @if(!$isAvailable && $lang == 'title')
 
                                 <img
-                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    src="{{ asset('storage/' . $item->image) }}"
                                     class="rounded-xl "
                                     style="height:150px;
                                     filter: blur(2px) saturate(99%) opacity(77%);
@@ -300,7 +318,7 @@ height: 7rem;
                         ">Not Available</p>
                             @elseif(!$isAvailable && $lang == 'title_ku')
                                 <img
-                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    src="{{ asset('storage/' . $item->image) }}"
                                     class="rounded-xl "
                                     style="height:150px;
                                     filter: blur(2px) saturate(99%) opacity(77%);
@@ -342,7 +360,7 @@ height: 7rem;
                         ">غير متاح</p>
                             @else
                                 <img
-                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    src="{{ asset('storage/' . $item->image) }}"
                                     class="rounded-xl "
                                     style="height:150px">
                                 <p class="font-bold mt-2 mb-2">{{$item->$lang}}</p>
@@ -360,32 +378,26 @@ height: 7rem;
                             @foreach ($item->prices as $key => $price)
 
                                 <p class="font-bold">{{$price->title}}: {{number_format($price->amount)}} IQD<p>
-
                                     @endforeach
                                 </p>
 
                                 @if ($item->show_ingredients)
-                                    @if(count($item->itemIngredients) > 1)
-                                        <div
-                                            class="  font-bold text-white text-center   p-1  rounded-xl "
-                                        >
-
-
-                                            @foreach ($item->itemIngredients as $key => $itemIngredient)
-                                                @php $ingredient = $itemIngredient->ingredient @endphp
-                                                @if(!$ingredient->is_available)
-                                                    <span class="-mt-2"><del>{{$ingredient->$lang}}</del></span>
-                                                @endif
-                                                @if($ingredient->is_available)
-                                                    <span>{{$ingredient->$lang}}</span>
-                                                @endif
-
-                                            @endforeach
-
-                                        </div>
-                                    @endif
+                                @if(count($item->itemIngredients) > 1)
+                                    <div class="font-bold text-white text-center p-1 rounded-xl" dir={{$lang == "title" ? "ltr" : "rtl"}}>
+                                        @foreach ($item->itemIngredients as $key => $itemIngredient)
+                                            @php $ingredient = $itemIngredient->ingredient @endphp
+                                            @if(!$ingredient->is_available)
+                                                <span class="mt-2"><del>{{$ingredient->$lang}}</del></span>
+                                            @endif
+                                            @if($ingredient->is_available)
+                                                <span>{{$ingredient->$lang}}</span>
+                                            @endif
+                                            @if(!$loop->last),@endif
+                                        @endforeach
+                                        .
+                                    </div>
                                 @endif
-
+                            @endif                            
                         </div>
 
                         <style>

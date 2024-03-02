@@ -90,7 +90,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 
 ">
     <div class="flex flex-auto justify-center w-full ">
-        <img src="{{asset('friends-stuff/Central-Perk-Logo.png')}}"
+        <img src="{{asset('storage/Central-Perk-Logo.png')}}"
              style="margin: 5px;
              background:{{$getColor}};
 backdrop-filter: blur( 8.5px );
