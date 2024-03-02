@@ -1,17 +1,20 @@
 <div>
+    @php
+        $getColor = App\Models\Setting::get('color');
 
-    @section('menu-content')
+    @endphp
+        <!--   section('menu-content')
 
-        <img src="{{asset('friends-stuff/cafe-logo.jpg')}}" style="margin: 5px;" class="h-16 rounded-lg shadow-xl ">
-        <h3 class="friends-title m-4 text-" style="
-        font-family: 'NRT Bold';
-        font-size: 24px;
-        background-color: #146249;
-        padding: 10px;
-        border-radius: 10px;
-        ">{{App\Models\Setting::get('Cafe Name') }}</h3>
+      <h3 class="friends-title m-4 text-" style="
+         font-family: 'NRT Bold';
+         font-size: 24px;
+         background-color: #146249;
+         padding: 10px;
+         border-radius: 10px;
+         ">{App\Models\Setting::get('Cafe Name') }}</h3>
+         endsection
+ -->
 
-    @endsection
     <div class="row justify-content-between align-items-start mt-3">
         <div class="col">
             @if($lang != '')
@@ -25,9 +28,8 @@
                     font-size: 20px;
             ">
                     <div class="grid grid-cols-2 gap-0 ">
-                        <div class="w-1 rounded-lg h-10 inline-block bg-white "></div>
                         <x-icon name="fas.house"
-                                class=" h-12 w-12   p-3 -ml-5 mr-3 -mt-2 rounded-xl   animate__animated animate__fadeInLeft bg-transparent transition-all border-1 border-white text-white  "
+                                class=" h-12 w-12   p-3 -ml-16  -mt-2 rounded-xl   animate__animated animate__fadeInLeft bg-transparent transition-all border-1 border-white text-white  "
                                 wire:click="selectLang('')"
                                 style="
 
@@ -53,14 +55,14 @@
     @if($lang == "")
 
         <img src="{{@asset('friends-stuff/logo-text.png')}}" height="300" width="300"
-             class="absolute m-5  rounded-xl p-3 bottom-0 right-0" style="background-color: #8f6fbd">
+             class="absolute m-5  rounded-xl p-3 bottom-0 right-0" style="background-color: {{  $getColor}}">
 
 
         <div
             class="flex flex-col  rounded-2xl w-10/12 md:w-96   mt-24 animate__animated animate__backInUp"
             style="
 
-background: rgba( 143, 111, 189, 0.75 );
+background:{{$getColor}};
 box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
 backdrop-filter: blur( 8.5px );
 -webkit-backdrop-filter: blur( 8.5px );
@@ -83,7 +85,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
                 @endforeach
             </div>
         </div>
-        <div style="background-color: #8f6fbd;
+        <div style="background-color:{{$getColor}};
             display: flex;
             align-items: flex-end;
             justify-content: flex-start;
@@ -124,7 +126,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
         <div
             class=" w-full h-full flex flex-row items-center   overflow-y-hidden "
             style="
-                background-color: #8f6fbd;
+                background-color:{{$getColor}};
 overflow-x: auto;
 white-space: nowrap;
 "
@@ -134,14 +136,30 @@ white-space: nowrap;
                 <div class="card-scroll">
                     @if($itemTypesNav->id == $itemType)
                         <x-button
-                            class=" p-3 m-4 text-white bg-purple-600 rounded-lg btn-primary border-white border-1 hover:bg-emerald-500 "
-                            wire:click="selectType({{$itemTypesNav->id}})">
+                            class=" p-3 m-4 text-white rounded-lg btn-primary  "
+                            wire:click="selectType({{$itemTypesNav->id}})"
+                            style="
+                      background: rgba(221, 255, 0, 0.45);
+border-radius: 10px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(10.8px);
+-webkit-backdrop-filter: blur(10.8px);
+border: 1px solid rgba(221, 255, 0, 1);
+">
                             {{$itemTypesNav->$lang}}
                         </x-button>
                     @else
                         <x-button
                             class="bg-emerald-500  p-3 m-4  text-white rounded-lg btn-primary border-white border-1 hover:bg-purple-600  "
-                            wire:click="selectType({{$itemTypesNav->id}})">
+                            wire:click="selectType({{$itemTypesNav->id}})"
+                            style="
+                        background: transparent;
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+backdrop-filter: blur( 4px );
+-webkit-backdrop-filter: blur( 9px );
+border-radius: 10px;
+border: 1px solid rgba( 255, 255, 255, 0.18 );
+">
                             {{$itemTypesNav->$lang}}
                         </x-button>
                     @endif
@@ -153,35 +171,30 @@ white-space: nowrap;
         {{-- CHOOSE Category --}}
         @if($itemCategories->count() > 1)
             <div
-                class=" m-2  h-52 flex flex-row items-center mt-8 transition-all overflow-y-hidden"
+                class=" -mt-9  h-52 flex flex-row items-center transition-all overflow-y-hidden"
                 style="
                 /* From https://css.glass */
-background: rgba(189, 111, 184, 0.85);
-border-radius: 16px;
-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(12.6px);
--webkit-backdrop-filter: blur(12.6px);
-border: 1px solid rgba(189, 111, 184, 1);
+
 overflow-x: auto;
 white-space: nowrap;
 "
             >
                 @foreach($itemCategories as $itemCategoryNav)
-                    <div class="card-scroll transition-all">
+                    <div class="card-scroll p-3 transition-all">
                         @if($itemCategoryNav->id == $itemCategory)
-                            <x-card class="m-2 shadow-xl transition-all text-center text-white w-52 "
+                            <x-card class=" shadow-xl transition-all text-center text-white w-44 "
                                     wire:click="selectCategory({{$itemCategoryNav->id}})"
                                     style="align-items: center; font-size: 15px;
-background: rgba(16, 224, 78, 0.4);
+background: {{$getColor}};
 box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
 backdrop-filter: blur( 9px );
 -webkit-backdrop-filter: blur( 9px );
 border-radius: 10px;
 border: 1px solid rgba( 255, 255, 255, 0.18 );
-height: 9.3rem;
+height: 7rem;
                     ">
-                                <x-slot name="figure">
-                                    <img class="rounded-xl shadow-lg border-transparent border-1 h-20"
+                                <x-slot name="figure" class="">
+                                    <img class="rounded-xl shadow-lg border-transparent border-1 h-16 -mt-4 w-24"
                                          src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
                                          alt="{{ $itemCategoryNav->$lang }}" width="150" height="150"
                                          style="opacity: 1 "
@@ -196,25 +209,26 @@ height: 9.3rem;
 
                             <div class=" transition-all mt-3"></div>
                         @else
-                            <x-card class="m-2 shadow-xl transition-all text-center text-white w-52 "
+                            <x-card class=" shadow-xl transition-all text-center text-white w-44 "
                                     wire:click="selectCategory({{$itemCategoryNav->id}})"
                                     style="align-items: center; font-size: 15px;
-background:rgba(189, 111, 184, 0.85);
+background: transparent;
 box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 9px );
+backdrop-filter: blur( 4px );
 -webkit-backdrop-filter: blur( 9px );
 border-radius: 10px;
-border: 1px solid rgb(196, 153, 193);
-height: 9.3rem;
+border: 1px solid rgba( 255, 255, 255, 0.18 );
+height: 7rem;
                     ">
-                                <x-slot name="figure">
-                                    <img class="rounded-xl shadow-lg border-transparent border-1 "
+                                <x-slot name="figure" class="">
+                                    <img class="rounded-xl shadow-lg border-transparent border-1 h-16 -mt-4 w-24"
                                          src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
                                          alt="{{ $itemCategoryNav->$lang }}" width="150" height="150"
-                                         style="opacity: 0.5;  "
+                                         style="opacity: 1 "
                                     />
                                 </x-slot>
                                 <p class="font-bold">{{ $itemCategoryNav->$lang }}</p>
+
                             </x-card>
 
                             <!-- { asset('storage/' . $itemCategoryNav->image) }} -->
@@ -229,34 +243,18 @@ height: 9.3rem;
         @endif
         {{-- /CHOOSE Category --}}
         {{-- Item --}}
-        <div class=" m-2 mt-10 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-2 md:gap-5 mb-5">
+        <div class=" m-2 mt-10 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2 md:gap-5 mb-5">
 
             @foreach ($items as $item)
 
                 <style>
-                    /* Define the animation */
-                    @keyframes animatedBackground {
-                        0% {
-                            background-position: 0% 0%, 0% 0%;
-                        }
-                        50% {
-                            background-position: 100% 100%, 0% 0%;
-                        }
-                        100% {
-                            background-position: 0% 0%, 100% 100%;
-                        }
-                    }
 
-                    /* Apply the animation to the element */
-                    .animated-card {
-                        animation: animatedBackground 10s infinite;
-                    }
 
                     /* Rest of your CSS styles */
                     .card-c {
-                        background: rgba(189, 16, 224, 0.11);
+                        background: transparent;
                         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-                        backdrop-filter: blur(9px);
+                        backdrop-filter: blur(5px);
                         -webkit-backdrop-filter: blur(9px);
                         border-radius: 10px;
                         border: 1px solid rgba(255, 255, 255, 0.18);
@@ -264,54 +262,129 @@ height: 9.3rem;
                     }
                 </style>
                 <div class="">
-                    <x-card style="padding: 10px !important;"
-                            class="card-c overflow-y-scroll shadow-xl justify-center  w-full h-48 md:w-80 overflow-x-hidden "
-                            wire:click="showModal({{$item->id}})">
-                        <x-slot:figure>
+                    <x-card style="
+                    padding: 25px !important;
+                    overflow-y: hidden;
+                    height: 450px;
 
-                            <!-- { asset('storage/' . $item->image) }} -->
-                            <img src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
-                                 class="rounded-xl mt-20 h-20 border-2 border-dotted border-white">
-                            <p class="font-bold">{{$item->$lang}}</p>
-                        </x-slot:figure>
-                        <hr class="relative mb-1">
+}"
+                            class="card-c mt-3 shadow-xl justify-center  w-full h-48 md:w-80 overflow-x-hidden "
+                            wire:click="showModal({{$item->id}})">
+                        <div class="-mt-5">
+                            @php
+                                $itemVal = App\Models\Item::find($item->id);
+                                    $isAvailable = $itemVal->available();
+                            @endphp
+                                <!-- { asset('storage/' . $item->image) }} -->
+                            @if(!$isAvailable && $lang == 'title')
+
+                                <img
+                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    class="rounded-xl "
+                                    style="height:150px;
+                                    filter: blur(2px) saturate(99%) opacity(77%);
+-webkit-filter: blur(2px) saturate(99%) opacity(77%);
+-moz-filter: blur(2px) saturate(99%) opacity(77%);
+"
+                                >
+                                <p class="font-bold mt-2 mb-2">{{$item->$lang}}</p>
+                                <p class="absolute top-2 " style="left: 28%; top: 25%;
+                                    background: transparent;
+                        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                        backdrop-filter: blur(5px);
+                        -webkit-backdrop-filter: blur(9px);
+                        border-radius: 10px;
+                        border: 1px solid rgba(255, 255, 255, 0.18);
+                        color: white;
+                        font-weight: bold; font-size: 20px; padding: 10px;
+                        ">Not Available</p>
+                            @elseif(!$isAvailable && $lang == 'title_ku')
+                                <img
+                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    class="rounded-xl "
+                                    style="height:150px;
+                                    filter: blur(2px) saturate(99%) opacity(77%);
+-webkit-filter: blur(2px) saturate(99%) opacity(77%);
+-moz-filter: blur(2px) saturate(99%) opacity(77%);
+"
+                                >
+                                <p class="font-bold mt-2 mb-2">{{$item->$lang}}</p>
+                                <p class="absolute top-2 " style="left: 28%; top: 25%;
+                                    background: transparent;
+                        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                        backdrop-filter: blur(5px);
+                        -webkit-backdrop-filter: blur(9px);
+                        border-radius: 10px;
+                        border: 1px solid rgba(255, 255, 255, 0.18);
+                        color: white;
+                        font-weight: bold; font-size: 20px; padding: 10px;
+                        ">.بەردەست نییە</p>
+                            @elseif(!$isAvailable && $lang == 'title_ar')
+                                <img
+                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    class="rounded-xl "
+                                    style="height:150px;
+                                    filter: blur(2px) saturate(99%) opacity(77%);
+-webkit-filter: blur(2px) saturate(99%) opacity(77%);
+-moz-filter: blur(2px) saturate(99%) opacity(77%);
+"
+                                >
+                                <p class="font-bold mt-2 mb-2">{{$item->$lang}}</p>
+                                <p class="absolute top-2 " style="left: 35%; top: 26%;
+                                    background: transparent;
+                        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                        backdrop-filter: blur(5px);
+                        -webkit-backdrop-filter: blur(9px);
+                        border-radius: 10px;
+                        border: 1px solid rgba(255, 255, 255, 0.18);
+                        color: white;
+                        font-weight: bold; font-size: 20px; padding: 10px;
+                        ">غير متاح</p>
+                            @else
+                                <img
+                                    src="https://central-perk-erbil.qodology.com/storage/01HPVR1HZSBBRMRZMTTQYP9EA2.jpg"
+                                    class="rounded-xl "
+                                    style="height:150px">
+                                <p class="font-bold mt-2 mb-2">{{$item->$lang}}</p>
+                            @endif
+                        </div>
+
+
+                        <hr class="relative mb-3">
                         <div>
 
 
-                            <p class="mb-2 font-bold text-white text-left flex flex-wrap p-1 rounded-xl shadow-xl border-solid border-1 border-white">
-                                <x-heroicon-o-currency-dollar class="w-6 h-6 mr-1"/>
-                                @foreach ($item->prices as $key => $price)
-                                    @if($key === 0)
-                                        {{$price->title}}: {{number_format($price->amount)}} IQD
-                                    @else
-                                        <span
-                                            class="">,More...</span>
-                                        @break
+                            <p class="font-bold text-white text-center p-1 rounded-xl"
+                            >
+
+                            @foreach ($item->prices as $key => $price)
+
+                                <p class="font-bold">{{$price->title}}: {{number_format($price->amount)}} IQD<p>
+
+                                    @endforeach
+                                </p>
+
+                                @if ($item->show_ingredients)
+                                    @if(count($item->itemIngredients) > 1)
+                                        <div
+                                            class="  font-bold text-white text-center   p-1  rounded-xl "
+                                        >
+
+
+                                            @foreach ($item->itemIngredients as $key => $itemIngredient)
+                                                @php $ingredient = $itemIngredient->ingredient @endphp
+                                                @if(!$ingredient->is_available)
+                                                    <span class="-mt-2"><del>{{$ingredient->$lang}}</del></span>
+                                                @endif
+                                                @if($ingredient->is_available)
+                                                    <span>{{$ingredient->$lang}}</span>
+                                                @endif
+
+                                            @endforeach
+
+                                        </div>
                                     @endif
-
-                                @endforeach
-                            </p>
-
-                            @if ($item->show_ingredients)
-                                @if(count($item->itemIngredients) > 1)
-                                    <div
-                                        class=" font-bold text-white text-left flex flex-wrap   p-1  rounded-xl shadow-xl border-solid border-1  border-white">
-                                        <x-heroicon-o-beaker class="w-6 h-6 mr-1"/>
-
-                                        @foreach ($item->itemIngredients as $key => $itemIngredient)
-                                            @php $ingredient = $itemIngredient->ingredient @endphp
-                                            @if(!$ingredient->is_available)
-                                                <span><del>{{$ingredient->$lang}}</del></span>
-                                            @endif
-                                            @if($ingredient->is_available)
-                                                <span>{{$ingredient->$lang}}</span>
-                                            @endif
-
-                                        @endforeach
-
-                                    </div>
                                 @endif
-                            @endif
 
                         </div>
 
@@ -322,8 +395,7 @@ height: 9.3rem;
                             }
 
                             .item-container {
-                                max-height: 100px; /* Adjust this value based on your needs */
-                                overflow-y: auto;
+                                max-height: 200px; /* Adjust this value based on your needs */
                             }
 
                             .ing-container {

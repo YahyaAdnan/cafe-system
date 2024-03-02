@@ -31,7 +31,7 @@ class Menu extends Component
         $this->itemTypes = ItemType::whereIn('id', Item::pluck('item_type_id'))->get();
         $this->langs = array(
             'title' => "English",
-            'title_ku' => "كوردي",
+            'title_ku' => "كوردی",
             'title_ar' => "عربي",
         );
 
