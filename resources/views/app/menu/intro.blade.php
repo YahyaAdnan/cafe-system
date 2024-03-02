@@ -18,7 +18,7 @@
         </div> -->
 
 
-        <img src="{{@asset('friends-stuff/logo-text.png')}}" height="300" width="300"
+        <img src="{{ asset('storage/' . 'logo-text.png')}}" height="300" width="300"
              class="absolute m-5  rounded-xl p-3 bottom-0 right-0" style="background-color: {{  $getColor}}">
 
         <div
