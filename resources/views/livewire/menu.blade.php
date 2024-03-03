@@ -72,7 +72,7 @@
 
     @if($lang == "")
 
-        <img src="{{ asset('storage/' . 'Central-Perk-Logo.png')}}" height="300" width="300" alt="cafe"
+        <img src="{{ asset('storage/' . 'Central-Perk-Logo.png') }}" height="300" width="300" alt="cafe"
              class="absolute m-5  rounded-xl p-3 bottom-0 right-0" style="background-color: {{  $getColor}}">
 
 
@@ -381,7 +381,7 @@ height: 7rem;
                                     @endforeach
                                 </p>
 
-                                @if ($item->show_ingredients)
+                                @if ($item->show_ingredients && $lang == "title_ar")
                                 @if(count($item->itemIngredients) > 1)
                                     <div class="font-bold text-white text-center p-1 rounded-xl" dir={{$lang == "title" ? "ltr" : "rtl"}}>
                                         @foreach ($item->itemIngredients as $key => $itemIngredient)
