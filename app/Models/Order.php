@@ -14,19 +14,12 @@ class Order extends Model
         'title',
         'item_id',
         'price_id',
-        'local_id',
         'user_id',
         'amount',
         'discount_fixed',
         'total_amount',
         'note',
     ];
-
-
-    public static function findLocal($local_id)
-    {
-        return Order::where('local_id', $local_id)->latest()->first();
-    }
 
     public function invoice()
     {

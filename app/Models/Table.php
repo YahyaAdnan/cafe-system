@@ -20,6 +20,11 @@ class Table extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function activeInvoices()
+    {
+        return $this->hasMany(Invoice::class)->where('active', 1);
+    }
+    
     public function isDeletable()
     {
         if($this->invoices->isNotEmpty())

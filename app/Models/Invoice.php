@@ -12,7 +12,6 @@ class Invoice extends Model
     protected $fillable = [
         'inovice_no',
         'title',
-        'local_id',
         'active',
         'dinning_in',
         'table_id',
@@ -24,11 +23,6 @@ class Invoice extends Model
         'employee_id',
         'note',
     ];
-
-    public static function findLocal($local_id)
-    {
-        return Invoice::where('local_id', $local_id)->latest()->first();
-    }
 
     public function updateAmount()
     {
