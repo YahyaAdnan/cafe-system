@@ -16,6 +16,17 @@ class Price extends Model
         'note',
     ];
 
+    public static function activePrices()
+    {
+        $all_prices = Price::all();
+        $prices = array();
+        foreach ($all_prices as $key => $price) 
+        {
+            $prices[$price->id] = $price->item->title . ' (' . $price->title . ' ' . $price->amount . 'IQD)';
+        }
+        return $prices;
+    }
+
     public function item()
     {
         return $this->belongsTo(Item::class);

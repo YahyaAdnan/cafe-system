@@ -172,19 +172,9 @@ class InvoiceResource extends Resource
                             );
                     })
             ]);
-            // 'inovice_no',
-            // 'title',
-            // 'local_id',
-            // 'active',
-            // 'dinning_in',
-            // 'table_id',
-            // 'amount',
-            // 'remaining',
-            // 'discount_rate',
-            // 'discount_fixed',
-            // 'note',
     }
 
+    
     public static function getRelations(): array
     {
         return [
@@ -196,6 +186,7 @@ class InvoiceResource extends Resource
     {
         return [
             'index' => Pages\ListInvoices::route('/'),
+            'view' => Pages\ViewInvoice::route('/{record}'),
         ];
     }
 }
