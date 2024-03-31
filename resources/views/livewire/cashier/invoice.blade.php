@@ -16,7 +16,7 @@
             @livewire('invoice.new-orders', ['invoice' => $record])
             @break
         @case(2)
-            {{-- @livewire('invoice.new-orders', ['invoice' => $record]) --}}
+            @livewire('invoice.orders', ['invoice' => $record])
             @break
         @default
             
