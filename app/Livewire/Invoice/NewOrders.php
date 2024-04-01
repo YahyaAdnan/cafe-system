@@ -50,13 +50,13 @@ class NewOrders extends Component implements HasForms
                     Select::make('item_id')
                         ->visible(fn (Get $get)=>  !$get('special_order'))
                         ->searchable()
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
+                        ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
                         ->options(Price::activePrices())
                         ->required()
                         ->live(),
                     TextInput::make('title')
                         ->visible(fn (Get $get)=>  $get('special_order'))
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
+                        ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
                         ->minLength(1)
                         ->maxLength(32)
                         ->required(),
@@ -88,7 +88,7 @@ class NewOrders extends Component implements HasForms
                         })
                         ->required()
                         ->live(),
-                        Placeholder::make('created')
+                    Placeholder::make('created')
                         ->content(function (Get $get)  {
                             if($get('special_order')) 
                             {
@@ -107,8 +107,7 @@ class NewOrders extends Component implements HasForms
                         ->maxLength(64),
                 ])
                 ->addActionLabel('Add Order')
-
-                 ->columns(12)
+                ->columns(12)
             ])
             ->statePath('data');
     }

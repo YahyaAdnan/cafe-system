@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Payment extends Model
 {
@@ -18,6 +19,16 @@ class Payment extends Model
         'user_id',
         'note',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->user_id = Auth::id();
+            $model->remaining = $model->paid - $model->amount;
+        });
+    }
 
     public function invoice()
     {

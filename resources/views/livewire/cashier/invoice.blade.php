@@ -18,6 +18,9 @@
         @case(2)
             @livewire('invoice.orders', ['invoice' => $record])
             @break
+        @case(3)
+            @livewire('invoice.payments', ['invoice' => $record])
+            @break
         @default
             
     @endswitch
