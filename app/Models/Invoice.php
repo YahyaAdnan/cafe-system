@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\GenerateDailySale;
 
 class Invoice extends Model
 {
@@ -23,6 +24,15 @@ class Invoice extends Model
         'employee_id',
         'note',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            GenerateDailySale::getInvoice($model);
+        });
+    }
 
     public function updateAmount()
     {

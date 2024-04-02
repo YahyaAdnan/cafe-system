@@ -20,6 +20,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Summarizers\Count;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -41,15 +43,19 @@ class Payments extends Component implements HasForms, HasTable
             ->query($this->invoice->payments()->getQuery())
             ->columns([
                 TextColumn::make('paymentMethod.title')
+                    ->summarize(Count::make())
                     ->sortable(),
                 TextColumn::make('amount')
+                    ->summarize(Sum::make())
                     ->money('IQD')
                     ->sortable(),
                 TextColumn::make('paid')
+                    ->summarize(Sum::make())
                     ->money('IQD')
                     ->toggleable()
                     ->sortable(),
                 TextColumn::make('remaining')
+                    ->summarize(Sum::make())
                     ->money('IQD')
                     ->toggleable()
                     ->sortable(),

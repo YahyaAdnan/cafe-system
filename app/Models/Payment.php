@@ -28,6 +28,18 @@ class Payment extends Model
             $model->user_id = Auth::id();
             $model->remaining = $model->paid - $model->amount;
         });
+
+        static::created(function ($model) {
+            $transaction = Transaction::create([
+                'amount' => $model->amount,
+                'user_id' => Auth::id(),
+                'payment_method_id' => $model->payment_method_id,
+                'transactionable_type' => 'App\Models\Transaction',
+                'transactionable_id' => $model->id,
+            ]);
+
+            $model->invoice->updateAmount();
+        });
     }
 
     public function invoice()

@@ -1,13 +1,13 @@
 <div class="grid grid-cols-2 gap-4">
     @if ($getState() != null)
         @foreach ($getState() as $invoice)
-            <a href="invoices/{{$invoice->id}}" class="flex items-center justify-between px-4 py-2 mb-2">
+            <a href="invoices/{{$invoice->id}}" class="flex items-center justify-between px-4 py-1 mb-2">
                 <div class="flex items-right pl-2">
                     <x-filament::icon
                         alias="panels::topbar.global-search.field"
                         icon="heroicon-m-eye"
                         wire:target="search"
-                        class="h-5 w-5 text-gray-500 dark:text-gray-400 pl-2"
+                        class="h-2 w-5 text-gray-500 dark:text-gray-400 pl-2"
                     />
                     <div class="w-4"></div>
                 </div>

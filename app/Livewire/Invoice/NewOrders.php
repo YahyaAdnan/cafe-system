@@ -63,6 +63,7 @@ class NewOrders extends Component implements HasForms
                     TextInput::make('quantity')
                         ->numeric()
                         ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
+                        ->default(1)
                         ->minValue(1)
                         ->maxValue(99)
                         ->required()
@@ -92,7 +93,11 @@ class NewOrders extends Component implements HasForms
                         ->content(function (Get $get)  {
                             if($get('special_order')) 
                             {
-                                return $get('amount') * $get('quantity') . 'IQD';
+                                try {
+                                    return $get('amount') * $get('quantity') . 'IQD';
+                                } catch (\Throwable $th) {
+                                    return '0IQD';
+                                }
                             }
                             if($get('item_id') == null) {return '0IQD';}
                             try {

@@ -9,6 +9,8 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -54,6 +56,7 @@ class Orders extends Component implements HasForms, HasTable
             ])
             ->actions([
                 EditAction::make()
+                    ->disabled(!$this->invoice->active)
                     ->slideOver()
                     ->form([
                         TextInput::make('discount_fixed')
@@ -68,6 +71,11 @@ class Orders extends Component implements HasForms, HasTable
                             ->columnSpan(12)
                             ->maxLength(64),
                     ]),
+            ])
+            ->bulkActions([
+                BulkAction::make('delete')
+                    ->visible($this->invoice->active)
+                    ->action(fn (Collection $records) => $records->each->delete())
             ])
             ->paginated(false);
     }
