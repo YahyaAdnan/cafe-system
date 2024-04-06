@@ -35,12 +35,12 @@ class InvoiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-            ]);
-    }
+    // public static function form(Form $form): Form
+    // {
+    //     return $form
+    //         ->schema([
+    //         ]);
+    // }
 
     public static function table(Table $table): Table
     {
@@ -186,6 +186,7 @@ class InvoiceResource extends Resource
     {
         return [
             'index' => Pages\ListInvoices::route('/'),
+            'edit' => Pages\EditInvoice::route('/{record}/edit'),
             'view' => Pages\ViewInvoice::route('/{record}'),
         ];
     }
