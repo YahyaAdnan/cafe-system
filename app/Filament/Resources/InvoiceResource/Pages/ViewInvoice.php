@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Livewire;
 use App\Livewire\Cashier\Invoice;
+use App\Livewire\Invoice\Card;
 use Filament\Infolists\Components\TextEntry;
 
 class ViewInvoice extends ViewRecord
@@ -18,6 +19,7 @@ class ViewInvoice extends ViewRecord
     {
         return $infolist
             ->schema([
+                Livewire::make(Card::class)->columnSpanFull(),
                 Livewire::make(Invoice::class)->columnSpanFull(),
             ]);
     }
