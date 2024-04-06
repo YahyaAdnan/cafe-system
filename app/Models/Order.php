@@ -21,6 +21,23 @@ class Order extends Model
         'note',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function ($model) {
+            $model->invoice->updateAmount();
+        });
+
+        static::updating(function ($model) {
+            $model->total_amount = $model->amount - $model->discount_fixed;
+        });
+
+        static::updated(function ($model) {
+            $model->invoice->updateAmount();
+        });
+    }
+
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);

@@ -24,6 +24,21 @@ class GenerateInovice
         ]);
     }
 
+    public static function dineOut($data)
+    {
+        return Invoice::create([
+            'inovice_no' => GenerateInovice:: getInovice(null),
+            'title' => GenerateInovice::generateTitle(),
+            'active' => 1,
+            'dinning_in' => 0,
+            'amount' => 0,
+            'remaining' => 0,
+            'discount_rate' => 0,
+            'discount_fixed' => 0,
+            'deliver_type_id' => $data['deliver_type_id']
+        ]);
+    }
+
     public static function generateTitle()
     {
         return Invoice::whereDate('created_at', today())->count() + 1;
