@@ -41,12 +41,9 @@ class Tables extends Component  implements HasForms, HasTable
         '1' => 'Dine-in',
         '2' => 'Dine-out',
     );
-    
+
     public function table(Table $table): Table
     {
-        $this->viewTitle = $this->viewType[$this->view];
-        $this->invoiceTitle = $this->invoiceTypes[$this->invoice];
-
         if($this->view == 1)
         {
             if($this->invoice == 1)
