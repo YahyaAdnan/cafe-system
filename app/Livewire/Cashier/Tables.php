@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Cashier;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Services\GenerateInovice;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -30,7 +31,20 @@ class Tables extends Component  implements HasForms, HasTable
     use InteractsWithTable;
     use InteractsWithForms;
 
-    public $view = 1, $invoice = 1;
+    public $view = 1, $invoice = 1,$renderCount = 0;
+
+
+    public function updatedView()
+    {
+        $this->dispatch('render');
+        $this->render(); // First render
+    }
+
+    public function updatedInvoice()
+    {
+        $this->dispatch('render');
+        $this->render(); // First render
+    }
 
     public $viewType = array(
         '1' => 'Grid',
@@ -41,7 +55,9 @@ class Tables extends Component  implements HasForms, HasTable
         '1' => 'Dine-in',
         '2' => 'Dine-out',
     );
-    
+
+
+
     public function table(Table $table): Table
     {
         $this->viewTitle = $this->viewType[$this->view];
@@ -52,13 +68,12 @@ class Tables extends Component  implements HasForms, HasTable
             if($this->invoice == 1)
             {
                 return $this->dineInGrid($table);
-            }
-            if($this->invoice == 2)
+            } else if($this->invoice == 2)
             {
                 return $this->dineOutGrid($table);
             }
         }
-        
+
         if($this->view == 2)
         {
             if($this->invoice == 1)
@@ -243,6 +258,7 @@ class Tables extends Component  implements HasForms, HasTable
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
     }
 
+    #[On('render')]
     public function render()
     {
         return view('livewire.cashier.tables');

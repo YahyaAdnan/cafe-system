@@ -18,7 +18,8 @@
         "laravel/tinker": "^2.8",
         "owenvoke/blade-fontawesome": "^2.6",
         "robsontenorio/mary": "^1.24",
-        "spatie/laravel-permission": "^6.3"
+        "spatie/laravel-permission": "^6.3",
+        "spatie/laravel-ray": "^1.36"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
