@@ -293,11 +293,11 @@ class Tables extends Component  implements HasForms, HasTable
             ->filters([
                 SelectFilter::make('table_id')
                     ->label('Table')
-                    ->multiple()
+                    ->multiple(false)
                     ->options(Seat::pluck('title', 'id')),
                 SelectFilter::make('employee_id')
                     ->label('Employee')
-                    ->multiple()
+                    ->multiple(false)
                     ->options(Employee::pluck('name', 'id')),
             ])
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
