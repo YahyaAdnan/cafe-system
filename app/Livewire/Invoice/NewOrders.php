@@ -87,7 +87,7 @@ class NewOrders extends Component implements HasForms
                             if($get('item_id') == null) {return;}
                             return Price::find($get('item_id'))->amount;
                         })
-                        ->required()
+                        ->default(0)
                         ->live(),
                     Placeholder::make('created')
                         ->content(function (Get $get)  {

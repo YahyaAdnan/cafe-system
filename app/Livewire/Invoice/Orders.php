@@ -12,9 +12,12 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Illuminate\Contracts\View\View;
+use App\Services\InvoiceAction;
 use Livewire\Component;
 
 class Orders extends Component implements HasForms, HasTable
@@ -73,9 +76,36 @@ class Orders extends Component implements HasForms, HasTable
                     ]),
             ])
             ->bulkActions([
-                BulkAction::make('delete')
-                    ->visible($this->invoice->active)
-                    ->action(fn (Collection $records) => $records->each->delete())
+                BulkActionGroup::make([
+                    BulkAction::make('delete')
+                        ->visible($this->invoice->active)
+                        ->action(fn (Collection $records) => $records->each->delete())
+                        ->color('danger'),
+                    BulkAction::make('Move')
+                        ->form([
+                            Select::make('invoice')
+                                ->required()
+                                ->searchable()
+                                ->options(Invoice::where('active', 1)->pluck('title', 'id'))
+                        ])
+                        ->action(function(Collection $records, array $data){
+                            $invoice = InvoiceAction::move([
+                                'orders' => $records,
+                                'to' => $data['invoice'],
+                            ]);
+                            return redirect("invoices/$invoice->id");
+                        })
+                        ->color('info'),
+                    BulkAction::make('Split')
+                        ->action(function (Collection $records) {
+                            $new_inovice = InvoiceAction::split([
+                                'orders' => $records,
+                                'invoice' => $this->invoice
+                            ]);
+                            return redirect("invoices/$new_inovice->id");
+                        })
+                        ->color('warning')
+                ]),
             ])
             ->paginated(false);
     }

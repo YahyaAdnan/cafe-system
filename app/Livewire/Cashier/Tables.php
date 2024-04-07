@@ -18,9 +18,14 @@ use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Illuminate\Contracts\View\View;
+use App\Services\InvoiceAction;
+use Illuminate\Database\Eloquent\Collection;
 use App\Models\Table as Seat;
 use App\Models\Employee;
 use App\Models\Invoice;
@@ -31,7 +36,7 @@ class Tables extends Component  implements HasForms, HasTable
     use InteractsWithTable;
     use InteractsWithForms;
 
-    public $view = 1, $invoice = 1,$renderCount = 0;
+    public $view = 1, $invoice = 1, $renderCount = 0;
 
 
     public function updatedView()
@@ -206,6 +211,7 @@ class Tables extends Component  implements HasForms, HasTable
                     ->sortable()
                     ->since()
             ])
+            ->bulkActions(fn(Collection $records) => $this->bulkActions($records))
             ->filters([
                 SelectFilter::make('deliver_type_id')
                     ->label('Deliver Type')
@@ -245,6 +251,26 @@ class Tables extends Component  implements HasForms, HasTable
                     ->sortable()
                     ->since()
             ])
+            ->bulkActions([ 
+                BulkActionGroup::make([
+                    BulkAction::make('Move')
+                        ->form([
+                            Select::make('invoice')
+                                ->disableOptionWhen(fn (String $value, Collection $records): bool => dd($records))
+                                ->required()
+                                ->searchable()
+                                ->options(Invoice::where('active', 1)->pluck('title', 'id'))
+                        ])
+                        ->action(function(Collection $records, array $data){
+                            $invoice = InvoiceAction::merge([
+                                'invoices' => $records,
+                                'invoice' => $data['invoice'],
+                            ]);
+                            return redirect("invoices/$invoice->id");
+                        })
+                        ->color('info'),
+                ])
+            ])
             ->filters([
                 SelectFilter::make('table_id')
                     ->label('Table')
@@ -256,6 +282,29 @@ class Tables extends Component  implements HasForms, HasTable
                     ->options(Employee::pluck('name', 'id')),
             ])
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
+    }
+
+    private function bulkButtons(Collection $records) : array
+    {
+        return [
+            BulkActionGroup::make([
+                BulkAction::make('Move')
+                    ->form([
+                        Select::make('invoice')
+                            ->required()
+                            ->searchable()
+                            ->options(Invoice::where('active', 1)->pluck('title', 'id'))
+                    ])
+                    ->action(function(Collection $records, array $data){
+                        $invoice = InvoiceAction::merge([
+                            'invoices' => $records,
+                            'invoice' => $data['invoice'],
+                        ]);
+                        return redirect("invoices/$invoice->id");
+                    })
+                    ->color('info'),
+            ])
+        ];
     }
 
     #[On('render')]
