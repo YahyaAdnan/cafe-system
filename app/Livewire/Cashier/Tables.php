@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Cashier;
 
+use Filament\Actions\ActionGroup;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Services\GenerateInovice;
@@ -44,6 +45,8 @@ class Tables extends Component  implements HasForms, HasTable
         $this->dispatch('render');
         $this->render(); // First render
     }
+
+
 
     public function updatedInvoice()
     {
@@ -130,6 +133,7 @@ class Tables extends Component  implements HasForms, HasTable
                         ]);
                     }),
             ], position: ActionsPosition::BeforeColumns);
+
     }
 
     private function dineOutGrid(Table $table)
@@ -211,14 +215,29 @@ class Tables extends Component  implements HasForms, HasTable
                     ->sortable()
                     ->since()
             ])
-            ->bulkActions(fn(Collection $records) => $this->bulkActions($records))
+         //   ->bulkActions(fn(Collection $records) => $this->bulkActions($records))
+         ->bulkActions([
+             BulkActionGroup::make([
+                 BulkAction::make('delete')
+                     ->requiresConfirmation()
+                     ->action(fn (Collection $records) => $records->each->delete()),
+                 BulkAction::make('forceDelete')
+                     ->requiresConfirmation()
+                     ->action(fn (Collection $records) => $records->each->forceDelete()),
+             ]),
+        ])
             ->filters([
                 SelectFilter::make('deliver_type_id')
-                    ->label('Deliver Type')
-                    ->multiple()
+                    ->label('Delivery Type')
                     ->options(DeliverType::pluck('title', 'id'))
+                    ->placeholder('Select a delivery type')
+                    ->multiple(false),
+
+
+
             ])
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
+
     }
 
     private function dineInTable(Table $table)
@@ -251,7 +270,7 @@ class Tables extends Component  implements HasForms, HasTable
                     ->sortable()
                     ->since()
             ])
-            ->bulkActions([ 
+            ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('Move')
                         ->form([
@@ -273,11 +292,11 @@ class Tables extends Component  implements HasForms, HasTable
             ->filters([
                 SelectFilter::make('table_id')
                     ->label('Table')
-                    ->multiple()
+                    ->multiple(false)
                     ->options(Seat::pluck('title', 'id')),
                 SelectFilter::make('employee_id')
                     ->label('Employee')
-                    ->multiple()
+                    ->multiple(false)
                     ->options(Employee::pluck('name', 'id')),
             ])
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
