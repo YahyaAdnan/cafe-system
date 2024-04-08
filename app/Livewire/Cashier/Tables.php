@@ -256,7 +256,6 @@ class Tables extends Component  implements HasForms, HasTable
                     BulkAction::make('Move')
                         ->form([
                             Select::make('invoice')
-                                ->disableOptionWhen(fn (String $value, Collection $records): bool => dd($records))
                                 ->required()
                                 ->searchable()
                                 ->options(Invoice::where('active', 1)->pluck('title', 'id'))
@@ -284,28 +283,6 @@ class Tables extends Component  implements HasForms, HasTable
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
     }
 
-    private function bulkButtons(Collection $records) : array
-    {
-        return [
-            BulkActionGroup::make([
-                BulkAction::make('Move')
-                    ->form([
-                        Select::make('invoice')
-                            ->required()
-                            ->searchable()
-                            ->options(Invoice::where('active', 1)->pluck('title', 'id'))
-                    ])
-                    ->action(function(Collection $records, array $data){
-                        $invoice = InvoiceAction::merge([
-                            'invoices' => $records,
-                            'invoice' => $data['invoice'],
-                        ]);
-                        return redirect("invoices/$invoice->id");
-                    })
-                    ->color('info'),
-            ])
-        ];
-    }
 
     #[On('render')]
     public function render()

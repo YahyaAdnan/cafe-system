@@ -39,6 +39,11 @@ class InvoiceAction
 
         foreach ($data['invoices'] as $key => $invoice) 
         { 
+            if($merged == $invoice->id)
+            {
+                continue;
+            }
+
             InvoiceAction::move([
                 'orders' => $invoice->orders,
                 'to' => $merged
