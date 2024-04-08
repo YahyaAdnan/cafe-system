@@ -13,6 +13,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Enums\ActionsPosition;
@@ -24,6 +25,7 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Illuminate\Contracts\View\View;
 use App\Services\InvoiceAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -68,6 +70,8 @@ class Tables extends Component  implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
+        return $this->dineInTable($table);
+
         $this->viewTitle = $this->viewType[$this->view];
         $this->invoiceTitle = $this->invoiceTypes[$this->invoice];
 
@@ -215,26 +219,76 @@ class Tables extends Component  implements HasForms, HasTable
                     ->sortable()
                     ->since()
             ])
-         //   ->bulkActions(fn(Collection $records) => $this->bulkActions($records))
-         ->bulkActions([
-             BulkActionGroup::make([
-                 BulkAction::make('delete')
-                     ->requiresConfirmation()
-                     ->action(fn (Collection $records) => $records->each->delete()),
-                 BulkAction::make('forceDelete')
-                     ->requiresConfirmation()
-                     ->action(fn (Collection $records) => $records->each->forceDelete()),
-             ]),
-        ])
+            // ->bulkActions([
+            ->bulkActions([
+                BulkActionGroup::make([
+                    BulkAction::make('Merge_into')
+                        ->label('Merge Into')
+                        ->form([
+                            Select::make('invoice')
+                                ->required()
+                                ->searchable()
+                                ->options(Invoice::where('active', 1)->pluck('title', 'id'))
+                        ])
+                        ->action(function(Collection $records, array $data){
+                            $invoice = InvoiceAction::merge([
+                                'invoices' => $records,
+                                'invoice' => Invoice::find($data['invoice']),
+                            ]);
+                            return redirect("invoices/$invoice->id");
+                        })
+                        ->color('info'),
+                    BulkAction::make('merge')
+                        ->label('Merge')
+                        ->form([
+                            Toggle::make('dinning_in')
+                                ->default(1)
+                                ->label('Dine-In')
+                                ->live(),
+                            Select::make('table_id')
+                                ->label('Table')
+                                ->searchable()
+                                ->visible(fn(Get $get) => $get('dinning_in'))
+                                ->required(fn(Get $get) => $get('dinning_in'))
+                                ->options(Seat::pluck('title', 'id')),
+                            Select::make('employee_id')
+                                ->label('Employee')
+                                ->searchable()
+                                ->visible(fn(Get $get) => $get('dinning_in'))
+                                ->required(fn(Get $get) => $get('dinning_in'))
+                                ->options(Employee::pluck('name', 'id')),
+                            Select::make('deliver_type_id')
+                                ->label('Deliver Type')
+                                ->searchable()
+                                ->visible(fn(Get $get) => !$get('dinning_in'))
+                                ->required(fn(Get $get) => !$get('dinning_in'))
+                                ->options(DeliverType::pluck('title', 'id'))
+                        ])
+                        ->action(function(Collection $records, array $data){
+                            $merged = $data['dinning_in'] ? 
+                                GenerateInovice::dineIn([
+                                    'employee_id' => $data['employee_id'],
+                                    'table_id' => $data['table_id'],
+                                ])
+                                : GenerateInovice::dineOut([
+                                    'deliver_type_id' => $data['deliver_type_id'],
+                                ]);
+
+                            $invoice = InvoiceAction::merge([
+                                'invoices' => $records,
+                                'invoice' => $merged,
+                            ]);
+                            return redirect("invoices/$invoice->id");
+                        })
+                        ->color('success'),
+                ])
+            ])
             ->filters([
                 SelectFilter::make('deliver_type_id')
                     ->label('Delivery Type')
                     ->options(DeliverType::pluck('title', 'id'))
                     ->placeholder('Select a delivery type')
                     ->multiple(false),
-
-
-
             ])
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
 
@@ -272,7 +326,8 @@ class Tables extends Component  implements HasForms, HasTable
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    BulkAction::make('Move')
+                    BulkAction::make('Merge_into')
+                        ->label('Merge Into')
                         ->form([
                             Select::make('invoice')
                                 ->required()
@@ -282,11 +337,54 @@ class Tables extends Component  implements HasForms, HasTable
                         ->action(function(Collection $records, array $data){
                             $invoice = InvoiceAction::merge([
                                 'invoices' => $records,
-                                'invoice' => $data['invoice'],
+                                'invoice' => Invoice::find($data['invoice']),
                             ]);
                             return redirect("invoices/$invoice->id");
                         })
                         ->color('info'),
+                    BulkAction::make('merge')
+                        ->label('Merge')
+                        ->form([
+                            Toggle::make('dinning_in')
+                                ->default(1)
+                                ->label('Dine-In')
+                                ->live(),
+                            Select::make('table_id')
+                                ->label('Table')
+                                ->searchable()
+                                ->visible(fn(Get $get) => $get('dinning_in'))
+                                ->required(fn(Get $get) => $get('dinning_in'))
+                                ->options(Seat::pluck('title', 'id')),
+                            Select::make('employee_id')
+                                ->label('Employee')
+                                ->searchable()
+                                ->visible(fn(Get $get) => $get('dinning_in'))
+                                ->required(fn(Get $get) => $get('dinning_in'))
+                                ->options(Employee::pluck('name', 'id')),
+                            Select::make('deliver_type_id')
+                                ->label('Deliver Type')
+                                ->searchable()
+                                ->visible(fn(Get $get) => !$get('dinning_in'))
+                                ->required(fn(Get $get) => !$get('dinning_in'))
+                                ->options(DeliverType::pluck('title', 'id'))
+                        ])
+                        ->action(function(Collection $records, array $data){
+                            $merged = $data['dinning_in'] ? 
+                                GenerateInovice::dineIn([
+                                    'employee_id' => $data['employee_id'],
+                                    'table_id' => $data['table_id'],
+                                ])
+                                : GenerateInovice::dineOut([
+                                    'deliver_type_id' => $data['deliver_type_id'],
+                                ]);
+    
+                            $invoice = InvoiceAction::merge([
+                                'invoices' => $records,
+                                'invoice' => $merged,
+                            ]);
+                            return redirect("invoices/$invoice->id");
+                        })
+                        ->color('success'),
                 ])
             ])
             ->filters([
@@ -301,7 +399,6 @@ class Tables extends Component  implements HasForms, HasTable
             ])
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
     }
-
 
     #[On('render')]
     public function render()

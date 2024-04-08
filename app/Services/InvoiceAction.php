@@ -39,22 +39,22 @@ class InvoiceAction
 
         foreach ($data['invoices'] as $key => $invoice) 
         { 
-            if($merged == $invoice->id)
+            if($merged->id == $invoice->id)
             {
                 continue;
             }
 
             InvoiceAction::move([
                 'orders' => $invoice->orders,
-                'to' => $merged
+                'to' => $merged->id 
             ]);
 
             $invoice->cancelInvoice();
         }
 
-        Invoice::find($merged)->updateAmount();
+        Invoice::find($merged->id)->updateAmount();
 
-        return  Invoice::find($merged);
+        return $merged;
     }
 
     // $data {"orders" => collection(), "to" => Invoice()}
