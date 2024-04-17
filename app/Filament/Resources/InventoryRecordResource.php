@@ -54,7 +54,7 @@ class InventoryRecordResource extends Resource
                     ])->live(),
                 // END: TYPE OF RECORD
                 // START: RECORD DETAILS
-                Select::make('inventory_id')->label("inventory")->columnSpan(6)->required()
+                Select::make('inventory_id')->label("item")->columnSpan(6)->required()
                     ->searchable()->options(
                         Inventory::pluck('title', 'id')
                     )->live(),

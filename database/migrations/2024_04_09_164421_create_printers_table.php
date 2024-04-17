@@ -15,7 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('api_key');
-            $table->foreignId('room_id')->constrained('rooms');
+            $table->unsignedBigInteger('room_id');
+            $table
+                ->foreign('room_id')
+                ->references('id')
+                ->on('rooms')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
             $table->timestamps();
         });
     }
