@@ -3,6 +3,7 @@
 namespace App\Livewire\Cashier;
 
 use Filament\Actions\ActionGroup;
+use Filament\Tables\Enums\FiltersLayout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use App\Services\GenerateInovice;
@@ -34,12 +35,23 @@ use App\Models\Employee;
 use App\Models\Invoice;
 use App\Models\DeliverType;
 
+
 class Tables extends Component  implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
 
     public $view = 1, $invoice = 1, $renderCount = 0;
+
+    public $viewType = array(
+        '1' => 'Grid',
+        '2' => 'Table',
+    );
+
+    public $invoiceTypes = array(
+        '1' => 'Dine-in',
+        '2' => 'Dine-out',
+    );
 
 
     public function updatedView()
@@ -56,22 +68,10 @@ class Tables extends Component  implements HasForms, HasTable
         $this->render(); // First render
     }
 
-    public $viewType = array(
-        '1' => 'Grid',
-        '2' => 'Table',
-    );
-
-    public $invoiceTypes = array(
-        '1' => 'Dine-in',
-        '2' => 'Dine-out',
-    );
-
 
 
     public function table(Table $table): Table
     {
-        return $this->dineInTable($table);
-
         $this->viewTitle = $this->viewType[$this->view];
         $this->invoiceTitle = $this->invoiceTypes[$this->invoice];
 
@@ -194,6 +194,12 @@ class Tables extends Component  implements HasForms, HasTable
     private function dineOutTable(Table $table)
     {
         return $table
+            ->filters([
+                SelectFilter::make('deliver_type_id')
+                    ->label('Delivery Type')
+                    ->options(DeliverType::pluck('title', 'id'))
+                    ->multiple(false),
+            ], layout: FiltersLayout::AboveContent )
             ->query(Invoice::where('active', 1)->where('dinning_in', 0))
             ->columns([
                 TextColumn::make('title')
@@ -265,7 +271,7 @@ class Tables extends Component  implements HasForms, HasTable
                                 ->options(DeliverType::pluck('title', 'id'))
                         ])
                         ->action(function(Collection $records, array $data){
-                            $merged = $data['dinning_in'] ? 
+                            $merged = $data['dinning_in'] ?
                                 GenerateInovice::dineIn([
                                     'employee_id' => $data['employee_id'],
                                     'table_id' => $data['table_id'],
@@ -283,13 +289,7 @@ class Tables extends Component  implements HasForms, HasTable
                         ->color('success'),
                 ])
             ])
-            ->filters([
-                SelectFilter::make('deliver_type_id')
-                    ->label('Delivery Type')
-                    ->options(DeliverType::pluck('title', 'id'))
-                    ->placeholder('Select a delivery type')
-                    ->multiple(false),
-            ])
+
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
 
     }
@@ -369,7 +369,7 @@ class Tables extends Component  implements HasForms, HasTable
                                 ->options(DeliverType::pluck('title', 'id'))
                         ])
                         ->action(function(Collection $records, array $data){
-                            $merged = $data['dinning_in'] ? 
+                            $merged = $data['dinning_in'] ?
                                 GenerateInovice::dineIn([
                                     'employee_id' => $data['employee_id'],
                                     'table_id' => $data['table_id'],
@@ -377,7 +377,7 @@ class Tables extends Component  implements HasForms, HasTable
                                 : GenerateInovice::dineOut([
                                     'deliver_type_id' => $data['deliver_type_id'],
                                 ]);
-    
+
                             $invoice = InvoiceAction::merge([
                                 'invoices' => $records,
                                 'invoice' => $merged,

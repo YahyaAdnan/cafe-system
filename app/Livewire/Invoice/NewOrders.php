@@ -35,14 +35,14 @@ class NewOrders extends Component implements HasForms
     public function mount(Invoice $invoice)
     {
         $this->invoice = $invoice;
-    }    
+    }
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Repeater::make('orders')
                 ->label('')
-                ->schema([       
+                ->schema([
                     Toggle::make('special_order')
                         ->inline()
                         ->columnSpan(12)
@@ -91,7 +91,7 @@ class NewOrders extends Component implements HasForms
                         ->live(),
                     Placeholder::make('created')
                         ->content(function (Get $get)  {
-                            if($get('special_order')) 
+                            if($get('special_order'))
                             {
                                 try {
                                     return $get('amount') * $get('quantity') . 'IQD';
@@ -106,7 +106,7 @@ class NewOrders extends Component implements HasForms
                                 return '0IQD';
                             }
                         })
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3]),     
+                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3]),
                     TextInput::make('note')
                         ->columnSpan(12)
                         ->maxLength(64),
@@ -116,46 +116,50 @@ class NewOrders extends Component implements HasForms
             ])
             ->statePath('data');
     }
-    
+
     public function create()
     {
-        foreach ($this->data['orders'] as $key => $order)
-        {
-            for ($i=0; $i < $order['quantity']; $i++) 
-            { 
-                if($order['special_order'])
+        if (isset($this->data['orders']) ){
+            foreach ($this->data['orders'] as $key => $order)
+            {
+                for ($i=0; $i < $order['quantity']; $i++)
                 {
-                    Order::create([
-                        'invoice_id' => $this->invoice->id,
-                        'title' => $order['title'],
-                        'user_id' => Auth::id(),
-                        'amount' => $order['amount'],
-                        'total_amount' => $order['amount'],
-                        'discount_fixed' => 0,
-                        'note' => $order['note'],
-                    ]);
-                }
-                else 
-                {
-                    $price = Price::find($order['item_id']);
-                    $item = $price->item;
+                    if($order['special_order'])
+                    {
+                        Order::create([
+                            'invoice_id' => $this->invoice->id,
+                            'title' => $order['title'],
+                            'user_id' => Auth::id(),
+                            'amount' => $order['amount'],
+                            'total_amount' => $order['amount'],
+                            'discount_fixed' => 0,
+                            'note' => $order['note'],
+                        ]);
+                    }
+                    else
+                    {
+                        $price = Price::find($order['item_id']);
+                        $item = $price->item;
 
-                    Order::create([
-                        'invoice_id' => $this->invoice->id,
-                        'title' => $item->title,
-                        'item_id' => $item->id,
-                        'price_id' => $price->id,
-                        'user_id' => Auth::id(),
-                        'amount' => $price->amount,
-                        'discount_fixed' => $order['discount'],
-                        'total_amount' => $price->amount -  $order['discount'],
-                        'note' =>  $order['note'],
-                    ]);
+                        Order::create([
+                            'invoice_id' => $this->invoice->id,
+                            'title' => $item->title,
+                            'item_id' => $item->id,
+                            'price_id' => $price->id,
+                            'user_id' => Auth::id(),
+                            'amount' => $price->amount,
+                            'discount_fixed' => $order['discount'],
+                            'total_amount' => $price->amount -  $order['discount'],
+                            'note' =>  $order['note'],
+                        ]);
+                    }
                 }
             }
+
+            // UPDATE THE AMOUNT OF THE INVOICE
+            Invoice::find($this->invoice->id)->updateAmount();
         }
-        // UPDATE THE AMOUNT OF THE INVOICE
-        Invoice::find($this->invoice->id)->updateAmount();
+
         return redirect('invoices/' . $this->invoice->id);
     }
     public function render()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Printer;
+use App\Models\Room;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,7 +28,11 @@ final class PrinterFactory extends Factory
     public function definition(): array
     {
         return [
-            'room_id' => \App\Models\Room::factory(),
+            'title' => $this->faker->word,
+            'printer_id' => $this->faker->unique()->uuid, // Unique identifier for printer
+            'room_id' => Room::factory(), // Use Room factory to generate a room ID
+            'created_at' => $this->faker->dateTimeThisMonth(),
+            'updated_at' => $this->faker->dateTimeThisMonth(),
         ];
     }
 }
