@@ -46,46 +46,10 @@ class NewOrders extends Component implements HasForms
 
     public function create()
     {
-        if (isset($this->data['orders']) ){
-            foreach ($this->data['orders'] as $key => $order)
-            {
-                for ($i=0; $i < $order['quantity']; $i++)
-                {
-                    if($order['special_order'])
-                    {
-                        Order::create([
-                            'invoice_id' => $this->invoice->id,
-                            'title' => $order['title'],
-                            'user_id' => Auth::id(),
-                            'amount' => $order['amount'],
-                            'total_amount' => $order['amount'],
-                            'discount_fixed' => 0,
-                            'note' => $order['note'],
-                        ]);
-                    }
-                    else
-                    {
-                        $price = Price::find($order['item_id']);
-                        $item = $price->item;
-
-                        Order::create([
-                            'invoice_id' => $this->invoice->id,
-                            'title' => $item->title,
-                            'item_id' => $item->id,
-                            'price_id' => $price->id,
-                            'user_id' => Auth::id(),
-                            'amount' => $price->amount,
-                            'discount_fixed' => $order['discount'],
-                            'total_amount' => $price->amount -  $order['discount'],
-                            'note' =>  $order['note'],
-                        ]);
-                    }
-                }
-            }
-
-            // UPDATE THE AMOUNT OF THE INVOICE
-            Invoice::find($this->invoice->id)->updateAmount();
-        }
+        OrdersForm::store([
+            'invoice' => $this->invoice,
+            'orders' => $this->data['orders'],
+        ]);
 
         return redirect('invoices/' . $this->invoice->id);
     }

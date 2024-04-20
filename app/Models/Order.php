@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\EstimatePrice;
 
 class Order extends Model
 {
@@ -29,12 +30,12 @@ class Order extends Model
             $model->invoice->updateAmount();
         });
 
-        static::creating(function ($model) {
-            $model->updateTotal();
+        static::created(function ($model) {
+            $model->invoice->updateAmount();
         });
 
         static::updating(function ($model) {
-            $model->updateTotal();
+            $model->total_amount = $model->getTotal();
         });
 
         static::updated(function ($model) {
@@ -42,10 +43,19 @@ class Order extends Model
         });
     }
 
-    public function updateTotal()
+    public function getTotal()
     {
-        $this->total_amount = $this->amount - $this->discount_fixed;
-        $this->total_amount += $this->extras->pluck('amount');
+        return EstimatePrice::run([
+            'discount' => $this->discount_fixed,
+            'amount' => $this->amount,
+            'extras' => $this->extras->pluck('id')->toArray(),
+        ]);
+    }
+
+    public function setTotal()
+    {
+        $this->total_amount = $this->getTotal();
+        $this->save();
     }
 
     public function invoice()

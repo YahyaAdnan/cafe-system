@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use App\Services\EstimatePrice;
 
@@ -123,6 +124,9 @@ class OrdersForm
     }
 
 
+    // Parameters: orders, invoice
+    // Orders: Array, Array of order inputs.
+    // Invoice: Invoice Model.
     public static function store($data)
     {
         if (isset($data['orders'])) {
@@ -159,22 +163,23 @@ class OrdersForm
                         $attributes['item_id'] = $item->id;
                         $attributes['price_id'] = $price->id;
                         $attributes['amount'] = $price->amount;
-                        $attributes['discount_fixed'] = $order['discount_fixed'];
+                        $attributes['discount_fixed'] = $order['discount'];
                     }
     
-                    $attributes['total_amount'] = 0; // Will be updated boot function in the order class.
+                    $attributes['total_amount'] = EstimatePrice::run([
+                        'amount' => $attributes['amount'],
+                        'discount' => $attributes['discount_fixed'],
+                        'extras' => $order['extras']    
+                    ]);
     
                     // Create the order
                     $new_order = Order::create($attributes);
+
+                    $new_order->extras()->attach($order['extras']);
                 }
             }
     
-            // Update the amount of the invoice
-            Invoice::find($data['invoice']->id)->updateAmount();
         }
-    
-        // Redirect to the invoice page
-        return redirect('invoices/' . $data['invoice']->id);
     }
 
 }
