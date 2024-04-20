@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Filament\OrdersForm;
+use App\Services\EstimatePrice;
 use Livewire\Component;
 
 class NewOrders extends Component implements HasForms
@@ -36,75 +37,7 @@ class NewOrders extends Component implements HasForms
             ->schema([
                 Repeater::make('orders')
                 ->label('')
-                ->schema([
-                    Toggle::make('special_order')
-                        ->inline()
-                        ->columnSpan(12)
-                        ->live(),
-                    Select::make('item_id')
-                        ->visible(fn (Get $get)=>  !$get('special_order'))
-                        ->searchable()
-                        ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
-                        ->options(Price::activePrices())
-                        ->required()
-                        ->live(),
-                    TextInput::make('title')
-                        ->visible(fn (Get $get)=>  $get('special_order'))
-                        ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
-                        ->minLength(1)
-                        ->maxLength(32)
-                        ->required(),
-                    TextInput::make('quantity')
-                        ->numeric()
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
-                        ->default(1)
-                        ->minValue(1)
-                        ->maxValue(99)
-                        ->required()
-                        ->live(),
-                    TextInput::make('amount')
-                        ->visible(fn (Get $get)=>  $get('special_order'))
-                        ->numeric()
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
-                        ->minValue(1)
-                        ->maxValue(100000000)
-                        ->required()
-                        ->live(),
-                    TextInput::make('discount')
-                        ->visible(fn (Get $get)=>  !$get('special_order'))
-                        ->disabled(fn (Get $get)=>  $get('item_id') == null)
-                        ->numeric()
-                        ->suffix('IQD')
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
-                        ->minValue(0)
-                        ->maxValue(function (Get $get)  {
-                            if($get('item_id') == null) {return;}
-                            return Price::find($get('item_id'))->amount;
-                        })
-                        ->default(0)
-                        ->live(),
-                    Placeholder::make('created')
-                        ->content(function (Get $get)  {
-                            if($get('special_order'))
-                            {
-                                try {
-                                    return $get('amount') * $get('quantity') . 'IQD';
-                                } catch (\Throwable $th) {
-                                    return '0IQD';
-                                }
-                            }
-                            if($get('item_id') == null) {return '0IQD';}
-                            try {
-                                return ( Price::find($get('item_id'))->amount - $get('discount') ) * $get('quantity') . 'IQD';
-                            } catch (\Throwable $th) {
-                                return '0IQD';
-                            }
-                        })
-                        ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3]),
-                    TextInput::make('note')
-                        ->columnSpan(12)
-                        ->maxLength(64),
-                ])
+                ->schema(OrdersForm::form())
                 ->addActionLabel('Add Order')
                 ->columns(12)
             ])
@@ -156,6 +89,7 @@ class NewOrders extends Component implements HasForms
 
         return redirect('invoices/' . $this->invoice->id);
     }
+
     public function render()
     {
         return view('livewire.invoice.new-orders');
