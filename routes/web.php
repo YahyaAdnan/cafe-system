@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PrintController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,3 +20,5 @@ Route::get('/home', function () {
 Route::get('/menu', function () {
     return view('app.menu.show');
 });
+
+Route::get('/test-print', [PrintController::class, 'testPrint']);

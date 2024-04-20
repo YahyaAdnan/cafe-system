@@ -4,34 +4,32 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Room;
+use App\Models\RoomConfig;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Room>
+ * @extends Factory<\App\Models\RoomConfig>
  */
-final class RoomFactory extends Factory
+final class RoomConfigFactory extends Factory
 {
     /**
     * The name of the factory's corresponding model.
     *
     * @var string
     */
-    protected $model = Room::class;
+    protected $model = RoomConfig::class;
 
     /**
     * Define the model's default state.
     *
     * @return array
     */
-
     public function definition(): array
     {
         return [
-            'title' => $this->faker->unique()->word,
-            'cashier' => $this->faker->boolean,
-            'monitor' => $this->faker->boolean,
-            'printing' => $this->faker->boolean,
+            'room_id' => \App\Models\Room::factory(),
+            'roomable_type' => fake()->word,
+            'roomable_id' => fake()->randomNumber(),
         ];
     }
 }

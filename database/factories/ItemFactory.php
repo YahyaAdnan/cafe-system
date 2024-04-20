@@ -38,6 +38,8 @@ final class ItemFactory extends Factory
             'note' => fake()->optional()->sentence,
             'title_ar' => fake()->word,
             'title_ku' => fake()->word,
+          'room_id' => '1'
+
         ];
     }
 }
