@@ -20,6 +20,11 @@ class Extra extends Model
         return $this->belongsToMany(Item::class, 'extra_items', 'extra_id', 'item_id');
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_extras', 'extra_id', 'order_id');
+    }
+
     public function isDeletable()
     {
         if($this->items->isNotEmpty())

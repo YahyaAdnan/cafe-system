@@ -50,7 +50,7 @@ class Item extends Model
     {
         return $this->belongsToMany(Extra::class, 'extra_items', 'item_id', 'extra_id');
     }
-
+    
     public function itemSubcategory()
     {
         return $this->belongsTo(ItemSubcategory::class);

@@ -29,13 +29,23 @@ class Order extends Model
             $model->invoice->updateAmount();
         });
 
+        static::creating(function ($model) {
+            $model->updateTotal();
+        });
+
         static::updating(function ($model) {
-            $model->total_amount = $model->amount - $model->discount_fixed;
+            $model->updateTotal();
         });
 
         static::updated(function ($model) {
             $model->invoice->updateAmount();
         });
+    }
+
+    public function updateTotal()
+    {
+        $this->total_amount = $this->amount - $this->discount_fixed;
+        $this->total_amount += $this->extras->pluck('amount');
     }
 
     public function invoice()
@@ -46,6 +56,11 @@ class Order extends Model
     public function item()
     {
         return $this->belongsTo(Item::class);
+    }
+
+    public function extras()
+    {
+        return $this->belongsToMany(Extra::class, 'order_extras', 'order_id', 'extra_id');
     }
 
     public function price()
