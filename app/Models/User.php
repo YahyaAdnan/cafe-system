@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class User extends Authenticatable
 {
@@ -55,7 +56,11 @@ class User extends Authenticatable
 
     public function authorized($action)
     {
-        return $this->role->hasPermissionTo($action);
+        try {
+            return $this->role->hasPermissionTo($action);
+        } catch (\Throwable $th) {
+            dd($action, Permission::find(121));
+        }
     }  
 
     public function expenses()
