@@ -46,6 +46,12 @@ class NewOrders extends Component implements HasForms
 
     public function create()
     {
+        $this->form->getState();
+        /**
+         * must use $this->form->getState() to validate and get data
+         * using $this->data is fine but it wont validate while form->getState() validates then returns the data 
+         * so u can store it inside a variable and treat it like $this->data
+         */
         OrdersForm::store([
             'invoice' => $this->invoice,
             'orders' => $this->data['orders'],
