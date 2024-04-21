@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\Filament\OrdersForm;
 use App\Services\EstimatePrice;
 use Livewire\Component;
-
+use App\Services\PrintingService;
 class NewOrders extends Component implements HasForms
 {
     use InteractsWithForms;
@@ -26,11 +26,17 @@ class NewOrders extends Component implements HasForms
     public Invoice $invoice;
 
     public ?array $data = [];
+    protected $printService;
 
     public function mount(Invoice $invoice)
     {
         $this->invoice = $invoice;
+
+
     }
+
+
+
     public function form(Form $form): Form
     {
         return $form
@@ -46,16 +52,26 @@ class NewOrders extends Component implements HasForms
 
     public function create()
     {
+        $this->printService = new PrintingService();
         $this->form->getState();
         /**
          * must use $this->form->getState() to validate and get data
-         * using $this->data is fine but it wont validate while form->getState() validates then returns the data 
+         * using $this->data is fine but it wont validate while form->getState() validates then returns the data
          * so u can store it inside a variable and treat it like $this->data
          */
-        OrdersForm::store([
-            'invoice' => $this->invoice,
-            'orders' => $this->data['orders'],
-        ]);
+        if (isset($this->data['orders'])){
+            OrdersForm::store([
+                'invoice' => $this->invoice,
+                'orders' => $this->data['orders'],
+            ]);
+
+
+            // Example usage of the PrintService
+            $printerId = "73259189"; // Define your printer ID
+            $orderContent = "Your order details here"; // Prepare the content you want to print
+            $this->printService->printOrder($printerId, $orderContent);
+        }
+
 
         return redirect('invoices/' . $this->invoice->id);
     }
