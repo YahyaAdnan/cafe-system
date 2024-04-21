@@ -66,7 +66,7 @@ class SettingSeeder extends Seeder
             'title' => 'Max Fixed Discount',
             'description' => '',
             'value' => '0',
-            'validation' => 'required|numeric|min:0',
+            'validation' => 'required|numeric|min:0|max:2000000000',
         ]);
 
         Setting::create([
@@ -74,6 +74,13 @@ class SettingSeeder extends Seeder
             'description' => '',
             'value' => '0',
             'validation' => 'required|numeric|min:0|max:100',
+        ]);
+
+        Setting::create([
+            'title' => 'Max Item Discount',
+            'description' => '',
+            'value' => '0',
+            'validation' => 'required|numeric|min:0|max:2000000000',
         ]);
 
         // Setting::create([

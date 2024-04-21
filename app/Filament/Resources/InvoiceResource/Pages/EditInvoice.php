@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\DiscountService;
 use App\Models\Table as Seating;
 use App\Models\Employee;
 use App\Models\DeliverType;
@@ -33,13 +34,13 @@ class EditInvoice extends EditRecord
                     ->visible(fn(Get $get) => !$get('fixed_discount'))
                     ->numeric()
                     ->minValue(0)
-                    ->maxValue(100),
+                    ->maxValue(DiscountService::maximumRateDiscount()),
                 TextInput::make('discount_fixed')
                     ->columnSpan(12)
                     ->visible(fn(Get $get) => $get('fixed_discount'))
                     ->numeric()
                     ->minValue(0)
-                    ->maxValue(100000000),
+                    ->maxValue(DiscountService::maximumFixedeDiscount()),
                 Toggle::make('dinning_in')
                     ->columnSpan(12)
                     ->live(),

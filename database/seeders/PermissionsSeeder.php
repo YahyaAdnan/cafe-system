@@ -116,6 +116,12 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update users']);
         Permission::create(['name' => 'delete users']);
 
+        Permission::create(['name' => 'list roles']);
+        Permission::create(['name' => 'view roles']);
+        Permission::create(['name' => 'create roles']);
+        Permission::create(['name' => 'update roles']);
+        Permission::create(['name' => 'delete roles']);
+
         Permission::create(['name' => 'list daily_sales']);
         Permission::create(['name' => 'view daily_sales']);
         Permission::create(['name' => 'create daily_sales']);
@@ -170,6 +176,8 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update transactions']);
         Permission::create(['name' => 'delete transactions']);
 
+        Permission::create(['name' => 'create discount']);
+
         // Create admin role and assign all permissions
         $allPermissions = Permission::all();
         $adminRole = Role::create(['name' => 'admin']);
@@ -177,9 +185,9 @@ class PermissionsSeeder extends Seeder
 
         $user = \App\Models\User::where('name', 'admin')->first();
 
-        if ($user) {
-            $user->assignRole($adminRole);
-        }
+        // if ($user) {
+        //     $user->assignRole($adminRole);
+        // }
 
         // ***************************************
         // ********** END PERMISIONS ***********
