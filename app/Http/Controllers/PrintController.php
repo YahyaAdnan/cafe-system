@@ -17,11 +17,10 @@ class PrintController extends Controller
 
         // Format text if necessary (check package documentation for details)
 
-//        $printing->newPrintTask()
-//            ->printer($printerId)
-//            ->content($textToPrint) // Chain methods
-//            ->send();
-        return $textToPrint;
+        $printing->newPrintTask()
+            ->printer($printerId)
+            ->content($textToPrint) // Chain methods
+            ->send();
 
     }
 }

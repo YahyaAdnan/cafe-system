@@ -6,7 +6,6 @@ use App\Models\Order;
 use App\Models\Price;
 use App\Models\Invoice;
 use App\Models\Item;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -17,6 +16,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\Filament\OrdersForm;
 use App\Services\EstimatePrice;
 use Livewire\Component;
+use App\Services\PrintingService;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Support\Colors\Color;
 
 class NewOrders extends Component implements HasForms
 {
@@ -26,30 +30,78 @@ class NewOrders extends Component implements HasForms
     public Invoice $invoice;
 
     public ?array $data = [];
+    protected $printService;
 
     public function mount(Invoice $invoice)
     {
         $this->invoice = $invoice;
+        // adding a deualt item to the repeater
+        // since this page is edit the repeaters defaultItems will not work
+        $this->form->fill(
+            // whole form
+            [
+                // repeater 
+                'orders' => [
+                    // default item start
+                    [
+                        "special_order" => false,
+                        "extras" => [],
+                        "item_id" => null,
+                        "title" => null,
+                        "quantity" => "1",
+                        "amount" => null,
+                        "discount" => "0",
+                        "total_amount" => null,
+                        "note" => null,
+                    ]
+                    //defult item end
+                ]
+            ]
+        );
     }
+
+
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Repeater::make('orders')
-                ->label('')
-                ->schema(OrdersForm::form())
-                ->addActionLabel('Add Order')
-                ->columns(12)
+                    ->label('')
+                    ->schema(OrdersForm::form())
+                    ->deleteAction(function (Action $action) {
+                        // making it hidden is not working so i just change icon, disable it, make it grey
+                        $action->disabled(fn(Get $get) => $get('orders') === null || count($get('orders')) <= 1);
+                        $action->color(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? Color::Gray:Color::Red);
+                        $action->icon(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? 'heroicon-m-no-symbol':'heroicon-s-trash');
+                    })
+                    ->required()
+                    ->addActionLabel('Add Order')
+                    ->columns(12)
             ])
             ->statePath('data');
     }
 
     public function create()
     {
+        $this->printService = new PrintingService();
+        $this->form->getState();
+        /**
+         * must use $this->form->getState() to validate and get data
+         * using $this->data is fine but it wont validate while form->getState() validates then returns the data
+         * so u can store it inside a variable and treat it like $this->data
+         */
         OrdersForm::store([
             'invoice' => $this->invoice,
             'orders' => $this->data['orders'],
         ]);
+
+
+        // Example usage of the PrintService
+        $printerId = "73259189"; // Define your printer ID
+        $orderContent = "Your order details here"; // Prepare the content you want to print
+        $this->printService->printOrder($printerId, $orderContent);
+
 
         return redirect('invoices/' . $this->invoice->id);
     }
