@@ -4,12 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -30,7 +31,7 @@ class RoleResource extends Resource
             ->schema([
                 TextInput::make('name'),
                 Select::make('permissions')
-                    ->relationship('permissions')
+                    ->relationship()
                     ->multiple()
                     ->options(Permission::pluck('name','id'))
                     ->disabled(function (string $operation, ?Model $record) {
@@ -44,7 +45,12 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->sortable(),
+                TextColumn::make('users_count')->counts('users')->sortable(),
+                TextColumn::make('permissions.name')
+                    ->toggleable(true)
+                    ->wrap()
+                    // ->state(fn(Role $role) => $role->getPermissionsName())
             ])
             ->filters([
                 //
@@ -56,7 +62,10 @@ class RoleResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(
+                fn(Role $role) => $role->isDeletable()
+            );
     }
 
     public static function getRelations(): array
