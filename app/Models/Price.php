@@ -36,4 +36,9 @@ class Price extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function offerEntities()
+    {
+        return $this->belongsToMany(OfferEntity::class, 'offer_entities_prices', 'price_id', 'offer_entity_id');
+    }
 }

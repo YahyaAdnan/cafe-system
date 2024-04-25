@@ -76,6 +76,10 @@ class Item extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function offerEntities()
+    {
+        return $this->belongsToMany(OfferEntity::class, 'offer_entities_items', 'item_id', 'offer_entity_id');
+    }
 
     public function isDeletable()
     {

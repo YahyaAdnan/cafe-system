@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\GenerateDailySale;
 
 class DailySale extends Model
 {
@@ -28,6 +29,16 @@ class DailySale extends Model
                 ]);
             }
         });
+    }
+
+    public static function activeDailySale()
+    {
+        if(DailySale::where('active', true)->exists())
+        {
+            return DailySale::where('active', true)->first();
+        }
+
+        return GenerateDailySale::createDailySale();
     }
 
     public function invoices()
