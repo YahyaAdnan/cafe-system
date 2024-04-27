@@ -59,7 +59,7 @@ class User extends Authenticatable
         try {
             return $this->role->hasPermissionTo($action);
         } catch (\Throwable $th) {
-            dd($action, Permission::find(121));
+            return false;
         }
     }  
 

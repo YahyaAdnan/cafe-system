@@ -176,14 +176,50 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update transactions']);
         Permission::create(['name' => 'delete transactions']);
 
+        Permission::create(['name' => 'list offers']);
+        Permission::create(['name' => 'view offers']);
+        Permission::create(['name' => 'create offers']);
+        Permission::create(['name' => 'update offers']);
+        Permission::create(['name' => 'delete offers']);
+
         Permission::create(['name' => 'create discount']);
+        Permission::create(['name' => 'create refund']);
+
+
+        Permission::create(['name' => 'list printers']);
+        Permission::create(['name' => 'view printers']);
+        Permission::create(['name' => 'create printers']);
+        Permission::create(['name' => 'update printers']);
+        Permission::create(['name' => 'delete printers']);
+
+
+        Permission::create(['name' => 'list rooms']);
+        Permission::create(['name' => 'view rooms']);
+        Permission::create(['name' => 'create rooms']);
+        Permission::create(['name' => 'update rooms']);
+        Permission::create(['name' => 'delete rooms']);
+
+        Permission::create(['name' => 'list settings']);
+        Permission::create(['name' => 'view settings']);
+        Permission::create(['name' => 'create settings']);
+        Permission::create(['name' => 'update settings']);
+        Permission::create(['name' => 'delete settings']);
+
+        Permission::create(['name' => 'list permissions']);
+        Permission::create(['name' => 'view permissions']);
+
+        Permission::create(['name' => 'list social_media']);
+        Permission::create(['name' => 'view social_media']);
+        Permission::create(['name' => 'create social_media']);
+        Permission::create(['name' => 'update social_media']);
+        Permission::create(['name' => 'delete social_media']);
 
         // Create admin role and assign all permissions
         $allPermissions = Permission::all();
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo($allPermissions);
 
-        $user = \App\Models\User::where('name', 'admin')->first();
+        // $user = \App\Models\User::where('name', 'admin')->first();
 
         // if ($user) {
         //     $user->assignRole($adminRole);
