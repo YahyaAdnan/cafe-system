@@ -13,4 +13,19 @@ class InventoryUnit extends Model
         'title',
     ];
     
+
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
+    public function isDeletable()
+    {
+        if($this->inventories->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

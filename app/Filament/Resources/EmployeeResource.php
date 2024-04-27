@@ -60,9 +60,6 @@ class EmployeeResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->checkIfRecordIsSelectableUsing(
-                fn(Employee $employee) => $employee->isDeletable()
-            )
             ->recordUrl(null);
     }
 

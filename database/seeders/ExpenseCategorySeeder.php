@@ -18,6 +18,10 @@ class ExpenseCategorySeeder extends Seeder
         ]);
 
         ExpenseCategory::create([
+            "title" => "Refunds"
+        ]);
+
+        ExpenseCategory::create([
             "title" => "Salaries"
         ]);
     }

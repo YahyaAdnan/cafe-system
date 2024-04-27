@@ -61,7 +61,9 @@ class InventoryUnitResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ]) ->checkIfRecordIsSelectableUsing(
+                fn(InventoryUnit $inventoryUnit) => $inventoryUnit->isDeletable()
+            );
     }
 
     public static function getRelations(): array

@@ -45,36 +45,39 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionsSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(SettingSeeder::class);
-        DailySale::factory(10)->create();
-         Room::factory(10)->create();
-      //  Printer::factory(10)->create();
-        DeliverType::factory(10)->create();
-        Employee::factory(10)->create();
-        ExpenseCategory::factory(10)->create();
-        Extra::factory(10)->create();
-        Ingredient::factory(10)->create();
-       // Inventory::factory(10)->create();
-      InventoryUnit::factory(10)->create();
-       // InventoryRecord::factory(10)->create();
-        Invoice::factory(10)->create();
-        ItemCategory::factory(10)->create();
-        Item::factory(10)->create();
-      //  ItemIngredient::factory(10)->create();
-        ItemSubcategory::factory(10)->create();
-        ItemType::factory(10)->create();
-        Order::factory(10)->create();
-      //  Payment::factory(10)->create();
-       PaymentMethod::factory(10)->create();
-        Price::factory(10)->create();
-        Setting::factory(10)->create();
-        SocialMedia::factory(10)->create();
-     //   Supplier::factory(10)->create();
-        Table::factory(10)->create();
-        Transaction::factory(10)->create();
-        Printer::create([
-            "title"=>"Printer 1",
-            "printer_id"=>"73259189",
-            "room_id"=>"1",
-        ]);
+        $this->call(ExpenseCategorySeeder::class);
+        $this->call(InventoryUnitSeeder::class);
+
+    //     DailySale::factory(10)->create();
+    //      Room::factory(10)->create();
+    //   //  Printer::factory(10)->create();
+    //     DeliverType::factory(10)->create();
+    //     Employee::factory(10)->create();
+    //     ExpenseCategory::factory(10)->create();
+    //     Extra::factory(10)->create();
+    //     Ingredient::factory(10)->create();
+    //    // Inventory::factory(10)->create();
+    //   InventoryUnit::factory(10)->create();
+    //    // InventoryRecord::factory(10)->create();
+    //     Invoice::factory(10)->create();
+    //     ItemCategory::factory(10)->create();
+    //     Item::factory(10)->create();
+    //   //  ItemIngredient::factory(10)->create();
+    //     ItemSubcategory::factory(10)->create();
+    //     ItemType::factory(10)->create();
+    //     Order::factory(10)->create();
+    //   //  Payment::factory(10)->create();
+    //    PaymentMethod::factory(10)->create();
+    //     Price::factory(10)->create();
+    //     Setting::factory(10)->create();
+    //     SocialMedia::factory(10)->create();
+    //  //   Supplier::factory(10)->create();
+    //     Table::factory(10)->create();
+    //     Transaction::factory(10)->create();
+    //     Printer::create([
+    //         "title"=>"Printer 1",
+    //         "printer_id"=>"73259189",
+    //         "room_id"=>"1",
+    //     ]);
     }
 }
