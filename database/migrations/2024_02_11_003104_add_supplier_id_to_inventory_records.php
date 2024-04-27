@@ -20,7 +20,7 @@ return new class extends Migration
                     ->references('id')
                     ->on('suppliers')
                     ->onUpdate('CASCADE')
-                    ->onDelete('CASCADE');
+                    ->onDelete('SET NULL');
         });
     }
 

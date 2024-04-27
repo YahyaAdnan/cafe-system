@@ -19,13 +19,13 @@ return new class extends Migration
 
             $table->boolean('dinning_in');
 
-            $table->unsignedBigInteger('table_id');
+            $table->unsignedBigInteger('table_id')->nullable();
             $table
                 ->foreign('table_id')
                 ->references('id')
                 ->on('tables')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+                ->onDelete('SET NULL');
 
             $table->unsignedInteger('amount');
             $table->unsignedInteger('remaining');

@@ -24,30 +24,29 @@ return new class extends Migration
 
             $table->string('title');
 
-            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('item_id')->nullable();
             $table
                 ->foreign('item_id')
                 ->references('id')
                 ->on('items')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+                ->onDelete('SET NULL');
 
-
-            $table->unsignedBigInteger('price_id');
+            $table->unsignedBigInteger('price_id')->nullable();
             $table
                 ->foreign('price_id')
                 ->references('id')
                 ->on('prices')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+                ->onDelete('SET NULL');
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table
                 ->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+                ->onDelete('SET NULL');
 
             $table->unsignedInteger('amount');
             $table->unsignedInteger('discount_fixed');

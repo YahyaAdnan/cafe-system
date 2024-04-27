@@ -24,17 +24,17 @@ return new class extends Migration
             
             $table->string('source');
             
-            $table->unsignedInteger('quantity')->default(0);
+            $table->float('quantity')->unsigned()->default(0);
             
             $table->enum('type', ['Increase', 'Decrease']);
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table
                 ->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE'); 
+                ->onDelete('SET NULL');
 
             $table->timestamps();
         });

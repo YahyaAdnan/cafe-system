@@ -24,21 +24,21 @@ return new class extends Migration
 
             $table->unsignedInteger('amount');
 
-            $table->unsignedBigInteger('payment_method_id');
+            $table->unsignedBigInteger('payment_method_id')->nullable();
             $table
                 ->foreign('payment_method_id')
                 ->references('id')
                 ->on('payment_methods')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+                ->onDelete('SET NULL');
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table
                 ->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+                ->onDelete('SET NULL');
 
             $table->text('note')->nullable();
 
