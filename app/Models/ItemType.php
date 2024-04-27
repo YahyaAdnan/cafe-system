@@ -15,7 +15,7 @@ class ItemType extends Model
         'title_ku',
         'image'
     ];
-    
+
     public function itemCategories()
     {
         return $this->hasMany(ItemCategory::class);
@@ -24,6 +24,11 @@ class ItemType extends Model
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function roomConfigs()
+    {
+        return $this->morphMany(RoomConfig::class,'roomable_type');
     }
 
     public function isDeletable()

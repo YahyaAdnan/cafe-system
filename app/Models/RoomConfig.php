@@ -14,6 +14,7 @@ class RoomConfig extends Model
         'roomable_type',
     ];
 
+
     public function roomable()
     {
         return $this->morphTo();

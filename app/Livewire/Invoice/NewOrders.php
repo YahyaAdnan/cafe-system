@@ -40,7 +40,7 @@ class NewOrders extends Component implements HasForms
         $this->form->fill(
             // whole form
             [
-                // repeater 
+                // repeater
                 'orders' => [
                     // default item start
                     [
@@ -85,7 +85,8 @@ class NewOrders extends Component implements HasForms
     public function create()
     {
         $this->printService = new PrintingService();
-        $this->form->getState();
+        $orderData = $this->form->getState();
+
         /**
          * must use $this->form->getState() to validate and get data
          * using $this->data is fine but it wont validate while form->getState() validates then returns the data
@@ -93,13 +94,22 @@ class NewOrders extends Component implements HasForms
          */
         OrdersForm::store([
             'invoice' => $this->invoice,
-            'orders' => $this->data['orders'],
+            'orders' => $orderData['orders'],
         ]);
 
 
+
         // Example usage of the PrintService
-        $printerId = "73259189"; // Define your printer ID
-        $orderContent = "Your order details here"; // Prepare the content you want to print
+        $printerId = "73259189"; // Define your printer ID , get based on room id
+
+        $orderContent = "";
+        foreach( $orderData['orders'] as $order){
+            $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
+            $quantity = $order['quantity'];
+            $orderContent.="Title : $title X Quanitity : $quantity \n";
+        }
+        $orderContent = "\n THANKS FOR COMING";
+
         $this->printService->printOrder($printerId, $orderContent);
 
 

@@ -16,10 +16,15 @@ class ItemCategory extends Model
         'title_ku',
         'image'
     ];
-    
+
     public function itemType()
     {
         return $this->belongsTo(ItemType::class);
+    }
+
+    public function roomConfigs()
+    {
+        return $this->morphMany(RoomConfig::class,'roomable_type');
     }
 
     public function items()

@@ -22,7 +22,7 @@ class Item extends Model
         'item_subcategory_id',
         'note',
     ];
-    
+
     public function available()
     {
         if(!$this->is_available)
@@ -37,8 +37,35 @@ class Item extends Model
                 return false;
             }
         }
-        
+
         return true;
+    }
+
+    public function  getAssociatedRoomConfig()
+    {
+        $roomConfig = RoomConfig::where('roomable_type',self::class)
+                                 ->where('roomable_id',$this->id)
+                                ->first();
+        if ($roomConfig)
+            return $roomConfig->room_id;
+
+        $roomConfig = RoomConfig::where('roomable_type',ItemCategory::class)
+            ->where('roomable_id',$this->item_category_id)
+            ->first();
+        if ($roomConfig)
+            return $roomConfig->room_id;
+
+        $roomConfig = RoomConfig::where('roomable_type',ItemType::class)
+            ->where('roomable_id',$this->item_type_id)
+            ->first();
+        if ($roomConfig)
+            return $roomConfig->room_id;
+            else{
+                $roomConfig = null;
+                return  $roomConfig;
+            }
+
+
     }
 
     public function itemCategory()
@@ -50,7 +77,7 @@ class Item extends Model
     {
         return $this->belongsToMany(Extra::class, 'extra_items', 'item_id', 'extra_id');
     }
-    
+
     public function itemSubcategory()
     {
         return $this->belongsTo(ItemSubcategory::class);
