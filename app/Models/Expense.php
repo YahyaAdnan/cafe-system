@@ -27,19 +27,17 @@ class Expense extends Model
         static::creating(function ($model) 
         {
             $model->user_id = Auth::id();
-            $model->title = "Purchasing " . date('Y/m/d H:i');
+            $model->title = ExpenseCategory::find($model->expense_category_id)->title . ' ' . date('Y/m/d H:i');
         });
 
         static::created(function ($model) {
-            $transaction = new Transaction([
-                'amount' => $model->amount,
+            $transaction =  Transaction::create([
+                'amount' => - $model->amount,
                 'user_id' => $model->user_id,
                 'payment_method_id' => $model->payment_method_id,
-                'transactionable_type' => get_class($model),
+                'transactionable_type' => 'App\Models\Expense',
                 'transactionable_id' => $model->id,
             ]);
-
-            $model->transactions()->save($transaction);
         });
     }
 

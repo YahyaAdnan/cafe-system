@@ -34,7 +34,7 @@ class Payment extends Model
                 'amount' => $model->amount,
                 'user_id' => Auth::id(),
                 'payment_method_id' => $model->payment_method_id,
-                'transactionable_type' => 'App\Models\Transaction',
+                'transactionable_type' => 'App\Models\Payment',
                 'transactionable_id' => $model->id,
             ]);
 
