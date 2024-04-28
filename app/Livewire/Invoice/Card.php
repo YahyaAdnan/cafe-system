@@ -15,7 +15,21 @@ class Card extends Component
     {
         $this->invoice = $record;
     }    
-        
+
+    public function done()
+    {
+        if($this->invoice->remaining != 0)
+        {
+            return;
+        }
+
+        $this->invoice->update([
+            'active' => 0
+        ]);
+
+        return redirect('tables-cashier');
+    }
+
     public function render()
     {
         return view('livewire.invoice.card');

@@ -20,6 +20,7 @@ class RoomConfigResource extends Resource
     protected static ?string $model = RoomConfig::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Configs';
 
     public static function form(Form $form): Form
     {
