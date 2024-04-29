@@ -126,7 +126,7 @@ class PaymentResource extends Resource
                                 function (Builder $query, $date) use ($data)
                                 {
                                     if(!$data['range']) {return;}
-                                    return $query->whereDate('created_until', '<=', $date);
+                                    return $query->whereDate('created_at', '<=', $date);
                                 }
                             )->when(
                                 $data['dinning_in'],

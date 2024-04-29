@@ -79,7 +79,7 @@ class Orders extends Component implements HasForms, HasTable
                 BulkActionGroup::make([
                     BulkAction::make('delete')
                         ->visible($this->invoice->active)
-                        ->action(fn (Collection $records) => $records->each->delete())
+                        // ->action(fn () => $records->each->delete())
                         ->color('danger'),
                     BulkAction::make('Move')
                         ->form([
@@ -106,7 +106,9 @@ class Orders extends Component implements HasForms, HasTable
                         })
                         ->color('warning')
                 ]),
-            ])
+            ])->checkIfRecordIsSelectableUsing(
+                fn() => $this->invoice->paid > 0
+            )
             ->paginated(false);
     }
 
