@@ -17,7 +17,9 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use App\Services\InvoiceAction;
+
 use Livewire\Component;
 
 class Orders extends Component implements HasForms, HasTable
@@ -78,9 +80,16 @@ class Orders extends Component implements HasForms, HasTable
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('delete')
-                        ->visible($this->invoice->active)
-                        // ->action(fn () => $records->each->delete())
-                        ->color('danger'),
+                        ->visible(fn() => Auth::user()->authorized('delete orders'))
+                        ->color('danger')
+                        ->action(function(Collection $records){
+                            foreach ($records as $key => $order) 
+                            {
+                                $order->delete();
+                            }
+                            Invoice::find($this->invoice->id)->updateAmount();
+                            return redirect("invoices/". $this->invoice->id);
+                        }),
                     BulkAction::make('Move')
                         ->form([
                             Select::make('invoice')
@@ -107,7 +116,7 @@ class Orders extends Component implements HasForms, HasTable
                         ->color('warning')
                 ]),
             ])->checkIfRecordIsSelectableUsing(
-                fn() => $this->invoice->paid > 0
+                fn() => $this->invoice->remaining == $this->invoice->amount 
             )
             ->paginated(false);
     }

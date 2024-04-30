@@ -4,6 +4,7 @@ namespace App\Livewire\Cashier;
 
 use Livewire\Component;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Invoice extends Component 
 {
@@ -16,12 +17,29 @@ class Invoice extends Component
     {
         $this->record = $record;
 
-        $this->navigators = array(
-            '1' => 'New Orders',
-            '2' => 'Orders',
-            '3' => 'Payments',
-        );
+        $this->getNavigators();
+
         $this->selected_nav = 1;
+    }
+
+    public function getNavigators()
+    {
+        $this->navigators = array();
+
+        if(Auth::user()->authorized('create orders'))
+        {
+            $this->navigators[1] = 'New Orders';
+        }
+
+        if(Auth::user()->authorized('list orders'))
+        {
+            $this->navigators[2] = 'Orders';
+        }
+
+        if(Auth::user()->authorized('create payments'))
+        {
+            $this->navigators[3] = 'Payments';
+        }
     }
 
     public function render()

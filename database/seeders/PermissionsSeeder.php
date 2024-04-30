@@ -39,6 +39,8 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update orders']);
         Permission::create(['name' => 'delete orders']);
 
+        Permission::create(['name' => 'view current invoices']);
+
         // Permisions for users
         $currentPermissions = Permission::all();
         $userRole = Role::create(['name' => 'user']);
