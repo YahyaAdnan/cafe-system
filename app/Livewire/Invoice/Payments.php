@@ -3,6 +3,7 @@
 namespace App\Livewire\Invoice;
 
 use App\Models\PaymentMethod;
+use App\Models\Payment;
 use App\Models\Invoice;
 use App\Models\Order;
 use Filament\Forms\Get;
@@ -114,7 +115,7 @@ class Payments extends Component implements HasForms, HasTable
                                 ->maxLength(64),
                         ])
                         ->columns(12),
-                    ]),
+                    ])->successRedirectUrl($this->invoice->id),
             ])
             ->actions([
                 EditAction::make()
