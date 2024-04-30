@@ -47,7 +47,12 @@ class PaymentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                Select::make('payment_method_id')
+                    ->required()
+                    ->searchable()
+                    ->options(PaymentMethod::pluck('title', 'id'))
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -74,6 +79,7 @@ class PaymentResource extends Resource
                 ]),
                 TextColumn::make('paymentMethod.title')->toggleable(true)->sortable(),
                 TextColumn::make('user.name')->toggleable(true)->sortable(),
+                TextColumn::make('created_at')->sortable(),
             ])
             ->filters([
                 Filter::make('created_at')
@@ -187,7 +193,7 @@ class PaymentResource extends Resource
         return [
             'index' => Pages\ListPayments::route('/'),
             // 'create' => Pages\CreatePayment::route('/create'),
-            // 'edit' => Pages\EditPayment::route('/{record}/edit'),
+            'edit' => Pages\EditPayment::route('/{record}/edit'),
         ];
     }
 }

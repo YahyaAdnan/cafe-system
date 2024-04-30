@@ -39,6 +39,24 @@ class Expense extends Model
                 'transactionable_id' => $model->id,
             ]);
         });
+
+        static::updated(function ($model) {
+            $model->transactions->first()->update([
+                'payment_method_id' => $model->payment_method_id,
+                'amount' => $model->amount,
+            ]);
+        });
+
+        static::deleted(function ($model) {
+            if(!$model->isDeletable())
+            {
+                abort(404);
+            }
+        });
+
+        static::deleted(function ($model) {
+            $model->transactions->first()->delete();
+        });
     }
 
     protected $table = 'expenses';
@@ -68,4 +86,13 @@ class Expense extends Model
         return $this->morphMany(Transaction::class, 'transactionable');
     }
 
+    public function isDeletable()
+    {
+        if($this->inventoryRecords->isNotEmpty())
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

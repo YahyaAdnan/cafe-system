@@ -40,6 +40,13 @@ class Payment extends Model
 
             $model->invoice->updateAmount();
         });
+
+
+        static::updated(function ($model) {
+            $model->transactions->first()->update([
+                'payment_method_id' => $model->payment_method_id
+            ]);
+        });
     }
 
     public function invoice()
