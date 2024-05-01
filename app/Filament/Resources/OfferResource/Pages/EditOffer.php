@@ -7,6 +7,8 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Offer;
+use App\Models\OfferEntity;
+use App\Services\OfferService;
 
 class EditOffer extends EditRecord
 {
@@ -27,6 +29,7 @@ class EditOffer extends EditRecord
         foreach ($offer->offerEntities as $key => $offerEntity)
         {
             $data['offerEntities'][] = array(
+                'id' => $offerEntity->id,
                 'items' => $offerEntity->items->pluck('id')->toArray(),
                 'price' => $offerEntity->price,
                 'show' => $offerEntity->show,
@@ -39,6 +42,34 @@ class EditOffer extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        //TO-DO: MAKE IT HANDLE THE OUTPUTS.
+        // $record->update($data);
+        // dd($record->offerEntities->whereNotIn('id', array_column( $data['offerEntities'], 'id')));
+        // dd(array_column( $data['offerEntities'], 'id'));
+        $deletedEntities = $record->offerEntities
+            ->whereNotIn('id', array_column( $data['offerEntities'], 'id'));
+        foreach ($deletedEntities as $key => $deletedEntity) 
+        {
+            $deletedEntity->delete();
+        }
+
+        foreach ($data['offerEntities'] as $key => $offerEntity) 
+        {
+            // if the 
+            if(isset($offerEntity['id']))
+            {
+                OfferService::update($offerEntity);
+            }
+            else
+            {
+                OfferService::store(
+                    array_merge(
+                        $offerEntity,
+                        ['offer_id' => $record->id]
+                    )
+                );
+            }
+        }
+
+        return $record;
     }
 }
