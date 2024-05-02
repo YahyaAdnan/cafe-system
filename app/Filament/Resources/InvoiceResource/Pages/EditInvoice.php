@@ -15,10 +15,22 @@ use App\Services\DiscountService;
 use App\Models\Table as Seating;
 use App\Models\Employee;
 use App\Models\DeliverType;
+// TESTING
+// use App\Services\GenerateReceipt;
+// use App\Models\Invoice;
 
 class EditInvoice extends EditRecord
 {
     protected static string $resource = InvoiceResource::class;
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if(!$data['active']){abort(403);}
+        // dd(GenerateReceipt::generate([
+        //     'lang' => 'title',
+        //     'invoice' => Invoice::find($data['id']),
+        // ]));
+    }
 
     public function form(Form $form): Form
     {

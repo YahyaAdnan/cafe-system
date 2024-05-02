@@ -60,14 +60,17 @@
         <div class="w-1/2 flex justify-end">
             <div class="flex flex-col">
                 @if($invoice->active)
-                <a href="/invoices/{{$invoice->id}}/edit" class="inline-block border rounded py-2 px-4 border-2 mb-2">
-                    Edit
-                </a>
-                @if($invoice->remaining == 0)
-                    <button class="inline-block border rounded py-2 px-4 border-2" wire:click="done">
-                        Done
-                    </button>
-                @endif
+                    <a href="/invoices/{{$invoice->id}}/edit" class="inline-block border rounded py-2 px-4 border-2 mb-2">
+                        Edit
+                    </a>
+                    @if($invoice->remaining == 0)
+                        <button class="inline-block border rounded py-2 px-4 border-2" wire:click="done">
+                            Done
+                        </button>
+                    @endif
+                    {{-- TO-DO: Make a drop down buttons, or a button that pop up a modal to choose lang (English => 'title', Arabic => 'title_ar' , Kurdish => 'title_ku')--}}
+                    {{-- TO-DO: Call GenerateReceipt from services (check the notes to understand what do with) it will returns array. --}}
+                    {{-- TO-DO: According to the returned array print a receipt. (Check the image sent, first list the items then the totals --}}
                 @endif
             </div>
         </div>        
