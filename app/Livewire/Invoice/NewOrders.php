@@ -95,12 +95,11 @@ class NewOrders extends Component implements HasForms
             'orders' => $orderData['orders'],
         ]);
 
-        if (!empty($orderData['orders'])) {
+
             $firstOrder = $orderData['orders'][0];
             $item = Item::find($firstOrder['item_id']);
-            if ($item) {
                 $roomId = $item->getAssociatedRoomConfig();
-                $printer = "73300069";
+                $printer = "73300071";
                     $orderContent = "******** ORDER SUMMARY ********\n\n";
                     foreach($orderData['orders'] as $order) {
                         $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
@@ -110,8 +109,8 @@ class NewOrders extends Component implements HasForms
                     $orderContent .= "\n****** THANKS FOR COMING ******";
                     $this->printService->printOrder($printer, $orderContent);
 
-            }
-        }
+
+
 
         return redirect('invoices/' . $this->invoice->id);
     }
