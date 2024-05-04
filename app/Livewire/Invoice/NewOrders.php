@@ -91,29 +91,29 @@ class NewOrders extends Component implements HasForms
         $this->printService = new PrintingService();
         $orderData = $this->form->getState();
 
+        /**
+         * must use $this->form->getState() to validate and get data
+         * using $this->data is fine but it wont validate while form->getState() validates then returns the data
+         * so u can store it inside a variable and treat it like $this->data
+         */
         OrdersForm::store([
             'invoice' => $this->invoice,
             'orders' => $orderData['orders'],
         ]);
 
-        $orderContent = "";
+        $firstOrder = $orderData['orders'][0]['item_id'];
+        $item = Item::find($firstOrder);
+        $roomId = $item->getAssociatedRoomConfig();
+        $printer = Printer::where('room_id', $roomId)->first();
+
         foreach($orderData['orders'] as $order) {
-            // Attempt to find the title directly from the order or fallback to related item's title
-            $item = Item::find($order['item_id']);
-            $title = $order['special_order'] && !empty($order['title']) ? $order['title'] : $item->title;
+            $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
             $quantity = $order['quantity'];
-            $orderContent .= "Title: $title X Quantity: $quantity\n";
+            $orderContent = "Title : $title X Quanitity : $quantity \n";
         }
-        $orderContent .= "hello\n";
+        $orderContent .= "hello \n";
 
-        // Find the printer based on the first item's associated room
-
-            $roomId = $item->getAssociatedRoomConfig();
-            $printer = Printer::where('room_id', $roomId)->first();
-
-                $this->printService->printOrder($printer, $orderContent);
-
-
+        $this->printService->printOrder($printer,$orderContent);
 
         return redirect('invoices/' . $this->invoice->id);
     }
