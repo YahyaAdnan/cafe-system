@@ -118,16 +118,13 @@ class NewOrders extends Component implements HasForms
             $printer = Printer::where('room_id', $roomId)->first();
             if ($printer) {
                 $printerId = $printer->printer_id;
-                $orderContent = "******** ORDER SUMMARY ********\n\n"; // Decorative Header
+                $orderContent = "";
                 foreach($orders as $order) {
                     $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
-                    // Shorten title if necessary
-                    $shortTitle = strlen($title) > 15 ? substr($title, 0, 12) . '...' : $title;
                     $quantity = $order['quantity'];
-                    $price = $order['price']; // Assuming price is available
-                    $orderContent .= sprintf("%-15s %2d pcs @ $%4.2f each\n", $shortTitle, $quantity, $price); // Adjusted format with price
+                    $orderContent .= "Title : $title X Quantity : $quantity \n";
                 }
-                $orderContent .= "\n****** THANKS FOR COMING ******"; // Decorative Footer
+                $orderContent .= "\n THANKS FOR COMING";
                 // Print all orders for the current room
                 $this->printService->printOrder($printerId, $orderContent);
             }
