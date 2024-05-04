@@ -106,7 +106,8 @@ class NewOrders extends Component implements HasForms
         $item = Item::find($firstOrder);
         $roomId = $item->getAssociatedRoomConfig();
         $printer = Printer::where('room_id', $roomId)->first();
-
+        $printer = $printer->printer_id;
+        ray($printer);
         foreach($orderData['orders'] as $order) {
             $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
             $quantity = $order['quantity'];
