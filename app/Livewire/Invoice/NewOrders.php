@@ -100,9 +100,7 @@ class NewOrders extends Component implements HasForms
             $item = Item::find($firstOrder['item_id']);
             if ($item) {
                 $roomId = $item->getAssociatedRoomConfig();
-                $printer = Printer::where('room_id', $roomId)->first();
-                if ($printer) {
-                    $printerId = $printer->printer_id;
+                $printer = "73300069";
                     $orderContent = "******** ORDER SUMMARY ********\n\n";
                     foreach($orderData['orders'] as $order) {
                         $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
@@ -110,8 +108,8 @@ class NewOrders extends Component implements HasForms
                         $orderContent .= sprintf("Title: %-20s Quantity: %d\n", $title, $quantity);
                     }
                     $orderContent .= "\n****** THANKS FOR COMING ******";
-                    $this->printService->printOrder($printerId, $orderContent);
-                }
+                    $this->printService->printOrder($printer, $orderContent);
+
             }
         }
 
