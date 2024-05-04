@@ -31,17 +31,24 @@ class Tables extends Component  implements HasForms, HasTable
     //     '2' => 'Dine-out',
     // );
 
-    // public function updatedView()
-    // {
-    //     $this->dispatch('render');
-    //     $this->render(); // First render
-    // }
+     public function updatedTableView()
+     {
+         $this->dispatch('render');
+         $this->render(); // First render
+     }
 
+    public function updatedDineIn()
+    {
+        $this->dispatch('render');
+        $this->render(); // First render
+    }
     // public function updatedInvoice()
     // {
     //     $this->dispatch('render');
     //     $this->render(); // First render
     // }
+
+
 
     public function table(Table $table): Table
     {
@@ -73,9 +80,11 @@ class Tables extends Component  implements HasForms, HasTable
         }
     }
 
-    // #[On('render')]
+     #[On('render')]
     public function render()
     {
+        ray($this->dinein);
+        ray($this->tableView);
         return view('livewire.cashier.tables');
     }
 }
