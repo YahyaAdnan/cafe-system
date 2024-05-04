@@ -91,43 +91,28 @@ class NewOrders extends Component implements HasForms
         $this->printService = new PrintingService();
         $orderData = $this->form->getState();
 
-        /**
-         * must use $this->form->getState() to validate and get data
-         * using $this->data is fine but it wont validate while form->getState() validates then returns the data
-         * so u can store it inside a variable and treat it like $this->data
-         */
         OrdersForm::store([
             'invoice' => $this->invoice,
             'orders' => $orderData['orders'],
         ]);
 
-        $ordersByRoom = [];
-        foreach($orderData['orders'] as $order){
+        $orderContent = "";
+        foreach($orderData['orders'] as $order) {
+            // Attempt to find the title directly from the order or fallback to related item's title
             $item = Item::find($order['item_id']);
-            if ($item) {
-                $roomId = $item->getAssociatedRoomConfig();
-                if (!isset($ordersByRoom[$roomId])) {
-                    $ordersByRoom[$roomId] = [];
-                }
-                $ordersByRoom[$roomId][] = $order;
-            }
+            $title = $order['special_order'] && !empty($order['title']) ? $order['title'] : $item->title;
+            $quantity = $order['quantity'];
+            $orderContent .= "Title: $title X Quantity: $quantity\n";
         }
+        $orderContent .= "hello\n";
 
-        foreach($ordersByRoom as $roomId => $orders) {
+        // Find the printer based on the first item's associated room
+
+            $roomId = $item->getAssociatedRoomConfig();
             $printer = Printer::where('room_id', $roomId)->first();
 
-                $printerId = $printer->printer_id;
-                $orderContent = "";
-                foreach($orders as $order) {
-                    $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
-                    $quantity = $order['quantity'];
-                    $orderContent .= "Title : $title X Quantity : $quantity \n";
-                }
-                $orderContent .= "\n THANKS FOR COMING";
-                // Print all orders for the current room
-                $this->printService->printOrder($printerId, $orderContent);
+                $this->printService->printOrder($printer, $orderContent);
 
-        }
 
 
         return redirect('invoices/' . $this->invoice->id);
