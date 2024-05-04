@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Price;
 use App\Models\Invoice;
 use App\Models\Item;
+use App\Models\Printer;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -100,20 +101,34 @@ class NewOrders extends Component implements HasForms
             'orders' => $orderData['orders'],
         ]);
 
-
-
-        // Example usage of the PrintService
-        $printerId = "73259189"; // Define your printer ID , get based on room id
-
-        $orderContent = "";
-        foreach( $orderData['orders'] as $order){
-            $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
-            $quantity = $order['quantity'];
-            $orderContent.="Title : $title X Quanitity : $quantity \n";
+        $ordersByRoom = [];
+        foreach($orderData['orders'] as $order){
+            $item = Item::find($order['item_id']);
+            if ($item) {
+                $roomId = $item->getAssociatedRoomConfig();
+                if (!isset($ordersByRoom[$roomId])) {
+                    $ordersByRoom[$roomId] = [];
+                }
+                $ordersByRoom[$roomId][] = $order;
+            }
         }
-        $orderContent = "\n THANKS FOR COMING";
 
-        $this->printService->printOrder($printerId, $orderContent);
+
+        foreach($ordersByRoom as $roomId => $orders) {
+            $printer = Printer::where('room_id', $roomId)->first();
+            if ($printer) {
+                $printerId = $printer->printer_id;
+                $orderContent = "";
+                foreach($orders as $order) {
+                    $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
+                    $quantity = $order['quantity'];
+                    $orderContent .= "Title : $title X Quantity : $quantity \n";
+                }
+                $orderContent .= "\n THANKS FOR COMING";
+                // Print all orders for the current room
+                $this->printService->printOrder($printerId, $orderContent);
+            }
+        }
 
 
         return redirect('invoices/' . $this->invoice->id);
