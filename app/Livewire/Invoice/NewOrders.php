@@ -85,40 +85,50 @@ class NewOrders extends Component implements HasForms
             ->live()
             ->statePath('data');
     }
+
     public function create()
     {
         $this->printService = new PrintingService();
         $orderData = $this->form->getState();
 
+        /**
+         * must use $this->form->getState() to validate and get data
+         * using $this->data is fine but it wont validate while form->getState() validates then returns the data
+         * so u can store it inside a variable and treat it like $this->data
+         */
         OrdersForm::store([
             'invoice' => $this->invoice,
             'orders' => $orderData['orders'],
         ]);
 
-        // Find the first non-special order with an item
-        $firstValidOrder = null;
-        foreach ($this->data['orders'] as $order) {
-            if (!$order['special_order'] && isset($order['item_id'])) {
-                $firstValidOrder = $order;
-                break;
+        $ordersByRoom = [];
+        foreach($orderData['orders'] as $order){
+            $item = Item::find($order['item_id']);
+            if ($item) {
+                $roomId = $item->getAssociatedRoomConfig();
+                if (!isset($ordersByRoom[$roomId])) {
+                    $ordersByRoom[$roomId] = [];
+                }
+                $ordersByRoom[$roomId][] = $order;
             }
         }
 
-        if ($firstValidOrder) {
-            $item = Item::find($firstValidOrder['item_id']);
+        foreach($ordersByRoom as $roomId => $orders) {
+            $printer = Printer::where('room_id', $roomId)->first();
 
+                $printerId = $printer->printer_id;
+                $orderContent = "";
+                foreach($orders as $order) {
+                    $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
+                    $quantity = $order['quantity'];
+                    $orderContent .= "Title : $title X Quantity : $quantity \n";
+                }
+                $orderContent .= "\n THANKS FOR COMING";
+                // Print all orders for the current room
+                $this->printService->printOrder($printerId, $orderContent);
 
-            $roomId = $item->getAssociatedRoomConfig();
-            $printer = "73300071";
-            $orderContent = "******** ORDER SUMMARY ********\n\n";
-            foreach($this->data['orders'] as $order) {
-                $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
-                $quantity = $order['quantity'];
-                $orderContent .= sprintf("Title: %-20s Quantity: %d\n", $title, $quantity);
-            }
-            $orderContent .= "\n****** THANKS FOR COMING ******";
-            $this->printService->printOrder($printer, $orderContent);
         }
+
 
         return redirect('invoices/' . $this->invoice->id);
     }
