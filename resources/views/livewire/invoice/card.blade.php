@@ -71,7 +71,7 @@
                         </button>
                     @endif
                     <select wire:model.live="selectedLanguage">
-                        <option value="title">English</option>
+                        <option value="title_en">English</option>
                         <option value="title_ar">Arabic</option>
                         <option value="title_ku">Kurdish</option>
                     </select>

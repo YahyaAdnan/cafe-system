@@ -11,7 +11,7 @@ class Card extends Component
 {
     // MODEL.
     public Invoice $invoice;
-    public $selectedLanguage = 'en'; // Default language
+    public $selectedLanguage = 'title_en'; // Default language
     public $receiptData;
     public function mount(Model $record)
     {
