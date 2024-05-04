@@ -43,11 +43,12 @@ class Item extends Model
 
     public function  getAssociatedRoomConfig()
     {
-        $roomConfig = RoomConfig::where('roomable_type',self::class)
-                                 ->where('roomable_id',$this->id)
-                                ->first();
+        $roomConfig = RoomConfig::where('roomable_type',ItemType::class)
+            ->where('roomable_id',$this->item_type_id)
+            ->first();
         if ($roomConfig)
             return $roomConfig->room_id;
+
 
         $roomConfig = RoomConfig::where('roomable_type',ItemCategory::class)
             ->where('roomable_id',$this->item_category_id)
@@ -55,9 +56,9 @@ class Item extends Model
         if ($roomConfig)
             return $roomConfig->room_id;
 
-        $roomConfig = RoomConfig::where('roomable_type',ItemType::class)
-            ->where('roomable_id',$this->item_type_id)
-            ->first();
+        $roomConfig = RoomConfig::where('roomable_type',self::class)
+                                 ->where('roomable_id',$this->id)
+                                ->first();
         if ($roomConfig)
             return $roomConfig->room_id;
             else{
