@@ -106,6 +106,8 @@ class NewOrders extends Component implements HasForms
 
         if ($firstValidOrder) {
             $item = Item::find($firstValidOrder['item_id']);
+
+
             $roomId = $item->getAssociatedRoomConfig();
             $printer = "73300071";
             $orderContent = "******** ORDER SUMMARY ********\n\n";
