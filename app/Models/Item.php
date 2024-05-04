@@ -61,12 +61,8 @@ class Item extends Model
                                 ->first();
         if ($roomConfig)
             return $roomConfig->room_id;
-            else{
-                $roomConfig = null;
-                return  $roomConfig;
-            }
 
-
+        return Room::where('cashier', 1)->first()->id;
     }
 
     public function itemCategory()

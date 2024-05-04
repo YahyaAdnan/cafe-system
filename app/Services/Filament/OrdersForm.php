@@ -35,6 +35,7 @@ class OrdersForm
                 ->visible(fn (Get $get)=>  !$get('special_order'))
                 ->searchable()
                 ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
+                ->preload()
                 ->options(Price::activePrices())
                 ->required()
                 ->live(),

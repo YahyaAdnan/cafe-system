@@ -101,45 +101,13 @@ class NewOrders extends Component implements HasForms
             'invoice' => $this->invoice,
             'orders' => $orderData['orders'],
         ]);
-
-        $firstOrder = Price::find($orderData['orders'][0]['item_id'])->item_id;
-        ray($firstOrder);
-        $item = Item::find($firstOrder);
-        $roomId = $item->getAssociatedRoomConfig();
-        $printer = Printer::where('room_id', $roomId)->first();
-        $printer = $printer->printer_id;
-        ray($printer);
-        $reciptContent = $this->generateReceiptContent($orderData);
-        $this->printService->printOrder($printer,$reciptContent);
-
+        
+        $this->printService->printersOrders($orderData);
+            
         return redirect('invoices/' . $this->invoice->id);
     }
 
-    protected function generateReceiptContent($orderData)
-    {
-        $receiptContent = ""; // Initialize receipt content
 
-        foreach($orderData['orders'] as $order) {
-            $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
-            $quantity = $order['quantity'];
-            $receiptContent .= "Title: $title X Quantity: $quantity\n";
-        }
-
-        // Add any additional content to the receipt here
-        $receiptContent .= "Thank you for your order!\n";
-
-        // Assuming the ReceiptPrinter class or similar functionality is available
-        // You might need to replace this with the actual method to generate receipt content
-        $receipt = (new ReceiptPrinter())
-            ->centerAlign()
-            ->text('Central Perk')
-            ->line()
-            ->leftAlign()
-            ->text($receiptContent)
-            ->cut();
-
-        return (string) $receipt;
-    }
 
     public function render()
     {
