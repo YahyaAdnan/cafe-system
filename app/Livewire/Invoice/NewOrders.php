@@ -95,23 +95,28 @@ class NewOrders extends Component implements HasForms
             'orders' => $orderData['orders'],
         ]);
 
-
-
-        $firstOrder = $this->data['orders'][0];
-        $item = Item::find($firstOrder['item_id']);
-        $roomId = $item->getAssociatedRoomConfig();
-        $printer = "73300071";
-        $orderContent = "******** ORDER SUMMARY ********\n\n";
-        foreach($this->data['orders'] as $order) {
-            $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
-            $quantity = $order['quantity'];
-            $orderContent .= sprintf("Title: %-20s Quantity: %d\n", $title, $quantity);
+        // Find the first non-special order with an item
+        $firstValidOrder = null;
+        foreach ($this->data['orders'] as $order) {
+            if (!$order['special_order'] && isset($order['item_id'])) {
+                $firstValidOrder = $order;
+                break;
+            }
         }
-        $orderContent .= "\n****** THANKS FOR COMING ******";
-        $this->printService->printOrder($printer, $orderContent);
 
-
-
+        if ($firstValidOrder) {
+            $item = Item::find($firstValidOrder['item_id']);
+            $roomId = $item->getAssociatedRoomConfig();
+            $printer = "73300071";
+            $orderContent = "******** ORDER SUMMARY ********\n\n";
+            foreach($this->data['orders'] as $order) {
+                $title = $order['special_order'] ? $order['title'] : Item::find($order['item_id'])->title;
+                $quantity = $order['quantity'];
+                $orderContent .= sprintf("Title: %-20s Quantity: %d\n", $title, $quantity);
+            }
+            $orderContent .= "\n****** THANKS FOR COMING ******";
+            $this->printService->printOrder($printer, $orderContent);
+        }
 
         return redirect('invoices/' . $this->invoice->id);
     }
