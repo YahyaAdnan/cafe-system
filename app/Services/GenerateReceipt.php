@@ -22,7 +22,7 @@ class GenerateReceipt
             ->groupBy('title', 'total_amount', 'price_id')
             ->get()
             ->toArray();
-        
+
         $result['total'] = array();
 
         // If they have taxes it must be shown in receipt.
@@ -40,7 +40,7 @@ class GenerateReceipt
         $result['total']['amount'] = $data['invoice']->amount;
         $result['total']['discount_rate'] = $data['invoice']->discount_rate;
         $result['total']['discount_fixed'] = $data['invoice']->discount_fixed;
+        return $result;
 
-        dd($result);
     }
 }

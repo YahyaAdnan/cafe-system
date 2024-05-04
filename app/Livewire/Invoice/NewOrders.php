@@ -75,10 +75,13 @@ class NewOrders extends Component implements HasForms
                         $action->color(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? Color::Gray:Color::Red);
                         $action->icon(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? 'heroicon-m-no-symbol':'heroicon-s-trash');
                     })
+
                     ->required()
                     ->addActionLabel('Add Order')
                     ->columns(12)
             ])
+
+            ->live()
             ->statePath('data');
     }
 

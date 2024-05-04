@@ -29,7 +29,7 @@
                         />
                     </span>
                     {{$invoice->employee->name}}
-                </span>      
+                </span>
                 @endif
                 @if($invoice->table_id)
                 <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
@@ -41,7 +41,7 @@
                         />
                     </span>
                     {{$invoice->table->title}}
-                </span>      
+                </span>
                 @endif
                 @if($invoice->deliver_type_id)
                 <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
@@ -53,10 +53,12 @@
                         />
                     </span>
                     {{$invoice->deliverType->title}}
-                </span>      
+                </span>
                 @endif
             </div>
         </div>
+        <button wire:click.live="manualGenerateReceipt">Generate Receipt Manually</button>
+
         <div class="w-1/2 flex justify-end">
             <div class="flex flex-col">
                 @if($invoice->active)
@@ -68,11 +70,47 @@
                             Done
                         </button>
                     @endif
+                    <select wire:model.live="selectedLanguage">
+                        <option value="title">English</option>
+                        <option value="title_ar">Arabic</option>
+                        <option value="title_ku">Kurdish</option>
+                    </select>
+
                     {{-- TO-DO: Make a drop down buttons, or a button that pop up a modal to choose lang (English => 'title', Arabic => 'title_ar' , Kurdish => 'title_ku')--}}
                     {{-- TO-DO: Call GenerateReceipt from services (check the notes to understand what do with) it will returns array. --}}
                     {{-- TO-DO: According to the returned array print a receipt. (Check the image sent, first list the items then the totals --}}
+
+                    @if(isset($receiptData['orders']))
+
+                        <div style="text-align: center;">
+                            <h2>CENTRAL PERK</h2>
+                            <p>{{ now()->toFormattedDateString() }}</p>
+                            <hr>
+                            @foreach($receiptData['orders'] as $order)
+                                <div>
+                                    {{ $order->title }} x {{ $order->count }}
+                                    <span style="float: right;">{{ number_format($order->total_amount, 2) }}</span>
+                                </div>
+                            @endforeach
+                            <hr>
+                            <div>
+                                <strong>Total Price:</strong>
+                                <span style="float: right;">{{ number_format($receiptData['total']['amount'], 2) }}</span>
+                            </div>
+                            <div>
+                                <strong>Discounts:</strong>
+                                <span style="float: right;">-{{ number_format($receiptData['total']['discount_fixed'], 2) }}</span>
+                            </div>
+                            <hr>
+                            <div>
+                                <strong>Price After Discounts:</strong>
+                                <span style="float: right;">{{ number_format($receiptData['total']['amount'] - $receiptData['total']['discount_fixed'], 2) }}</span>
+                            </div>
+                        </div>
+                    @endif
+
                 @endif
             </div>
-        </div>        
-    </div>    
+        </div>
+    </div>
 </div>

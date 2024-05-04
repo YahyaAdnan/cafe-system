@@ -11,11 +11,11 @@ class TablesCashier extends Page
 
     protected static string $view = 'filament.pages.tables-cashier';
 
-    public function mount()
-    {
-        if(!Auth::user()->authorized('view current invoices'))
-        {
-            abort(403);
-        }
-    }
+//    public function mount()
+//    {
+//        if(!Auth::user()->authorized('view current invoices'))
+//        {
+//            abort(403);
+//        }
+//    }
 }
