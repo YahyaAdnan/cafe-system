@@ -101,7 +101,8 @@ class NewOrders extends Component implements HasForms
             'orders' => $orderData['orders'],
         ]);
 
-        $firstOrder = $orderData['orders'][0]['item_id'];
+        $firstOrder = Price::find($orderData['orders'][0]['item_id'])->item_id;
+        ray($firstOrder);
         $item = Item::find($firstOrder);
         $roomId = $item->getAssociatedRoomConfig();
         $printer = Printer::where('room_id', $roomId)->first();
