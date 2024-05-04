@@ -22,6 +22,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
+use Rawilk\Printing\Receipts\ReceiptPrinter;
 
 class NewOrders extends Component implements HasForms
 {
@@ -108,16 +109,36 @@ class NewOrders extends Component implements HasForms
         $printer = Printer::where('room_id', $roomId)->first();
         $printer = $printer->printer_id;
         ray($printer);
+        $reciptContent = $this->generateReceiptContent($orderData);
+        $this->printService->printOrder($printer,$reciptContent);
+
+        return redirect('invoices/' . $this->invoice->id);
+    }
+
+    protected function generateReceiptContent($orderData)
+    {
+        $receiptContent = ""; // Initialize receipt content
+
         foreach($orderData['orders'] as $order) {
             $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
             $quantity = $order['quantity'];
-            $orderContent = "Title : $title X Quanitity : $quantity \n";
+            $receiptContent .= "Title: $title X Quantity: $quantity\n";
         }
-        $orderContent .= "hello \n";
 
-        $this->printService->printOrder($printer,$orderContent);
+        // Add any additional content to the receipt here
+        $receiptContent .= "Thank you for your order!\n";
 
-        return redirect('invoices/' . $this->invoice->id);
+        // Assuming the ReceiptPrinter class or similar functionality is available
+        // You might need to replace this with the actual method to generate receipt content
+        $receipt = (new ReceiptPrinter())
+            ->centerAlign()
+            ->text('Central Perk')
+            ->line()
+            ->leftAlign()
+            ->text($receiptContent)
+            ->cut();
+
+        return (string) $receipt;
     }
 
     public function render()
