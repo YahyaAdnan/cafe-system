@@ -11,7 +11,8 @@ class Printer extends Model
     use HasFactory;
     protected $fillable =[
         "title",
-        "api_key",
+        "printer_id",
+        "room_id"
     ];
 
     public function room(): BelongsTo

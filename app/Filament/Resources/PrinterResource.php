@@ -31,7 +31,17 @@ class PrinterResource extends Resource
     {
         return $form
             ->schema([
-
+                TextInput::make('title')
+                    ->label('Title')
+                    ->required(),
+                TextInput::make('printer_id')
+                    ->label('Serial Number')
+                    ->required(),
+                BelongsToSelect::make('room_id')
+                    ->label('Room')
+                    ->relationship('room', 'title')
+                    ->searchable()
+                    ->required(),
             ]);
     }
 
