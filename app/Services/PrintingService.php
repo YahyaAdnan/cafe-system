@@ -64,6 +64,8 @@ class PrintingService
                 $printersOrders[$roomId][] = $order;
         }
 
+        dd($printersOrders);
+
         foreach($printersOrders as $roomId => $orders)
         {
             $content = $this->generateReceiptContent($orders);
