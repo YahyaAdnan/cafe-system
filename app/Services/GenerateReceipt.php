@@ -18,8 +18,8 @@ class GenerateReceipt
         // GROUP BY PRICE, TITle with the quantity.
         $result['orders'] = DB::table('orders')
             ->where('invoice_id', $data['invoice']->id)
-            ->select('title', 'total_amount', 'price_id', DB::raw('COUNT(*) as count'))
-            ->groupBy('title', 'total_amount', 'price_id')
+            ->select($data['lang'], 'total_amount', 'price_id', DB::raw('COUNT(*) as count'))
+            ->groupBy($data['lang'], 'total_amount', 'price_id')
             ->get()
             ->toArray();
 

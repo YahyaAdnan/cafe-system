@@ -1,19 +1,17 @@
 <div>
-    @ray($renderCount)
-  <div class="flex items-center gap-2">
-      <div class="w-4/12 md:w-auto mb-4 mr-2">
-          <select wire:model.live="view" id="viewSelect" style="background-color: #5f606162" class="w-full border px-4 py-2 rounded shadow leading-tight">
-              <option value="1">Grid</option>
-              <option value="2">Table</option>
-          </select>
-      </div>
-      <div class="w-4/12 md:w-auto mb-4 ml-2.5">
-          <select wire:model.live="invoice" style="background-color: #5f606162" id="invoiceSelect" class="w-full border px-4 py-2 ml-2 rounded shadow leading-tight">
-              <option value="1">Dine-in</option>
-              <option value="2">Dine-out</option>
-          </select>
-      </div>
-  </div>
-  <div class="h-5"></div>
-  {{ $this->table }}
+    <div class="flex items-center gap-2">
+        <div class="w-4/12 md:w-auto mb-4 mr-2">
+            <button class="inline-block border rounded py-2 px-4 border-2" wire:click="$toggle('tableView')">
+                Change View
+            </button>
+
+            <button class="inline-block border rounded py-2 px-4 border-2" wire:click="$toggle('dinein')">
+                Dine-in/Dine-out
+            </button>
+        </div>
+    </div>
+
+    <div wire:key="view-{{$tableView}}-{{$dinein}}">
+        {{ $this->table }}
+    </div>
 </div>
