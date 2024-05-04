@@ -13,6 +13,8 @@ class Order extends Model
     protected $fillable = [
         'invoice_id',
         'title',
+        'title_ar',
+        'title_ku',
         'item_id',
         'price_id',
         'user_id',
@@ -28,6 +30,11 @@ class Order extends Model
 
         static::deleted(function ($model) {
             $model->invoice->updateAmount();
+        });
+
+        static::creating(function ($model) {
+            $model->title_ar = $model->item_id ? Item::find($model->item_id)->title_ar : $model->title;
+            $model->title_ku = $model->item_id ? Item::find($model->item_id)->title_ku : $model->title;
         });
 
         static::created(function ($model) {
