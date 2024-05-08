@@ -26,8 +26,15 @@ class DineInGrid
                 ->columns(1)
                 ->schema([
                     TextColumn::make('title')
-                        ->size(TextColumn\TextColumnSize::Large)
-                        ->weight(FontWeight::Bold)
+                        ->color(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0 ? 'success' : '')
+                        ->size(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0 
+                            ? TextColumn\TextColumnSize::Large
+                            : TextColumn\TextColumnSize::Medium
+                        )
+                        ->weight(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0 
+                            ? FontWeight::Black
+                            : FontWeight::Thin
+                        )
                         ->alignment('center')
                         ->searchable(),
                     ViewColumn::make('ActiveInvoices')->view('tables.columns.invoices-column')
@@ -36,6 +43,7 @@ class DineInGrid
             ])
             ->contentGrid(['md' => 2, 'xl' => 3])
             ->paginated(false)
+            ->recordAction(fn(Seat $seat) => $seat->activeInvoicesCount() == 0 ? 'create' : Tables\Actions\ViewAction::class)
             ->actions([
                 Action::make('create')
                     ->label('New Invoice')
@@ -45,13 +53,15 @@ class DineInGrid
                         Select::make('employee_id')
                             ->searchable()
                             ->label('employee')
+                            ->default(fn(Seat $seat) => $seat->invoices->where('active', 1)->first()?->employee_id)
                             ->options(Employee::pluck('name', 'id'))
                             ->required(),
-                    ])->action(function (array $data, Seat $seat): void {
+                    ])->action(function (array $data, Seat $seat) {
                         $invoice = GenerateInovice::dineIn([
                             'table_id' => $seat->id,
                             'employee_id' => $data['employee_id'],
                         ]);
+                        return redirect('invoices/' . $invoice->id);
                     }),
             ], position: ActionsPosition::BeforeColumns);
 

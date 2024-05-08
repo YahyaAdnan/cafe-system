@@ -15,6 +15,11 @@ class Table extends Model
         'note',
     ];
 
+    public function activeInvoicesCount()
+    {
+        return $this->invoices->where('active', 1)->count();
+    }
+    
     public function invoices()
     {
         return $this->hasMany(Invoice::class);

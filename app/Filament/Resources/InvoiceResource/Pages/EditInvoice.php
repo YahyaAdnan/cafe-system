@@ -25,11 +25,9 @@ class EditInvoice extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if(!$data['active']){abort(403);}
-        // dd(GenerateReceipt::generate([
-        //     'lang' => 'title',
-        //     'invoice' => Invoice::find($data['id']),
-        // ]));
+        $data['fixed_discount'] = $data['discount_rate'] == 0;
+        
+        return $data;
     }
 
     public function form(Form $form): Form

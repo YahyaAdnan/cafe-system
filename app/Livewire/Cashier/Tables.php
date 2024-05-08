@@ -19,7 +19,7 @@ class Tables extends Component  implements HasForms, HasTable
     use InteractsWithTable;
     use InteractsWithForms;
 
-    public $tableView = 1, $dinein = 1, $renderCount = 0;
+    public $tableView = 0, $dinein = 1, $renderCount = 0;
 
     // public $viewType = array(
     //     '1' => 'Grid',
