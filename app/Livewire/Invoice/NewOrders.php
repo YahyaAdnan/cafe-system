@@ -7,10 +7,18 @@ use App\Models\Price;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Printer;
+use App\Models\ItemType;
+use App\Models\ItemCategory;
+use App\Models\ItemSubcategory;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\Layout\Grid;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -23,10 +31,17 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
 use Rawilk\Printing\Receipts\ReceiptPrinter;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\Alignment;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
 
-class NewOrders extends Component implements HasForms
+
+class NewOrders extends Component implements HasForms, HasTable
 {
     use InteractsWithForms;
+    use InteractsWithTable;
 
     // MODEL.
     public Invoice $invoice;
@@ -37,32 +52,77 @@ class NewOrders extends Component implements HasForms
     public function mount(Invoice $invoice)
     {
         $this->invoice = $invoice;
+        $this->data = [
+            // repeater
+            'orders' => [
+            ]
+        ];
         // adding a deualt item to the repeater
         // since this page is edit the repeaters defaultItems will not work
-        $this->form->fill(
-            // whole form
-            [
-                // repeater
-                'orders' => [
-                    // default item start
-                    [
-                        "special_order" => false,
-                        "extras" => [],
-                        "item_id" => null,
-                        "title" => null,
-                        "quantity" => "1",
-                        "amount" => null,
-                        "discount" => "0",
-                        "total_amount" => null,
-                        "note" => null,
-                    ]
-                    //defult item end
-                ]
-            ]
-        );
+        $this->form->fill($this->data);
     }
 
+    public function selectItem($data)
+    {
+        $this->data['orders'][] = [
+            "special_order" => true,
+            "extras" => [],
+            "item_id" => $data['item_id'],
+            "title" => $data['title'],
+            "quantity" => "1",
+            "amount" => $data['amount'],
+            "discount" => "0",
+            "total_amount" => null,
+            "note" => null,
+        ];
 
+        $this->form->fill($this->data);
+    }
+    
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Item::query())
+            ->columns([
+                Grid::make()
+                    ->columns(1)
+                    ->schema([
+                        TextColumn::make('title')
+                            ->alignment(Alignment::Center)
+                            ->weight(FontWeight::SemiBold)
+                            ->searchable()
+                    ])
+            ])
+            ->filters([
+                Filter::make('category_filter')
+                    ->form([
+                        Select::make('item_type_id')
+                            ->label('Item Type')
+                            ->options(ItemType::pluck('title', 'id'))
+                            ->live(),
+                        // Select::make('item_type_id')
+                        //     ->label('Item Type')
+                        //     ->options(ItemType::pluck('title', 'id'))
+                        //     ->live(),
+                        // Select::make('item_type_id')
+                        //     ->label('Item Type')
+                        //     ->options(ItemType::pluck('title', 'id'))
+                        //     ->live(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            // ->when(
+                            //     $data['created_from'],
+                            //     fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            // )
+                            ->when(
+                                $data['item_type_id'],
+                                fn (Builder $query, $item_type_id): Builder => $query->where('item_type_id', $item_type_id),
+                            );
+                    })
+            ])
+            ->contentGrid(['md' => 2, 'xl' => 3]);
+    }
 
     public function form(Form $form): Form
     {
@@ -77,12 +137,10 @@ class NewOrders extends Component implements HasForms
                         $action->color(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? Color::Gray:Color::Red);
                         $action->icon(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? 'heroicon-m-no-symbol':'heroicon-s-trash');
                     })
-
                     ->required()
-                    ->addActionLabel('Add Order')
+                    // ->addable(false)
                     ->columns(12)
             ])
-
             ->live()
             ->statePath('data');
     }
