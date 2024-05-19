@@ -1,16 +1,25 @@
-<div class="grid grid-cols-4 mt-4 ">
-    <div class="col-span-2 m-1 md:w-1/3 sm:w-full  ">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10" style="margin-top: 10px">
+    <!-- Table Section -->
+    <div class="md:col-span-3 w-full">
         {{$this->table}}
     </div>
-    <div class="col-span-2 m-1 md:w-1/4 sm:w-full ">
-        <form wire:submit="create">
-            {{-- TO-DO: make it card with submit and cancel --}}
-            <div class="flex justify-center mt-5">
-                <button type="submit" class="py-2 px-4 border border-gray-300 rounded">
-                    Submit
-                </button>
+
+    <!-- Form Section -->
+    <div class="md:col-span-1 w-full">
+        <form wire:submit.prevent="create">
+            <div class="card bg-white p-4 shadow-md rounded-md">
+                <div class="card-body">
+                    {{ $this->form }}
+                </div>
+                <div class="card-footer flex justify-between">
+                    <button style="background-color: #635ffd" type="submit" class="btn btn-primary py-2 px-4 rounded text-white hover:bg-blue-600">
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-secondary py-2 px-4 rounded bg-gray-500 text-white hover:bg-gray-600" wire:click="cancel">
+                        Cancel
+                    </button>
+                </div>
             </div>
-            {{ $this->form }}
         </form>
     </div>
 </div>
