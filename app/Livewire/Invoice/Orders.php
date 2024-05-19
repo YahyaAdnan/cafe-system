@@ -95,7 +95,7 @@ class Orders extends Component implements HasForms, HasTable
                             Select::make('invoice')
                                 ->required()
                                 ->searchable()
-                                ->options(Invoice::where('active', 1)->pluck('title', 'id'))
+                                ->options(Invoice::fetchActive())
                         ])
                         ->action(function(Collection $records, array $data){
                             $invoice = InvoiceAction::move([

@@ -62,6 +62,9 @@ class NewOrders extends Component implements HasForms, HasTable
         $this->form->fill($this->data);
     }
 
+    // *** START: FUNCTION ***
+    // $data => array()
+    //**  item_id, title, amount **/
     public function selectItem($data)
     {
         $this->data['orders'][] = [
@@ -121,6 +124,14 @@ class NewOrders extends Component implements HasForms, HasTable
                             );
                     })
             ])
+            // TO-DO: Make it when we press add in the table
+            ->recordAction(fn(Item $item) => 
+                $this->selectItem([
+                    "item_id" => $item->prices,
+                    'title' => $item->title, 
+                    'amount' => $item->amount, 
+                ])
+            )
             ->contentGrid(['md' => 2, 'xl' => 3]);
     }
 

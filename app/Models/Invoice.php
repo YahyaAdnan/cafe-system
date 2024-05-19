@@ -68,6 +68,23 @@ class Invoice extends Model
         ]);
     }
 
+    static public function fetchActive()
+    {
+        $invoices = array();
+
+        foreach (Invoice::where('active', 1)->get() as $key => $invoice)
+        {
+            if($invoice->table_id)
+            {
+                $invoices[$invoice->id] = 'Table-' . $invoice->seating->title . ": #$invoice->title ($invoice->amount IQD)";
+                continue;
+            }
+            $invoices[$invoice->id] = 'order-' . $invoice->deliverType->title . ": #$invoice->title ($invoice->amount IQD)";
+        }
+
+        return collect($invoices);
+    }
+    
     public function invoices()
     {
         return $this->belongsToMany(DailySale::class, 'daily_sale_invoices', 'invoice_id', 'daily_sale_id');
@@ -76,6 +93,11 @@ class Invoice extends Model
     public function table()
     {
         return $this->belongsTo(Table::class);
+    }
+
+    public function seating()
+    {
+        return $this->belongsTo(Table::class, 'table_id');
     }
 
     public function deliverType()

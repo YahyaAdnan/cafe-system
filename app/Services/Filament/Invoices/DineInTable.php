@@ -57,7 +57,8 @@ class DineInTable
                             Select::make('invoice')
                                 ->required()
                                 ->searchable()
-                                ->options(Invoice::where('active', 1)->pluck('title', 'id'))
+                                ->options(Invoice::fetchActive())
+                                // ->options(Invoice::where('active', 1)->pluck('title', 'id'))
                         ])
                         ->action(function(Collection $records, array $data){
                             $invoice = InvoiceAction::merge([
