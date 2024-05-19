@@ -4,6 +4,7 @@ namespace App\Services\Filament\Invoices;
 use App\Models\Employee;
 use App\Models\Table as Seat;
 use App\Services\GenerateInovice;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
@@ -50,8 +51,7 @@ class DineInGrid
                     ->icon('heroicon-s-plus')
                     ->size(ActionSize::Large)
                     ->form([
-                        Select::make('employee_id')
-                            ->searchable()
+                        Radio::make('employee_id')
                             ->label('employee')
                             ->default(fn(Seat $seat) => $seat->invoices->where('active', 1)->first()?->employee_id)
                             ->options(Employee::pluck('name', 'id'))
