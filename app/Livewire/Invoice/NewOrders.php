@@ -67,21 +67,35 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-        $this->data['orders'][] = [
-            "special_order" => true,
-            "extras" => [],
-            "item_id" => $data['item_id'],
-            "title" => $data['title'],
-            "quantity" => "1",
-            "amount" => $data['amount'],
-            "discount" => "0",
-            "total_amount" => null,
-            "note" => null,
-        ];
+        $dataFound = false;
+        ray($data);
+       foreach ($this->data['orders'] as &$order){
+           if ($data['item_id'] == $order['item_id']){
+               $order['quantity']=(int)$order['quantity'] + 1;
+               $dataFound = true;
+               break;
+               ray($order['quantity'])->label('quanity');
+           };
+       }
+       if (!$dataFound){
+           $this->data['orders'][] = [
+               "special_order" => true,
+               "extras" => [],
+               "item_id" => $data['item_id'],
+               "title" => $data['title'],
+               "quantity" =>1,
+               "amount" => $data['amount'],
+               "discount" => "0",
+               "total_amount" => null,
+               "note" => null,
+           ];
+       }
+
+        ray($this->data['orders']);
 
         $this->form->fill($this->data);
     }
-    
+
     public function table(Table $table): Table
     {
         return $table
@@ -94,6 +108,13 @@ class NewOrders extends Component implements HasForms, HasTable
                             ->alignment(Alignment::Center)
                             ->weight(FontWeight::SemiBold)
                             ->searchable()
+                            ->action((function (Item $item) {
+                                $this->selectItem([
+                                    "item_id" => $item->id, // Adjusted to use item ID for consistency
+                                    'title' => $item->title,
+                                    'amount' => $item->amount,
+                                ]);
+                            }))
                     ])
             ])
             ->filters([
@@ -124,14 +145,7 @@ class NewOrders extends Component implements HasForms, HasTable
                             );
                     })
             ])
-            // TO-DO: Make it when we press add in the table
-            ->recordAction(fn(Item $item) => 
-                $this->selectItem([
-                    "item_id" => $item->prices,
-                    'title' => $item->title, 
-                    'amount' => $item->amount, 
-                ])
-            )
+
             ->contentGrid(['md' => 2, 'xl' => 3]);
     }
 
@@ -170,9 +184,9 @@ class NewOrders extends Component implements HasForms, HasTable
             'invoice' => $this->invoice,
             'orders' => $orderData['orders'],
         ]);
-        
+
         $this->printService->printersOrders($orderData);
-            
+
         return redirect('invoices/' . $this->invoice->id);
     }
 
