@@ -28,6 +28,28 @@ use App\Models\ItemCategory;
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/test_ing_price', function () {
+    $items = App\Models\Item::all();
+
+    foreach ($items as $key => $item) 
+    {
+        foreach ($item->prices as $key => $price) 
+        {
+            foreach ($item->itemIngredients as $key => $itemIngredient) 
+            {
+                App\Models\IngredientDetails::create([
+                    'item_ingredients_id' => $itemIngredient->id,
+                    'ingredient_id' => $itemIngredient->ingredient_id,
+                    'price_id' => $price->id,
+                    'amount' => 0,
+                ]);
+            }
+        }
+    }
+
+    dd(App\Models\IngredientDetails::all());
+});
+
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
     // Items

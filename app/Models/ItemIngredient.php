@@ -16,9 +16,33 @@ class ItemIngredient extends Model
         'note',
     ];
     
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            $prices = $model->item->prices;
+
+            foreach ($prices as $key => $price) 
+            {
+                IngredientDetails::create([
+                    'item_ingredients_id' => $model->id,
+                    'ingredient_id' => $model->ingredient_id,
+                    'price_id' => $price->id,
+                    'amount' => 0,
+                ]);
+            }
+        });
+    }
+
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
     }
 
     public function ingredient()

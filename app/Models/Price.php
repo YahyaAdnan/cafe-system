@@ -16,6 +16,26 @@ class Price extends Model
         'note',
     ];
 
+    
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            $itemIngredients = $model->item->itemIngredients;
+
+            foreach ($itemIngredients as $key => $itemIngredient)
+            {
+                IngredientDetails::create([
+                    'item_ingredients_id' => $itemIngredient->id,
+                    'ingredient_id' => $itemIngredient->ingredient_id,
+                    'price_id' => $model->id,
+                    'amount' => 0,
+                ]);
+            }
+        });
+    }
+
     public static function activePrices()
     {
         $all_prices = Price::all();
@@ -40,5 +60,10 @@ class Price extends Model
     public function offerEntities()
     {
         return $this->belongsToMany(OfferEntity::class, 'offer_entities_prices', 'price_id', 'offer_entity_id');
+    }
+
+    public function ingredientDetails()
+    {
+        return $this->hasMany(IngredientDetails::class, 'price_id');
     }
 }
