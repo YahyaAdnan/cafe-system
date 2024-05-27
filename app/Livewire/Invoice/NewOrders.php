@@ -7,9 +7,6 @@ use App\Models\Price;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Printer;
-use App\Models\ItemType;
-use App\Models\ItemCategory;
-use App\Models\ItemSubcategory;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -27,6 +24,7 @@ use App\Services\EstimatePrice;
 use Livewire\Component;
 use App\Services\PrintingService;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
@@ -35,6 +33,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Radio;
 use Illuminate\Database\Eloquent\Builder;
 
 
@@ -67,29 +66,19 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-        $dataFound = false;
         ray($data);
-       foreach ($this->data['orders'] as &$order){
-           if ($data['item_id'] == $order['item_id']){
-               $order['quantity']=(int)$order['quantity'] + 1;
-               $dataFound = true;
-               break;
-               ray($order['quantity'])->label('quanity');
-           };
-       }
-       if (!$dataFound){
-           $this->data['orders'][] = [
-               "special_order" => true,
-               "extras" => [],
-               "item_id" => $data['item_id'],
-               "title" => $data['title'],
-               "quantity" =>1,
-               "amount" => $data['amount'],
-               "discount" => "0",
-               "total_amount" => null,
-               "note" => null,
-           ];
-       }
+
+        $this->data['orders'][] = [
+            "special_order" => true,
+            "extras" => [],
+            "item_id" => $data['item_id'],
+            "title" => $data['title'],
+            "quantity" =>1,
+            "amount" => $data['amount'],
+            "discount" => "0",
+            "total_amount" => null,
+            "note" => null,
+        ];
 
         ray($this->data['orders']);
 
@@ -98,55 +87,32 @@ class NewOrders extends Component implements HasForms, HasTable
 
     public function table(Table $table): Table
     {
-        return $table
-            ->query(Item::query())
-            ->columns([
-                Grid::make()
-                    ->columns(1)
-                    ->schema([
-                        TextColumn::make('title')
-                            ->alignment(Alignment::Center)
-                            ->weight(FontWeight::SemiBold)
-                            ->searchable()
-                            ->action((function (Item $item) {
-                                $this->selectItem([
-                                    "item_id" => $item->id, // Adjusted to use item ID for consistency
-                                    'title' => $item->title,
-                                    'amount' => $item->amount,
-                                ]);
-                            }))
-                    ])
-            ])
-            ->filters([
-                Filter::make('category_filter')
+        return OrdersForm::table($table)
+            ->recordAction(fn(Item $item) =>  $item->prices->count() > 1 ? 'prices' : 'select')
+            ->actions([
+                TableAction::make('prices')
+                    ->label('')
                     ->form([
-                        Select::make('item_type_id')
-                            ->label('Item Type')
-                            ->options(ItemType::pluck('title', 'id'))
-                            ->live(),
-                        // Select::make('item_type_id')
-                        //     ->label('Item Type')
-                        //     ->options(ItemType::pluck('title', 'id'))
-                        //     ->live(),
-                        // Select::make('item_type_id')
-                        //     ->label('Item Type')
-                        //     ->options(ItemType::pluck('title', 'id'))
-                        //     ->live(),
+                        Radio::make('price_id')
+                            ->label('Price')
+                            ->options(fn(Item $item) => $item->prices->pluck('title', 'id'))
+                            ->required(),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            // ->when(
-                            //     $data['created_from'],
-                            //     fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                            // )
-                            ->when(
-                                $data['item_type_id'],
-                                fn (Builder $query, $item_type_id): Builder => $query->where('item_type_id', $item_type_id),
-                            );
-                    })
-            ])
-
-            ->contentGrid(['md' => 2, 'xl' => 3]);
+                    ->action(function (array $data, Item $item): void {
+                        $this->selectItem([
+                            'item_id' => $item->prices->first()->id,
+                            'title' => $item->title . ' (' . Price::find($data['price_id'])->title . ')',
+                            'amount' => $item->prices->first()->amount,
+                        ]);
+                    }),
+                TableAction::make('select')
+                    ->label('')
+                    ->action(fn(Item $item) => $this->selectItem([
+                        'item_id' => $item->prices->first()->id,
+                        'title' => $item->title,
+                        'amount' => $item->prices->first()->amount,
+                    ]))
+            ]);
     }
 
     public function form(Form $form): Form

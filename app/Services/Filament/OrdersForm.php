@@ -5,46 +5,35 @@ use App\Models\Invoice;
 use App\Models\DailySale;
 use App\Models\Price;
 use App\Models\Order;
+use App\Models\Item;
+use App\Models\ItemType;
+use App\Models\ItemCategory;
+use App\Models\ItemSubcategory;
 use Filament\Forms\Get;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Table;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\Layout\Grid;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\Alignment;
 use App\Services\EstimatePrice;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrdersForm
 {
     public static function form()
     {
         return [
-            // *** STARTS: SPECIAL ORDERS ***
-            // TO CHECK IF THE ORDER IS SPECIAL
-            // SPECIAL ORDERS DOESN'T REQUIRES ITEM ID
-            // SPECIAL ORDERS NEED TO WRITE TITLE.
-            Toggle::make('special_order')
-                ->inline()
-                ->columnSpan(12)
-                ->live(),
-            // *** ENDS: SPECIAL ORDERS ***
-        
-            // *** STARTS: ITEM ***
-            // WE GET THE PRICE ID THEN CONVERT IT TO ITEM ID 
-            Select::make('item_id')
-                ->visible(fn (Get $get)=>  !$get('special_order'))
-                ->searchable()
-                ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
-                ->preload()
-                ->options(Price::activePrices())
-                ->required()
-                ->live(),
-            // *** ENDS: ITEM ***
-
             // *** STARTS: TITLE ***
             TextInput::make('title')
-                ->visible(fn (Get $get)=>  $get('special_order'))
-                ->columnSpan(['sm' => 12, 'md' => 6, 'xl' => 3])
+                ->disabled(fn (Get $get)=>  $get('item_id'))
+                ->columnSpan('12')
                 ->minLength(1)
                 ->maxLength(32)
                 ->required(),
@@ -56,7 +45,7 @@ class OrdersForm
             // *** MAX: 99 ***
             TextInput::make('quantity')
                 ->numeric()
-                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
+                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3])
                 ->default(1)
                 ->minValue(1)
                 ->maxValue(99)
@@ -68,9 +57,9 @@ class OrdersForm
             // *** MIN: 1 ***
             // *** MAX: 100000000 ***
             TextInput::make('amount')
-                ->visible(fn (Get $get)=>  $get('special_order'))
+                ->disabled(fn (Get $get)=>  $get('item_id'))
                 ->numeric()
-                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
+                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3])
                 ->minValue(1)
                 ->maxValue(100000000)
                 ->required()
@@ -81,11 +70,9 @@ class OrdersForm
             // *** MIN: 0 ***
             // *** MAX: min(Maximum Discount, Price) ***
             TextInput::make('discount')
-                ->visible(fn (Get $get)=>  !$get('special_order'))
                 ->disabled(fn (Get $get)=>  $get('item_id') == null)
                 ->numeric()
-                ->suffix('IQD')
-                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3])
+                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3])
                 ->required()
                 ->minValue(0)
                 ->maxValue(function (Get $get)  {
@@ -99,18 +86,19 @@ class OrdersForm
             Placeholder::make('total_amount')
                 ->content(function (Get $get)  {
                     return "IQD " . EstimatePrice::run([
-                        'amount' => $get('special_order') ? $get('amount') : null ,
-                        'discount' => $get('special_order') ? null : $get('discount'),
-                        'price_id' => $get('special_order') ? null : $get('item_id'),
-                        'extras' => $get('special_order') ? null : $get('extras'),    
+                        'amount' => $get('item_id') ? $get('amount') : null ,
+                        'discount' => $get('item_id') ? null : $get('discount'),
+                        'price_id' => $get('item_id') ? null : $get('item_id'),
+                        'extras' => $get('item_id') ? null : $get('extras'),    
                         'quantity' => $get('quantity')                 
                     ]);
                 })
-                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 3]),
+                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3]),
+
             Select::make('extras')
                 ->columnSpan(12)
                 ->multiple()
-                ->visible(fn (Get $get)=>  !$get('special_order'))
+                ->visible(fn (Get $get)=>  $get('item_id'))
                 ->options(function (Get $get) { 
                     if($get('item_id'))
                     {
@@ -137,13 +125,13 @@ class OrdersForm
                     // Create orders based on the quantity specified
     
                     // Determine price and item based on whether it's a special order or not
-                    $price = $order['special_order']
-                        ? null
-                        : Price::find($order['item_id']);
-                    $item = $order['special_order']
-                        ? null
-                        : $price->item;
-    
+                    $price = $order['item_id']
+                        ? Price::find($order['item_id'])
+                        : null;
+                    $item = $order['item_id']
+                        ? $price->item
+                        : null;
+
                     // Set attributes for the order
                     $attributes = array();
     
@@ -153,18 +141,19 @@ class OrdersForm
                     $attributes['note'] = $order['note'];
     
                     // Conditionally set attributes based on whether it's a special order or not
-                    if ($order['special_order']) {
-                        $attributes['title'] = $order['title'];
-                        $attributes['item_id'] = null;
-                        $attributes['price_id'] = null;
-                        $attributes['amount'] = $order['amount'];
-                        $attributes['discount_fixed'] = 0;
-                    } else {
+                    if ($order['item_id']) 
+                    {
                         $attributes['title'] = $item->title;
                         $attributes['item_id'] = $item->id;
                         $attributes['price_id'] = $price->id;
                         $attributes['amount'] = $price->amount;
                         $attributes['discount_fixed'] = $order['discount'];
+                    } else {
+                        $attributes['title'] = $order['title'];
+                        $attributes['item_id'] = null;
+                        $attributes['price_id'] = null;
+                        $attributes['amount'] = $order['amount'];
+                        $attributes['discount_fixed'] = 0;
                     }
     
                     $attributes['total_amount'] = EstimatePrice::run([
@@ -183,4 +172,65 @@ class OrdersForm
         }
     }
 
+    public static function table(Table $table)
+    {
+        return $table
+            ->query(Item::query())
+            ->columns([
+                Grid::make()
+                    ->columns(1)
+                    ->schema([
+                        TextColumn::make('title')
+                            ->alignment(Alignment::Center)
+                            ->weight(FontWeight::SemiBold)
+                            ->searchable()
+                    ])
+            ])
+            ->filters([
+                Filter::make('category_filter')
+                ->form([
+                    Select::make('item_type_id')
+                        ->label('Item Type')
+                        ->options(ItemType::pluck('title', 'id'))
+                        ->searchable()
+                        ->live(),
+                    Select::make('item_category_id')
+                        ->label('Item Category')
+                        ->options(function ($get) {
+                            if ($item_type_id = $get('item_type_id')) {
+                                return ItemCategory::where('item_type_id', $item_type_id)->pluck('title', 'id');
+                            }
+                            return ItemCategory::pluck('title', 'id');
+                        })
+                        ->searchable()
+                        ->live(),
+                    Select::make('item_subcategory_id')
+                        ->label('Item Subcategory')
+                        ->options(function ($get) {
+                            if ($category_id = $get('item_category_id')) {
+                                return ItemSubcategory::where('item_category_id', $category_id)->pluck('title', 'id');
+                            }
+                            return ItemSubcategory::pluck('title', 'id');
+                        })
+                        ->searchable()
+                        ->live(),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query
+                        ->when(
+                            $data['item_type_id'],
+                            fn (Builder $query, $item_type_id): Builder => $query->where('item_type_id', $item_type_id)
+                        )
+                        ->when(
+                            $data['item_category_id'],
+                            fn (Builder $query, $category_id): Builder => $query->where('item_category_id', $category_id)
+                        )
+                        ->when(
+                            $data['item_subcategory_id'],
+                            fn (Builder $query, $subcategory_id): Builder => $query->where('item_subcategory_id', $subcategory_id)
+                        );
+                })
+            ])
+            ->contentGrid(['md' => 2, 'xl' => 3]);
+    }
 }

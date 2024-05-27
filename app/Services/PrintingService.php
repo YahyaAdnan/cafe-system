@@ -29,7 +29,9 @@ class PrintingService
         $receiptContent = ""; // Initialize receipt content
 
         foreach($data as $order) {
-            $title = $order['special_order'] ? $order['title'] : Price::find($order['item_id'])->item->title;
+            $title = !$order['item_id'] 
+                ? $order['title'] 
+                : Price::find($order['item_id'])->item->title . ' (' . Price::find($order['item_id'])->title . ')' ;
             $quantity = $order['quantity'];
             $receiptContent .= "Title: $title X Quantity: $quantity\n";
         }
