@@ -80,6 +80,10 @@ class Tables extends Component  implements HasForms, HasTable
         }
     }
 
+
+
+
+
      #[On('render')]
     public function render()
     {

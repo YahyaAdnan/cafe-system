@@ -74,7 +74,6 @@ class NewOrders extends Component implements HasForms, HasTable
                $order['quantity']=(int)$order['quantity'] + 1;
                $dataFound = true;
                break;
-               ray($order['quantity'])->label('quanity');
            };
        }
        if (!$dataFound){

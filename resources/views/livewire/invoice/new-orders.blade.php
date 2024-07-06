@@ -5,7 +5,7 @@
     </div>
 
     <!-- Form Section -->
-    <div class="w-full lg:w-1/9 card bg-white mt-3 rounded">
+    <div class="w-full lg:w-1/9 card bg-white dark:bg-gray-800 mt-3 rounded">
 
         <form wire:submit.prevent="create">
             <div class="p-4 shadow-md rounded-md">
