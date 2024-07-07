@@ -116,13 +116,15 @@ class DineInTable
             ->filters([
                 SelectFilter::make('table_id')
                     ->label('Table')
-                    ->multiple(false)
-                    ->options(Seat::pluck('title', 'id')),
+                    ->options(Seat::pluck('title', 'id')->toArray())
+                    ->multiple(false),
                 SelectFilter::make('employee_id')
                     ->label('Employee')
-                    ->multiple(false)
-                    ->options(Employee::pluck('name', 'id')),
+                    ->options(Employee::pluck('name', 'id')->toArray())
+                    ->multiple(false),
             ])
+            ->filtersFormColumns(2)
+            ->persistFiltersInSession()
             ->recordUrl(fn (Invoice $invoice): string => "invoices/$invoice->id");
     }
 }
