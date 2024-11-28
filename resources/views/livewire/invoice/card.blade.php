@@ -66,21 +66,17 @@
                         Edit
                     </a>
                     @if($invoice->remaining == 0)
-                        <button class="inline-block border rounded py-2 px-4 border-2" wire:click="done">
+                        <button class="inline-block border rounded py-2 px-4 border-2 b" wire:click="done">
                             Done
                         </button>
                     @endif
-                    <select wire:model.live="selectedLanguage">
+                    {{-- <select wire:model.live="selectedLanguage">
                         <option value="title">English</option>
                         <option value="title_ar">Arabic</option>
                         <option value="title_ku">Kurdish</option>
-                    </select>
+                    </select> --}}
 
-                    {{-- TO-DO: Make a drop down buttons, or a button that pop up a modal to choose lang (English => 'title', Arabic => 'title_ar' , Kurdish => 'title_ku')--}}
-                    {{-- TO-DO: Call GenerateReceipt from services (check the notes to understand what do with) it will returns array. --}}
-                    {{-- TO-DO: According to the returned array print a receipt. (Check the image sent, first list the items then the totals --}}
-
-                    @if(isset($receiptData['orders']))
+                    {{-- @if(isset($receiptData['orders']))
 
                         <div style="text-align: center;">
                             <h2>CENTRAL PERK</h2>
@@ -107,7 +103,7 @@
                                 <span style="float: right;">{{ number_format($receiptData['total']['amount'] - $receiptData['total']['discount_fixed'], 2) }}</span>
                             </div>
                         </div>
-                    @endif
+                    @endif --}}
 
                 @endif
             </div>

@@ -14,7 +14,6 @@ class Room extends Model
       'cashier',
       'monitor',
       'printing',
-
     ];
 
 

@@ -72,6 +72,7 @@ class Payments extends Component implements HasForms, HasTable
                             Hidden::make('invoice_id')
                                 ->default($this->invoice->id),
                             Select::make('payment_method_id')
+                                ->default(fn() => PaymentMethod::first()->id)
                                 ->columnSpan(12)
                                 ->native(false)
                                 ->options(PaymentMethod::pluck('title', 'id'))
@@ -90,6 +91,7 @@ class Payments extends Component implements HasForms, HasTable
                                 ->maxValue(fn() => $this->invoice->remaining)
                                 ->live(),
                             TextInput::make('paid')
+                                ->default(fn() => $this->invoice->remaining)
                                 ->columnSpan([
                                     'sm' => 12,
                                     'md' => 6,
