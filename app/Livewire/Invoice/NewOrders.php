@@ -7,6 +7,7 @@ use App\Models\Price;
 use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Printer;
+use App\Models\Setting;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -23,7 +24,7 @@ use App\Services\Filament\OrdersForm;
 use App\Services\EstimatePrice;
 use Livewire\Component;
 use App\Services\PrintingService;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -34,6 +35,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Builder;
 
 
@@ -66,14 +68,15 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-        ray($data);
-       foreach ($this->data['orders'] as &$order){
-           if ($data['item_id'] == $order['item_id']){
-               $order['quantity']=(int)$order['quantity'] + 1;
-               $dataFound = true;
-               break;
-           };
-       }
+        $dataFound = false;
+        foreach ($this->data['orders'] as &$order){
+            if ($data['item_id'] == $order['item_id']){
+                $order['quantity']=(int)$order['quantity'] + 1;
+                $dataFound = true;
+                break;
+            };
+        }
+
        if (!$dataFound){
            $this->data['orders'][] = [
                "special_order" => true,
@@ -89,8 +92,6 @@ class NewOrders extends Component implements HasForms, HasTable
        }
 
         ray($this->data['orders']);
-
-        $this->form->fill($this->data);
     }
 
     public function table(Table $table): Table
@@ -120,28 +121,12 @@ class NewOrders extends Component implements HasForms, HasTable
                         'title' => $item->title,
                         'amount' => $item->prices->first()->amount,
                     ]))
-            ]);
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Repeater::make('orders')
-                    ->label('')
-                    ->schema(OrdersForm::form())
-                    ->deleteAction(function (Action $action) {
-                        // making it hidden is not working so i just change icon, disable it, make it grey
-                        $action->disabled(fn(Get $get) => $get('orders') === null || count($get('orders')) <= 1);
-                        $action->color(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? Color::Gray:Color::Red);
-                        $action->icon(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? 'heroicon-m-no-symbol':'heroicon-s-trash');
-                    })
-                    ->required()
-                    // ->addable(false)
-                    ->columns(12)
-            ])
-            ->live()
-            ->statePath('data');
+            ])->headerActions([
+                Action::make('submit')
+                    ->label('SUBMIT')
+                    ->size(ActionSize::Large)
+                    ->action(fn() => $this->create()),
+            ])->paginated([16, 20, 28, 32, 'all']);
     }
 
     public function create()
@@ -156,10 +141,11 @@ class NewOrders extends Component implements HasForms, HasTable
          */
         OrdersForm::store([
             'invoice' => $this->invoice,
-            'orders' => $orderData['orders'],
+            'orders' => $this->data['orders'],
         ]);
 
-        $this->printService->printersOrders($orderData);
+        // TODO: FOR PRINT RECEIPT.
+        // $this->printService->printersOrders($orderData);
 
         return redirect('invoices/' . $this->invoice->id);
     }

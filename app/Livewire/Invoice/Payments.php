@@ -91,7 +91,6 @@ class Payments extends Component implements HasForms, HasTable
                                 ->maxValue(fn() => $this->invoice->remaining)
                                 ->live(),
                             TextInput::make('paid')
-                                ->default(fn() => $this->invoice->remaining)
                                 ->columnSpan([
                                     'sm' => 12,
                                     'md' => 6,

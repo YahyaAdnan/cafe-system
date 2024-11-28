@@ -231,6 +231,6 @@ class OrdersForm
                         );
                 })
             ])
-            ->contentGrid(['md' => 2, 'xl' => 3]);
+            ->contentGrid(['sm' => 2, 'md' => 2, 'xl' => 4]);
     }
 }
