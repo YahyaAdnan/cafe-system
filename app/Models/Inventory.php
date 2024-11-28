@@ -14,6 +14,7 @@ class Inventory extends Model
         'title',
         'quantity',
         'inventory_unit_id',
+        'ingredient_id',
         'user_id',
         'note'
     ];

@@ -29,7 +29,7 @@ return [
             'ip' => env('CUPS_SERVER_IP'),
             'username' => env('CUPS_SERVER_USERNAME'),
             'password' => env('CUPS_SERVER_PASSWORD'),
-            'port' => env('CUPS_SERVER_PORT', 631),
+            'port' => (int) env('CUPS_SERVER_PORT', 631),
         ],
 
         /*

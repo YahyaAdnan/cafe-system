@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InventoryResource\Pages;
 use App\Filament\Resources\InventoryResource\RelationManagers;
 use App\Models\Inventory;
+use App\Models\Ingredient;
 use App\Models\InventoryUnit;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -42,14 +43,32 @@ class InventoryResource extends Resource
     {
         return $form
             ->schema([         
-                TextInput::make('title')->columnSpan(6)->required()->minLength(3)->maxLength(32)->unique(
-                    modifyRuleUsing: function (Unique $rule, Get $get) {
-                        return $rule->where('title', $get('title'));
-                    }, ignoreRecord: true
-                ),
-                Select::make('inventory_unit_id')->columnSpan(6)->required()->options(
-                    InventoryUnit::pluck('title', 'id')
-                )->searchable(),
+                TextInput::make('title')
+                    ->columnSpan(['sm' => 12, 'md' => 6, 'lg' => 4])
+                    ->required()
+                    ->minLength(3)
+                    ->maxLength(32)
+                    ->unique(
+                        modifyRuleUsing: function (Unique $rule, Get $get) {
+                            return $rule->where('title', $get('title'));
+                        }, ignoreRecord: true
+                    ),
+                Select::make('inventory_unit_id')
+                    ->label('Unit')
+                    ->columnSpan(['sm' => 12, 'md' => 6, 'lg' => 4])
+                    ->required()
+                    ->options(InventoryUnit::pluck('title', 'id'))
+                    ->searchable(),
+                Select::make('ingredient_id')
+                    ->label("Ingredient")
+                    ->columnSpan(['sm' => 12, 'md' => 6, 'lg' => 4])
+                    ->options(
+                        fn(Inventory $inventory) => 
+                        Ingredient::whereNotIn('id', Inventory::pluck('ingredient_id'))
+                            ->orWhere('id', $inventory->ingredient_id)
+                            ->pluck('title', 'id')
+                    )
+                    ->searchable(),
                 TextInput::make('note')->columnSpan(12)->maxLength(250),
             ])->columns(12);
     }

@@ -30,6 +30,7 @@ class Order extends Model
 
         static::deleted(function ($model) {
             $model->invoice->updateAmount();
+            $model->restockIngredients();
         });
 
         static::creating(function ($model) {
@@ -39,6 +40,7 @@ class Order extends Model
 
         static::created(function ($model) {
             $model->invoice->updateAmount();
+            $model->consumeIngredients();
         });
 
         static::updating(function ($model) {
@@ -63,6 +65,34 @@ class Order extends Model
     {
         $this->total_amount = $this->getTotal();
         $this->save();
+    }
+
+    public function consumeIngredients()
+    {
+        if(!$this->price_id)
+        {
+            return;
+        }
+
+        $ingredients = $this->price->ingredientDetails;
+        foreach ($ingredients as $key => $ingredient) 
+        {
+            $ingredient->consume();
+        }
+    }
+
+    public function restockIngredients()
+    {
+        if(!$this->price_id)
+        {
+            return;
+        }
+
+        $ingredients = $this->price->ingredientDetails;
+        foreach ($ingredients as $key => $ingredient) 
+        {
+            $ingredient->restock();
+        }
     }
 
     public function invoice()

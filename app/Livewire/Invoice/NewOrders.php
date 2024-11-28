@@ -67,18 +67,26 @@ class NewOrders extends Component implements HasForms, HasTable
     public function selectItem($data)
     {
         ray($data);
-
-        $this->data['orders'][] = [
-            "special_order" => true,
-            "extras" => [],
-            "item_id" => $data['item_id'],
-            "title" => $data['title'],
-            "quantity" =>1,
-            "amount" => $data['amount'],
-            "discount" => "0",
-            "total_amount" => null,
-            "note" => null,
-        ];
+       foreach ($this->data['orders'] as &$order){
+           if ($data['item_id'] == $order['item_id']){
+               $order['quantity']=(int)$order['quantity'] + 1;
+               $dataFound = true;
+               break;
+           };
+       }
+       if (!$dataFound){
+           $this->data['orders'][] = [
+               "special_order" => true,
+               "extras" => [],
+               "item_id" => $data['item_id'],
+               "title" => $data['title'],
+               "quantity" =>1,
+               "amount" => $data['amount'],
+               "discount" => "0",
+               "total_amount" => null,
+               "note" => null,
+           ];
+       }
 
         ray($this->data['orders']);
 

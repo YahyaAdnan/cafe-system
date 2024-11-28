@@ -19,6 +19,32 @@ class IngredientDetails extends Model
         'amount',
     ];
 
+    public function consume()
+    {
+        if($this->ingredient->inventories->isEmpty())
+        {
+            return;
+        }
+
+        $inventory = $this->ingredient->inventories->first();
+
+        $inventory->quantity = max(0, $inventory->quantity - $this->amount);
+        $inventory->save();
+    }
+
+    public function restock()
+    {
+        if($this->ingredient->inventories->isEmpty())
+        {
+            return;
+        }
+
+        $inventory = $this->ingredient->inventories->first();
+
+        $inventory->quantity += $this->amount;
+        $inventory->save();
+    }
+
     // Define the relationship with the Ingredient model
     public function ingredient()
     {

@@ -30,6 +30,16 @@ class Ingredient extends Model
         return $this->hasMany(ItemIngredient::class);
     }
 
+    public function ingredientDetails()
+    {
+        return $this->hasMany(IngredientDetails::class, 'ingredient_id');
+    }
+
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
     public function isDeletable()
     {
         if($this->itemIngredient->isNotEmpty())
