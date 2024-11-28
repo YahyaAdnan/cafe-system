@@ -92,21 +92,9 @@ class PaymentResource extends Resource
                         DatePicker::make('created_until')->visible(fn(\Filament\Forms\Get $get):bool => $get('range')), //IF RANGE
                         // *** START: END THE DATE *** 
                         // *** START: FIND BY ORDER DETAILS *** 
-                        Select::make('dinning_in')->options([
-                            0 => "ANY",
-                            1 => "OUT-ORDER",
-                            2 => "DIN-IN",
-                        ])->native(false)->live(),
-                        Select::make('tables')->options(Seating::pluck('title', 'id'))->multiple()
-                            ->visible(fn(Get $get):bool => $get('dinning_in') == 2),
-                        Select::make('employees')->options(Employee::pluck('name', 'id'))->multiple()
-                            ->visible(fn(Get $get):bool => $get('dinning_in') == 2),
-                        Select::make('deliver_type')->options(DeliverType::pluck('title', 'id'))->multiple()
-                            ->visible(fn(Get $get):bool => $get('dinning_in') == 1),
-                        // *** END: FIND BY ORDER DETAILS *** 
-                        // *** START: FIND BY ORDER Payment *** 
+                        Select::make('deliver_type')->options(DeliverType::pluck('title', 'id'))->multiple(),
                         Select::make('payment_method')->options(PaymentMethod::pluck('title', 'id'))->multiple(),
-                        // *** END: FIND BY ORDER Payment *** 
+                        // *** END: FIND BY ORDER DETAILS *** 
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -134,32 +122,6 @@ class PaymentResource extends Resource
                                     if(!$data['range']) {return;}
                                     return $query->whereDate('created_at', '<=', $date);
                                 }
-                            )->when(
-                                $data['dinning_in'],
-                                function (Builder $query, $dinning_in)
-                                {
-                                    // IF dinning_is 1 then 1-1 = false, while dinning in val is 2 so 2-1 = 1 true.
-                                    $invoices = Invoice::where('dinning_in', (int)$dinning_in - 1)->get();
-                                    return $query->whereIn('invoice_id', $invoices->pluck('id'));
-                                }
-                            )
-                            ->when(
-                                $data['tables'],
-                                function (Builder $query, $tables_id) use ($data)
-                                { 
-                                    if(!$data['dinning_in'] == 2) {return;}
-                                    $invoices = Invoice::whereIn('table_id', $tables_id)->pluck('id');
-                                    return $query->whereIn('invoice_id', $invoices);
-                                }
-                            )
-                            ->when(
-                                $data['employees'],
-                                function (Builder $query, $employee_id) use ($data)
-                                { 
-                                    if(!$data['dinning_in'] == 2) {return;}
-                                    $invoices = Invoice::whereIn('employee_id', $employee_id)->pluck('id');
-                                    return $query->whereIn('invoice_id', $invoices);
-                                }
                             )
                             ->when(
                                 $data['deliver_type'],
@@ -169,7 +131,8 @@ class PaymentResource extends Resource
                                     $invoices = Invoice::whereIn('deliver_type_id', $deliver_type_id)->pluck('id');
                                     return $query->whereIn('invoice_id', $invoices);
                                 }
-                            )->when(
+                            )
+                            ->when(
                                 $data['payment_method'],
                                 function (Builder $query, $payment_method)
                                 { 

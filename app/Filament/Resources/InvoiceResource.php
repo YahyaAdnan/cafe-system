@@ -83,17 +83,7 @@ class InvoiceResource extends Resource
                     DatePicker::make('created_until')->visible(fn(\Filament\Forms\Get $get):bool => $get('range')), //IF RANGE
                     // *** START: END THE DATE *** 
                     // *** START: FIND BY ORDER DETAILS *** 
-                    Select::make('dinning_in')->options([
-                        0 => "ANY",
-                        1 => "OUT-ORDER",
-                        2 => "DIN-IN",
-                    ])->native(false)->live(),
-                    Select::make('tables')->options(Seating::pluck('title', 'id'))->multiple()
-                        ->visible(fn(Get $get):bool => $get('dinning_in') == 2),
-                    Select::make('employees')->options(Employee::pluck('name', 'id'))->multiple()
-                        ->visible(fn(Get $get):bool => $get('dinning_in') == 2),
-                    Select::make('deliver_type')->options(DeliverType::pluck('title', 'id'))->multiple()
-                        ->visible(fn(Get $get):bool => $get('dinning_in') == 1),
+                    Select::make('deliver_type')->options(DeliverType::pluck('title', 'id'))->multiple(),
                     // *** END: FIND BY ORDER DETAILS *** 
                 ])->query(function (Builder $query, array $data): Builder {
                     return $query
@@ -120,30 +110,6 @@ class InvoiceResource extends Resource
                             {
                                 if(!$data['range']) {return;}
                                 return $query->whereDate('created_until', '<=', $date);
-                            }
-                        )
-                        ->when(
-                            $data['dinning_in'],
-                            function (Builder $query, $dinning_in)
-                            {
-                                // IF dinning_is 1 then 1-1 = false, while dinning in val is 2 so 2-1 = 1 true.
-                                return $query->where('dinning_in', (int)$dinning_in - 1);
-                            }
-                        )
-                        ->when(
-                            $data['tables'],
-                            function (Builder $query, $tables_id) use ($data)
-                            { 
-                                if(!$data['dinning_in'] == 2) {return;}
-                                return $query->whereIn('table_id', $tables_id);
-                            }
-                        )
-                        ->when(
-                            $data['employees'],
-                            function (Builder $query, $employee_id) use ($data)
-                            { 
-                                if(!$data['dinning_in'] == 2) {return;}
-                                return $query->whereIn('employee_id', $employee_id);
                             }
                         )
                         ->when(
