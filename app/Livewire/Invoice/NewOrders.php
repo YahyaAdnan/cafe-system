@@ -68,6 +68,7 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
+
         $dataFound = false;
         foreach ($this->data['orders'] as &$order){
             if ($data['item_id'] == $order['item_id']){
@@ -91,9 +92,25 @@ class NewOrders extends Component implements HasForms, HasTable
            ];
        }
 
-        ray($this->data['orders']);
     }
 
+
+    public function reduceQuantity($itemId)
+    {
+        foreach ($this->data['orders'] as &$order) {
+            if ($order['item_id'] == $itemId) {
+                if ($order['quantity'] > 1) {
+                    $order['quantity'] = (int)$order['quantity'] - 1;
+                }else{
+                    $this->data['orders'] = array_filter($this->data['orders'], function ($item) use ($itemId) {
+                        return $item['item_id'] != $itemId;
+                    });
+                }
+                break;
+            }
+        }
+
+    }
     public function table(Table $table): Table
     {
         return OrdersForm::table($table)
