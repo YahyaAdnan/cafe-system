@@ -1,10 +1,10 @@
 <div class="gap-4 mt-3">
+    {{-- #TODO: JUST ADD DELETE with button x, next to the badge --}}
     @foreach ($data['orders'] as $order)
     <span class="inline-block text-sm font-semibold px-3 py-1 rounded-full shadow mt-1 mb-1" style="background-color: {{App\Models\Setting::get("color") ?? "#3b82f6"}};">
         {{$order['title']}} x {{$order['quantity']}}
     </span>
     @endforeach
-
 
     <div class="flex flex-col lg:flex-row gap-4 mt-10">
         <!-- Table Section -->

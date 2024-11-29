@@ -122,9 +122,11 @@ class NewOrders extends Component implements HasForms, HasTable
                         'amount' => $item->prices->first()->amount,
                     ]))
             ])->headerActions([
+                #TODO: MAKE BUTTON DISABLED IF NOT ORDEr
                 Action::make('submit')
                     ->label('SUBMIT')
                     ->size(ActionSize::Large)
+                    ->disabled(fn() => empty($this->data['orders']))
                     ->action(fn() => $this->create()),
             ])->paginated([16, 20, 28, 32, 'all']);
     }
