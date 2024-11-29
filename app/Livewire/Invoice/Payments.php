@@ -37,7 +37,7 @@ class Payments extends Component implements HasForms, HasTable
     {
         $this->invoice = $invoice;
     }
- 
+
     public function table(Table $table): Table
     {
         return $table
@@ -72,8 +72,16 @@ class Payments extends Component implements HasForms, HasTable
                             Hidden::make('invoice_id')
                                 ->default($this->invoice->id),
                             Select::make('payment_method_id')
-                                ->default(fn() => PaymentMethod::first()->id)
+                                ->default(fn() => PaymentMethod::first()?->id)
                                 ->columnSpan(12)
+                               ->createOptionForm([
+                                   TextInput::make('title')
+                                   ->required()
+                                   ->maxLength(64),
+                               ])
+                                ->createOptionUsing(function (array $data) {
+                                    return PaymentMethod::create($data)->id;
+                                })
                                 ->native(false)
                                 ->options(PaymentMethod::pluck('title', 'id'))
                                 ->required(),
