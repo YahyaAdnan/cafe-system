@@ -918,7 +918,7 @@ background-color: rgb(227 227 255 / 8%) !important;
 
     /* Remove Default Ring */
     .ring-gray-950\/5 {
-        --tw-ring-color: rgba(255, 255, 255, 0.1) !important;
+        --tw-ring-color: rgb(159 159 159 / 19%) !important;
     }
 
     /* Sign Out Button */
