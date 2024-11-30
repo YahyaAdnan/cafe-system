@@ -1300,7 +1300,7 @@ font-weight: bold !important;
                 Authenticate::class,
             ])->navigationItems([
 
-            ])->spa();
+            ]);
     }
 
     private function getNavigation()

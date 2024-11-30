@@ -139,7 +139,11 @@ class NewOrders extends Component implements HasForms, HasTable
                         'amount' => $item->prices->first()->amount,
                     ]))
             ])->headerActions([
-                #TODO: MAKE BUTTON DISABLED IF NOT ORDEr
+                Action::make('special')
+                    ->label('Special Order')
+                    ->size(ActionSize::Large)
+                    ->form(OrdersForm::form()),
+                    // TODO: FINISH IT AFTER DEBUGGING, action(fn(array $data) => $this->create()).
                 Action::make('submit')
                     ->label('SUBMIT')
                     ->size(ActionSize::Large)

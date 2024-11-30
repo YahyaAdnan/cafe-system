@@ -32,7 +32,6 @@ class OrdersForm
         return [
             // *** STARTS: TITLE ***
             TextInput::make('title')
-                ->disabled(fn (Get $get)=>  $get('item_id'))
                 ->columnSpan('12')
                 ->minLength(1)
                 ->maxLength(32)
@@ -45,7 +44,7 @@ class OrdersForm
             // *** MAX: 99 ***
             TextInput::make('quantity')
                 ->numeric()
-                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3])
+                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4])
                 ->default(1)
                 ->minValue(1)
                 ->maxValue(99)
@@ -59,29 +58,14 @@ class OrdersForm
             TextInput::make('amount')
                 ->disabled(fn (Get $get)=>  $get('item_id'))
                 ->numeric()
-                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3])
+                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4])
                 ->minValue(1)
                 ->maxValue(100000000)
                 ->required()
                 ->live(),
             // *** ENDS: QUANTITY ***
 
-            // *** STARTS: DISCOUNT ***
-            // *** MIN: 0 ***
-            // *** MAX: min(Maximum Discount, Price) ***
-            TextInput::make('discount')
-                ->disabled(fn (Get $get)=>  $get('item_id') == null)
-                ->numeric()
-                ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3])
-                ->required()
-                ->minValue(0)
-                ->maxValue(function (Get $get)  {
-                    if($get('item_id') == null) {return;}
-                    return Price::find($get('item_id'))->amount;
-                })
-                ->default(0)
-                ->live(),
-            // *** ENDS: MAX ***
+
             
             Placeholder::make('total_amount')
                 ->content(function (Get $get)  {
@@ -95,17 +79,6 @@ class OrdersForm
                 })
                 ->columnSpan(['sm' => 12, 'md' => 3, 'xl' => 3]),
 
-            Select::make('extras')
-                ->columnSpan(12)
-                ->multiple()
-                ->visible(fn (Get $get)=>  $get('item_id'))
-                ->options(function (Get $get) { 
-                    if($get('item_id'))
-                    {
-                        return Price::find($get('item_id'))->item->extras->pluck('title', 'id');
-                    }
-                })
-                ->live(),
             TextInput::make('note')
                 ->columnSpan(12)
                 ->maxLength(64),
