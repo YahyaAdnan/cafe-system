@@ -77,21 +77,21 @@ class NewOrders extends Component implements HasForms, HasTable
                 break;
             };
         }
-
-       if (!$dataFound){
-           $this->data['orders'][] = [
-               "special_order" => true,
-               "extras" => [],
-               "item_id" => $data['item_id'],
-               "title" => $data['title'],
-               "quantity" =>1,
-               "amount" => $data['amount'],
-               "discount" => "0",
-               "total_amount" => null,
-               "note" => null,
-           ];
-       }
-
+//
+        // dd($dataFound, $data, $this->data, $dataFound);
+        if (!$dataFound) {
+            $this->data['orders'][] = [
+                "special_order" => true,
+                "extras" => [],
+                "item_id" => $data['item_id'],
+                "title" => $data['title'],
+                "quantity" => 1,
+                "amount" => $data['amount'],
+                "discount" => "0",
+                "total_amount" => null,
+                "note" => null,
+            ];
+        }
     }
 
 
