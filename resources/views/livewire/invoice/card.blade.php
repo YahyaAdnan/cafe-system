@@ -57,7 +57,6 @@
                 @endif
             </div>
         </div>
-        <button wire:click.live="manualGenerateReceipt">Generate Receipt Manually</button>
 
         <div class="w-1/2 flex justify-end">
             <div class="flex flex-col">
@@ -70,41 +69,6 @@
                             Done
                         </button>
                     @endif
-                    {{-- <select wire:model.live="selectedLanguage">
-                        <option value="title">English</option>
-                        <option value="title_ar">Arabic</option>
-                        <option value="title_ku">Kurdish</option>
-                    </select> --}}
-
-                    {{-- @if(isset($receiptData['orders']))
-
-                        <div style="text-align: center;">
-                            <h2>CENTRAL PERK</h2>
-                            <p>{{ now()->toFormattedDateString() }}</p>
-                            <hr>
-                            @foreach($receiptData['orders'] as $order)
-                                <div>
-                                    {{ $order->title }} x {{ $order->count }}
-                                    <span style="float: right;">{{ number_format($order->total_amount, 2) }}</span>
-                                </div>
-                            @endforeach
-                            <hr>
-                            <div>
-                                <strong>Total Price:</strong>
-                                <span style="float: right;">{{ number_format($receiptData['total']['amount'], 2) }}</span>
-                            </div>
-                            <div>
-                                <strong>Discounts:</strong>
-                                <span style="float: right;">-{{ number_format($receiptData['total']['discount_fixed'], 2) }}</span>
-                            </div>
-                            <hr>
-                            <div>
-                                <strong>Price After Discounts:</strong>
-                                <span style="float: right;">{{ number_format($receiptData['total']['amount'] - $receiptData['total']['discount_fixed'], 2) }}</span>
-                            </div>
-                        </div>
-                    @endif --}}
-
                 @endif
             </div>
         </div>

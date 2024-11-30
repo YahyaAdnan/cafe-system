@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Price;
 use App\Models\Invoice;
 use App\Models\Item;
+use App\Models\Setting;
 use App\Models\Printer;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
@@ -23,8 +24,8 @@ use App\Services\Filament\OrdersForm;
 use App\Services\EstimatePrice;
 use Livewire\Component;
 use App\Services\PrintingService;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
@@ -61,12 +62,38 @@ class NewOrders extends Component implements HasForms, HasTable
         $this->form->fill($this->data);
     }
 
+
+    public function reduceQuantity(Array $selectedOrder)
+    {
+        foreach ($this->data['orders'] as &$order) 
+        {
+            if($order!= $selectedOrder)
+            {
+                continue;
+            }
+
+            if($order['quantity'] > 1)
+            {
+                $order['quantity'] -= 1;
+                return;
+            }
+
+            $this->data['orders'] = array_filter($this->data['orders'], function ($item) use ($order) {
+                return $item != $order;
+            });
+            
+            return;
+        }
+
+    }
+
     // *** START: FUNCTION ***
     // $data => array()
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-        ray($data);
+        $dataFound = false;
+
        foreach ($this->data['orders'] as &$order){
            if ($data['item_id'] == $order['item_id']){
                $order['quantity']=(int)$order['quantity'] + 1;
@@ -74,7 +101,8 @@ class NewOrders extends Component implements HasForms, HasTable
                break;
            };
        }
-       if (!$dataFound){
+       if (!$dataFound)
+       {
            $this->data['orders'][] = [
                "special_order" => true,
                "extras" => [],
@@ -89,8 +117,6 @@ class NewOrders extends Component implements HasForms, HasTable
        }
 
         ray($this->data['orders']);
-
-        $this->form->fill($this->data);
     }
 
     public function table(Table $table): Table
@@ -98,7 +124,7 @@ class NewOrders extends Component implements HasForms, HasTable
         return OrdersForm::table($table)
             ->recordAction(fn(Item $item) =>  $item->prices->count() > 1 ? 'prices' : 'select')
             ->actions([
-                TableAction::make('prices')
+                Action::make('prices')
                     ->label('')
                     ->form([
                         Radio::make('price_id')
@@ -113,35 +139,20 @@ class NewOrders extends Component implements HasForms, HasTable
                             'amount' => $item->prices->first()->amount,
                         ]);
                     }),
-                TableAction::make('select')
+                Action::make('select')
                     ->label('')
                     ->action(fn(Item $item) => $this->selectItem([
                         'item_id' => $item->prices->first()->id,
                         'title' => $item->title,
                         'amount' => $item->prices->first()->amount,
                     ]))
-            ]);
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Repeater::make('orders')
-                    ->label('')
-                    ->schema(OrdersForm::form())
-                    ->deleteAction(function (Action $action) {
-                        // making it hidden is not working so i just change icon, disable it, make it grey
-                        $action->disabled(fn(Get $get) => $get('orders') === null || count($get('orders')) <= 1);
-                        $action->color(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? Color::Gray:Color::Red);
-                        $action->icon(fn(Get $get) => ($get('orders') === null || count($get('orders')) <= 1) ? 'heroicon-m-no-symbol':'heroicon-s-trash');
-                    })
-                    ->required()
-                    // ->addable(false)
-                    ->columns(12)
-            ])
-            ->live()
-            ->statePath('data');
+            ])->headerActions([
+                Action::make('submit')
+                    ->label('SUBMIT')
+                    ->size(ActionSize::Large)
+                    ->action(fn() => $this->create())
+                    ->disabled(fn() => empty($this->data['orders'])),
+            ])->paginated([16, 20, 28, 32, 'all']);;
     }
 
     public function create()
@@ -156,10 +167,10 @@ class NewOrders extends Component implements HasForms, HasTable
          */
         OrdersForm::store([
             'invoice' => $this->invoice,
-            'orders' => $orderData['orders'],
+            'orders' => $this->data['orders'],
         ]);
 
-        $this->printService->printersOrders($orderData);
+        // $this->printService->printersOrders($orderData);
 
         return redirect('invoices/' . $this->invoice->id);
     }
