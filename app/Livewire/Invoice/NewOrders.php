@@ -63,28 +63,17 @@ class NewOrders extends Component implements HasForms, HasTable
     }
 
 
-    public function reduceQuantity(Array $selectedOrder)
+    public function reduceQuantity($selectedOrder)
     {
-        foreach ($this->data['orders'] as &$order)
-        {
-            if($order!= $selectedOrder)
-            {
-                continue;
-            }
-
-            if($order['quantity'] > 1)
-            {
-                $order['quantity'] -= 1;
-                return;
-            }
-
-            $this->data['orders'] = array_filter($this->data['orders'], function ($item) use ($order) {
-                return $item != $order;
-            });
-
-            return;
-        }
-
+        $this->data['orders'] = collect($this->data['orders'])
+            ->map(function ($order) use ($selectedOrder) {
+                if ($order['item_id'] === $selectedOrder['item_id']) {
+                    $order['quantity'] = max(0, $order['quantity'] - 1);
+                }
+                return $order;
+            })
+            ->filter(fn ($order) => $order['quantity'] > 0)
+            ->toArray();
     }
 
     // *** START: FUNCTION ***
@@ -125,6 +114,7 @@ class NewOrders extends Component implements HasForms, HasTable
     {
         return OrdersForm::table($table)
             ->recordAction(fn(Item $item) =>  $item->prices->count() > 1 ? 'prices' : 'select')
+            ->recordClasses('cursor-pointer hover:bg-gray-50')  // Make entire row clickable
             ->actions([
                 Action::make('prices')
                     ->label('')
