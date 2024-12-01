@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Invoice;
 use App\Models\Order;
+use App\Models\Table;
 
 class GenerateInovice
 {
@@ -31,6 +32,7 @@ class GenerateInovice
             'title' => GenerateInovice::generateTitle(),
             'active' => 1,
             'dinning_in' => 0,
+            'table_id' => Table::takeAway()->id,
             'amount' => 0,
             'remaining' => 0,
             'discount_rate' => 0,

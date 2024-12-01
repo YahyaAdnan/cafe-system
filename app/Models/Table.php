@@ -15,6 +15,22 @@ class Table extends Model
         'note',
     ];
 
+    public static function takeAway()
+    {
+        $table = Table::where('title', '#')->first();
+    
+        if (!$table) 
+        {
+            $table = Table::create([
+                'title' => '#',
+                'chairs' => 0, 
+                'note' => null,
+            ]);
+        }
+    
+        return $table;
+    }
+    
     public function activeInvoicesCount()
     {
         return $this->invoices->where('active', 1)->count();
