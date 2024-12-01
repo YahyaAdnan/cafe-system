@@ -65,7 +65,7 @@ class NewOrders extends Component implements HasForms, HasTable
 
     public function reduceQuantity(Array $selectedOrder)
     {
-        foreach ($this->data['orders'] as &$order) 
+        foreach ($this->data['orders'] as &$order)
         {
             if($order!= $selectedOrder)
             {
@@ -81,7 +81,7 @@ class NewOrders extends Component implements HasForms, HasTable
             $this->data['orders'] = array_filter($this->data['orders'], function ($item) use ($order) {
                 return $item != $order;
             });
-            
+
             return;
         }
 
@@ -92,32 +92,33 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-        $dataFound = false;
-        foreach ($this->data['orders'] as &$order)
-        {
-            if ($data['item_id'] == $order['item_id'])
-            {
-                // dd($order, $data, $this->data['orders']);
-                $order['quantity'] = (int)$order['quantity'] + 1;
-                $dataFound = true;
-                break;
-            };
-        }
+       $existenOrder = collect($this->data['orders'])->firstWhere('item_id', $data['item_id']);
+       if ($existenOrder)
+       {
+          $this->data['orders'] = collect($this->data['orders'])->map(function ($item) use ($data) {
+              if($item['item_id'] == $data['item_id'])
+              {
+                  $item['quantity'] +=1;
+                  return $item;
+              }
+              return $item;
+          })->toArray();
+       }else{
+           $this->data['orders'][] = [
+               "special_order" => true,
+               "extras" => [],
+               "item_id" => $data['item_id'],
+               "title" => $data['title'],
+               "quantity" => 1,
+               "amount" => $data['amount'],
+               "discount" => "0",
+               "total_amount" => null,
+               "note" => null,
+           ];
+       }
+        ray($this->data['orders']);
 
-        // dd($dataFound, $data, $this->data, $dataFound);
-        if (!$dataFound) {
-            $this->data['orders'][] = [
-                "special_order" => true,
-                "extras" => [],
-                "item_id" => $data['item_id'],
-                "title" => $data['title'],
-                "quantity" => 1,
-                "amount" => $data['amount'],
-                "discount" => "0",
-                "total_amount" => null,
-                "note" => null,
-            ];
-        }
+
     }
 
     public function table(Table $table): Table
