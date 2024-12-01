@@ -29,7 +29,7 @@ class GenerateInovice
     {
         return Invoice::create([
             'inovice_no' => GenerateInovice:: getInovice(null),
-            'title' => GenerateInovice::generateTitle(),
+            'title' =>$data['title'] ?? GenerateInovice::generateTitle(),
             'active' => 1,
             'dinning_in' => 0,
             'table_id' => Table::takeAway()->id,

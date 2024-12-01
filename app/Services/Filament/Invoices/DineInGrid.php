@@ -7,6 +7,9 @@ use App\Services\GenerateInovice;
 use App\Models\DeliverType;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
@@ -15,6 +18,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
+use Hamcrest\Core\Set;
+use Illuminate\Database\Eloquent\Model;
 
 class DineInGrid
 {
@@ -42,14 +47,17 @@ class DineInGrid
                 ->schema([
                     TextColumn::make('title')
                         ->color(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0 ? 'success' : '')
-                        ->size(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0 
+                        ->size(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0
                             ? TextColumn\TextColumnSize::Large
                             : TextColumn\TextColumnSize::Medium
                         )
-                        ->weight(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0 
+                        ->weight(fn(Seat $seat) =>  $seat->activeInvoicesCount() > 0
                             ? FontWeight::Black
                             : FontWeight::Thin
                         )
+                        ->state(function(Model $record){
+                            return $record->title == "#" ? "Delivery Table" : $record->title;
+                        })
                         ->alignment('center')
                         ->searchable(),
                     ViewColumn::make('ActiveInvoices')->view('tables.columns.invoices-column')
@@ -87,11 +95,35 @@ class DineInGrid
                         Select::make('deliver_type_id')
                             ->searchable()
                             ->label('Deliver Type')
+                            ->afterStateUpdated(function ($state,Get $get, \Filament\Forms\Set $set) {
+                               $dilverytype = DeliverType::find($state);
+                               if (!$dilverytype) {
+                                   Notification::make('choose_dilvery')
+                                       ->title('Choose Dilvery Type First')
+                                       ->icon('heroicon-s-exclamation-triangle')
+                                       ->iconColor('warning')
+                                   ->send();
+                                   return;
+                               }
+                                $autoTitle =sprintf(
+                                    "%s-%s",
+                                    $dilverytype->title,
+                                    GenerateInovice::generateTitle()
+                                );
+                               $set('title', $autoTitle);
+                            })
+                            ->live()
                             ->options(DeliverType::pluck('title', 'id'))
                             ->required(),
+
+                            TextInput::make('title')
+                            ->label('Title For Invoice')
+                        ->helperText('click to generate title based on dilvery type.')
+
                     ])->action(function (array $data, Seat $seat): void {
                         $invoice = GenerateInovice::dineOut([
                             'deliver_type_id' => $data['deliver_type_id'],
+                            'title' => $data['title'],
                         ]);
                     }),
             ]);
