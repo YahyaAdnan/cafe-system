@@ -77,6 +77,53 @@ class OrdersForm
         ];
     }
 
+    public static function specialSelect(Item $item)
+    {
+        return [
+
+            Radio::make('price_id')
+                ->label('Price')
+                ->options(fn(Item $item) => $item->prices->pluck('title', 'id'))
+                ->required(),
+
+            // *** STARTS: QUANTITY ***
+            // *** DEFAULT: 1 ***
+            // *** MIN: 1 ***
+            // *** MAX: 99 ***
+            TextInput::make('quantity')
+                ->numeric()
+                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4])
+                ->default(1)
+                ->minValue(1)
+                ->maxValue(99)
+                ->required()
+                ->live(),
+            // *** ENDS: QUANTITY ***
+
+            // *** STARTS: AMOUNT ***
+            // *** MIN: 1 ***
+            // *** MAX: 100000000 ***
+            TextInput::make('discount')
+                ->disabled(fn (Get $get)=>  $get('item_id'))
+                ->numeric()
+                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4])
+                ->minValue(1)
+                // ->maxValue(Setting::)
+                ->prefix("IQD")
+                ->required()
+                ->live(),
+            // *** ENDS: QUANTITY ***
+
+            // *** STARTS: DISCOUNT ***      
+            Placeholder::make('total_amount')
+                ->content(fn (Get $get)=> ($get('quantity') * $get('amount')) ?? 0)
+                ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4]),
+                
+            TextInput::make('note')
+                ->columnSpan(12)
+                ->maxLength(64),
+        ];
+    }
 
     // Parameters: orders, invoice
     // Orders: Array, Array of order inputs.

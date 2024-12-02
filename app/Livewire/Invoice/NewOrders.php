@@ -67,7 +67,7 @@ class NewOrders extends Component implements HasForms, HasTable
     {
         $this->data['orders'] = collect($this->data['orders'])
             ->map(function ($order) use ($selectedOrder) {
-                if ($order['item_id'] === $selectedOrder['item_id']) {
+                if ($order === $selectedOrder) {
                     $order['quantity'] = max(0, $order['quantity'] - 1);
                 }
                 return $order;
@@ -81,7 +81,14 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-       $existenOrder = collect($this->data['orders'])->firstWhere('item_id', $data['item_id']);
+        $existenOrder = collect($this->data['orders'])->first(function ($item) use ($data) {
+            $filteredItem = collect($item)->except('quantity')->toArray();
+            $filteredData = collect($data)->except('quantity')->toArray();
+
+            return $filteredItem == $filteredData;
+        });
+        
+
        if ($existenOrder)
        {
           $this->data['orders'] = collect($this->data['orders'])->map(function ($item) use ($data) {
@@ -92,24 +99,25 @@ class NewOrders extends Component implements HasForms, HasTable
               }
               return $item;
           })->toArray();
-       }else{
+       }
+       else
+       {
            $this->data['orders'][] = [
-               "special_order" => true,
+               "special_order" => false,
                "extras" => [],
                "item_id" => $data['item_id'],
                "title" => $data['title'],
-               "quantity" => 1,
+               "quantity" => $data['quantity'] ?? 1,
                "amount" => $data['amount'],
-               "discount" => "0",
+               "discount" => $data['discount'] ?? 0,
                "total_amount" => null,
                "note" => null,
            ];
        }
+
         ray($this->data['orders']);
-
-
     }
-
+    
     public function table(Table $table): Table
     {
         return OrdersForm::table($table)
@@ -126,23 +134,66 @@ class NewOrders extends Component implements HasForms, HasTable
                     ])
                     ->action(function (array $data, Item $item): void {
                         $this->selectItem([
+                            "special_order" => false,
+                            "extras" => [],
                             'item_id' => $item->prices->first()->id,
                             'title' => $item->title . ' (' . Price::find($data['price_id'])->title . ')',
                             'amount' => $item->prices->first()->amount,
-                        ]);
+                            "discount" => 0,
+                            "total_amount" => null,
+                            "note" => null,
+                        ]); 
                     }),
                 Action::make('select')
                     ->label('')
                     ->action(fn(Item $item) => $this->selectItem([
+                        "special_order" => true,
+                        "extras" => [],
                         'item_id' => $item->prices->first()->id,
                         'title' => $item->title,
                         'amount' => $item->prices->first()->amount,
-                    ]))
+                        'quantity' => 1,
+                        "discount" => 0,
+                        "total_amount" => null,
+                        "note" => null,
+                    ])),
+                    //quantity,
+                    //discount,
+                    //discount,
+                    //extras,
+                // Action::make('special_select')
+                //     ->label('Special')
+                //     ->form([
+
+                //     ])
+                //     ->action(fn(array $data) => $this->selectItem([
+                //             "special_order" => false,
+                //             "extras" => [],
+                //             'item_id' => null,
+                //             'title' => $data['title'],
+                //             'amount' => $data['amount'],
+                //             'quantity' => $data['quantity'],
+                //             "discount" => 0,
+                //             "total_amount" => null,
+                //             "note" =>  $data['note'],
+                //         ]))
             ])->headerActions([
                 Action::make('special')
                     ->label('Special Order')
                     ->size(ActionSize::Large)
-                    ->form(OrdersForm::form()),
+                    ->form(OrdersForm::form())
+                    ->action(fn(array $data) => $this->selectItem([
+                            "special_order" => false,
+                            "extras" => [],
+                            'item_id' => null,
+                            'title' => $data['title'],
+                            'amount' => $data['amount'],
+                            'quantity' => $data['quantity'],
+                            "discount" => 0,
+                            "total_amount" => null,
+                            "note" =>  $data['note'],
+                        ])
+                    ),
                     // TODO: FINISH IT AFTER DEBUGGING, action(fn(array $data) => $this->create()).
                 Action::make('submit')
                     ->label('SUBMIT')
