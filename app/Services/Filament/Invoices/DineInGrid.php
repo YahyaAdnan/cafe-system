@@ -66,7 +66,18 @@ class DineInGrid
             ])
             ->contentGrid(['md' => 2, 'xl' => 3])
             ->paginated(false)
-            ->recordAction(fn(Seat $seat) => $seat->activeInvoicesCount() == 0 ? 'create' : Tables\Actions\ViewAction::class)
+            ->recordAction(function(Seat $seat) {
+                if($seat->activeInvoicesCount() == 0)
+                {
+                    return 'create';
+                }
+                
+                if($seat->activeInvoicesCount() == 1)
+                {
+                    return Tables\Actions\ViewAction::class;
+                }
+                
+            })
             ->actions([
                 Action::make('create')
                     ->label('New Invoice')
@@ -84,10 +95,11 @@ class DineInGrid
                             'employee_id' => $data['employee_id'],
                         ]);
                         return redirect('invoices/' . $invoice->id);
-                    }),
+                    })
+                    ->hidden(fn(Seat $seat) => $seat->title == '#'),
             ], position: ActionsPosition::BeforeColumns)
             ->headerActions([
-                Action::make('create')
+                Action::make('takeaway')
                     ->label('Take Away')
                     ->icon('heroicon-s-plus')
                     ->size(ActionSize::Large)
