@@ -81,29 +81,30 @@ class NewOrders extends Component implements HasForms, HasTable
     //**  item_id, title, amount **/
     public function selectItem($data)
     {
-        $existenOrder = collect($this->data['orders'])->first(function ($item) use ($data) {
+        $filteredData = collect($data)->except('quantity')->toArray();
+
+        $existenOrder = collect($this->data['orders'])->first(function ($item) use ($data, $filteredData) {
             $filteredItem = collect($item)->except('quantity')->toArray();
-            $filteredData = collect($data)->except('quantity')->toArray();
-
-            return $filteredItem == $filteredData;
+            return $filteredItem === $filteredData;
         });
-        
+    
+        if ($existenOrder)
+        {
+          $this->data['orders'] = collect($this->data['orders'])->map(function ($item) use ($data, $filteredData) {
+                $filteredItem = collect($item)->except('quantity')->toArray();
 
-       if ($existenOrder)
-       {
-          $this->data['orders'] = collect($this->data['orders'])->map(function ($item) use ($data) {
-              if($item['item_id'] == $data['item_id'])
-              {
-                  $item['quantity'] +=1;
-                  return $item;
-              }
-              return $item;
+                if($filteredItem == $filteredData)
+                {
+                    $item['quantity'] += $filteredData['quanity'] ?? 1;
+                    return $item;
+                }
+                return $item;
           })->toArray();
-       }
-       else
-       {
+        }
+        else
+        {
            $this->data['orders'][] = [
-               "special_order" => false,
+               "special_order" => $data['special_order'] ?? true,
                "extras" => [],
                "item_id" => $data['item_id'],
                "title" => $data['title'],
@@ -111,7 +112,7 @@ class NewOrders extends Component implements HasForms, HasTable
                "amount" => $data['amount'],
                "discount" => $data['discount'] ?? 0,
                "total_amount" => null,
-               "note" => null,
+               "note" => $data['note'] ?? null,
            ];
        }
 
@@ -121,33 +122,13 @@ class NewOrders extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return OrdersForm::table($table)
-            ->recordAction(fn(Item $item) =>  $item->prices->count() > 1 ? 'prices' : 'select')
+            ->recordAction(fn(Item $item) =>  $item->prices->count() > 1 ? 'special_select' : 'select')
             ->recordClasses('cursor-pointer hover:bg-gray-50')  // Make entire row clickable
             ->actions([
-                Action::make('prices')
-                    ->label('')
-                    ->form([
-                        Radio::make('price_id')
-                            ->label('Price')
-                            ->options(fn(Item $item) => $item->prices->pluck('title', 'id'))
-                            ->required(),
-                    ])
-                    ->action(function (array $data, Item $item): void {
-                        $this->selectItem([
-                            "special_order" => false,
-                            "extras" => [],
-                            'item_id' => $item->prices->first()->id,
-                            'title' => $item->title . ' (' . Price::find($data['price_id'])->title . ')',
-                            'amount' => $item->prices->first()->amount,
-                            "discount" => 0,
-                            "total_amount" => null,
-                            "note" => null,
-                        ]); 
-                    }),
                 Action::make('select')
                     ->label('')
                     ->action(fn(Item $item) => $this->selectItem([
-                        "special_order" => true,
+                        "special_order" => false,
                         "extras" => [],
                         'item_id' => $item->prices->first()->id,
                         'title' => $item->title,
@@ -157,33 +138,29 @@ class NewOrders extends Component implements HasForms, HasTable
                         "total_amount" => null,
                         "note" => null,
                     ])),
-                    //quantity,
-                    //discount,
-                    //discount,
-                    //extras,
-                // Action::make('special_select')
-                //     ->label('Special')
-                //     ->form([
-
-                //     ])
-                //     ->action(fn(array $data) => $this->selectItem([
-                //             "special_order" => false,
-                //             "extras" => [],
-                //             'item_id' => null,
-                //             'title' => $data['title'],
-                //             'amount' => $data['amount'],
-                //             'quantity' => $data['quantity'],
-                //             "discount" => 0,
-                //             "total_amount" => null,
-                //             "note" =>  $data['note'],
-                //         ]))
+                Action::make('special_select')
+                    ->label('')
+                    ->icon('heroicon-o-pencil-square')
+                    ->size(ActionSize::Small)
+                    ->form(fn(Item $item) => OrdersForm::specialSelect($item))
+                    ->action(fn(Item $item, array $data) => $this->selectItem([
+                            "special_order" => false,
+                            "extras" => [],
+                            'item_id' => $data['price_id'],
+                            'title' => $item->title . ' (' . Price::find($data['price_id'])->title . ')',
+                            'quantity' => $data['quantity'],
+                            'amount' => Price::find($data['price_id'])->amount,
+                            "discount" => $data['discount'] ?? 0,
+                            "total_amount" => null,
+                            "note" => $data['note'],
+                        ]))
             ])->headerActions([
                 Action::make('special')
                     ->label('Special Order')
                     ->size(ActionSize::Large)
                     ->form(OrdersForm::form())
                     ->action(fn(array $data) => $this->selectItem([
-                            "special_order" => false,
+                            "special_order" => true,
                             "extras" => [],
                             'item_id' => null,
                             'title' => $data['title'],
@@ -194,7 +171,6 @@ class NewOrders extends Component implements HasForms, HasTable
                             "note" =>  $data['note'],
                         ])
                     ),
-                    // TODO: FINISH IT AFTER DEBUGGING, action(fn(array $data) => $this->create()).
                 Action::make('submit')
                     ->label('SUBMIT')
                     ->size(ActionSize::Large)

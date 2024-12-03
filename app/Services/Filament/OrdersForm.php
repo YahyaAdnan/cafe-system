@@ -9,8 +9,10 @@ use App\Models\Item;
 use App\Models\ItemType;
 use App\Models\ItemCategory;
 use App\Models\ItemSubcategory;
+use App\Services\DiscountService;
 use Filament\Forms\Get;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Radio;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Placeholder;
@@ -81,10 +83,14 @@ class OrdersForm
     {
         return [
 
+            // *** STARTS: PRICE ***
             Radio::make('price_id')
                 ->label('Price')
                 ->options(fn(Item $item) => $item->prices->pluck('title', 'id'))
-                ->required(),
+                ->default($item->prices->first()->id)
+                ->required()
+                ->columnSpan(12),
+            // *** ENDS: PRICE ***
 
             // *** STARTS: QUANTITY ***
             // *** DEFAULT: 1 ***
@@ -108,15 +114,17 @@ class OrdersForm
                 ->numeric()
                 ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4])
                 ->minValue(1)
-                // ->maxValue(Setting::)
+                ->maxValue(DiscountService::maximumItemDiscount(fn (Get $get)=>  Price::find($get('price_id'))->amount))
                 ->prefix("IQD")
-                ->required()
                 ->live(),
             // *** ENDS: QUANTITY ***
 
             // *** STARTS: DISCOUNT ***      
             Placeholder::make('total_amount')
-                ->content(fn (Get $get)=> ($get('quantity') * $get('amount')) ?? 0)
+                ->content(fn (Get $get) => max(
+                        ((int) $get('quantity') * ((Price::find($get('price_id'))->amount ?? 0) - ((float) $get('discount') ?? 0))), 
+                        0
+                    ))
                 ->columnSpan(['sm' => 12, 'md' => 4, 'xl' => 4]),
                 
             TextInput::make('note')
@@ -245,4 +253,5 @@ class OrdersForm
             ])
             ->contentGrid(['sm' => 2, 'md' => 2, 'xl' => 4]);
     }
+    
 }

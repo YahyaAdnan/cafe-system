@@ -24,7 +24,7 @@ class DiscountService
     public static function maximumItemDiscount($amount)
     {
         $max = Auth::user()->authorized('create discount')
-            ? 100
+            ? $amount
             : Setting::get('Max Item Discount');
         
         return min($amount, $max);
