@@ -47,6 +47,18 @@ class Price extends Model
         return $prices;
     }
 
+    public function validateIngredient()
+    {
+        foreach ($this->ingredientDetails as $key => $ingredient) 
+        {
+            if($ingredient->amount == '0')
+            {
+                return 0;
+            }
+        }
+        return true;
+    }
+
     public function item()
     {
         return $this->belongsTo(Item::class);

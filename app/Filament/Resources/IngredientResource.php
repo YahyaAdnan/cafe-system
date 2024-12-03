@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\IngredientResource\Pages;
 use App\Filament\Resources\IngredientResource\RelationManagers;
 use App\Models\Ingredient;
+use App\Models\InventoryUnit;
 use App\Models\Item;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -55,6 +56,9 @@ class IngredientResource extends Resource
                     }, ignoreRecord: true
                 ),
                 Toggle::make('is_available')->onColor('success')->offColor('danger')->default(1),
+                Select::make('inventory_unit_id')
+                    ->options(InventoryUnit::pluck('title', 'id'))
+                    ->required(),
                 // START: REPEATER for Ingredient
                 Repeater::make('itemIngredient')
                     ->relationship()
