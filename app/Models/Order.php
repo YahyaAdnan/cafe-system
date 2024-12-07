@@ -75,6 +75,7 @@ class Order extends Model
         }
 
         $ingredients = $this->price->ingredientDetails;
+        
         foreach ($ingredients as $key => $ingredient) 
         {
             $ingredient->consume();

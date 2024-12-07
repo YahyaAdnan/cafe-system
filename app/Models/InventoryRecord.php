@@ -11,7 +11,7 @@ class InventoryRecord extends Model
     use HasFactory;
 
     protected $fillable = [
-        'inventory_id',
+        'ingredient_id',
         'supplier_id',
         'expense_id',
         'quantity',
@@ -31,17 +31,17 @@ class InventoryRecord extends Model
         static::created(function ($model) {
             if($model->type == "Increase")
             {
-                $inventory = Inventory::find($model->inventory_id);
-                $inventory->update([
-                    'quantity' => $inventory->quantity + $model->quantity
+                $ingredient = Ingredient::find($model->ingredient_id);
+                $ingredient->update([
+                    'quantity' => $ingredient->quantity + $model->quantity
                 ]);
             }
             else
             {
-                $inventory = Inventory::find($model->inventory_id);
-                $quantity = $inventory->quantity - $model->quantity;
-                $inventory->update([
-                    'quantity' => $quantity > 0 ? $quantity : 0
+                $ingredient = Ingredient::find($model->ingredient_id);
+                $quantity = $ingredient->quantity - $model->quantity;
+                $ingredient->update([
+                    'quantity' => max(0, $quantity)
                 ]);
             }
         });
@@ -62,8 +62,8 @@ class InventoryRecord extends Model
         return $this->belongsTo(Expense::class);
     }
 
-    public function inventory()
+    public function ingredient()
     {
-        return $this->belongsTo(Inventory::class);
+        return $this->belongsTo(Ingredient::class);
     }
 }
