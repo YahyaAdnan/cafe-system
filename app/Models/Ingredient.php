@@ -14,14 +14,17 @@ class Ingredient extends Model
         'title_ar',
         'title_ku',
         'is_available',
+        'inventory_unit_id',
+        'quantity'
     ];
     
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($ingredient) {
-            
+        static::updating(function ($ingredient) 
+        {
+            $ingredient->is_available = $ingredient->quantity > 0;
         });
     }
 
@@ -33,6 +36,17 @@ class Ingredient extends Model
     public function ingredientDetails()
     {
         return $this->hasMany(IngredientDetails::class, 'ingredient_id');
+    }
+
+    public function inventoryRecords()
+    {
+        return $this->hasMany(InventoryRecord::class);
+    }
+
+
+    public function inventoryUnit()
+    {
+        return $this->belongsTo(InventoryUnit::class);
     }
 
     public function inventories()

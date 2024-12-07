@@ -58,7 +58,8 @@ class IngredientResource extends Resource
                 Toggle::make('is_available')->onColor('success')->offColor('danger')->default(1),
                 Select::make('inventory_unit_id')
                     ->options(InventoryUnit::pluck('title', 'id'))
-                    ->required(),
+                    ->required()
+                    ->native(false),
                 // START: REPEATER for Ingredient
                 Repeater::make('itemIngredient')
                     ->relationship()
@@ -85,8 +86,9 @@ class IngredientResource extends Resource
                 TextColumn::make('title')->label('Title (EN)')->sortable(),
                 TextColumn::make('title_ar')->label('Title (AR)')->sortable(),
                 TextColumn::make('title_ku')->label('Title (KU)')->sortable(),
-                TextColumn::make('items_count')->counts('itemIngredient')
-
+                TextColumn::make('quantity')
+                    ->suffix(fn(Ingredient $ingredient) => $ingredient->inventoryUnit->title ?? "")
+                    ->sortable(),
             ])
             ->filters([
                 

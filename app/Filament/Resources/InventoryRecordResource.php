@@ -7,7 +7,7 @@ use App\Filament\Resources\InventoryRecordResource\RelationManagers;
 use App\Models\InventoryRecord;
 use App\Models\PaymentMethod;
 use App\Models\Supplier;
-use App\Models\Inventory;
+use App\Models\Ingredient;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables\Columns\TextColumn;
@@ -54,9 +54,9 @@ class InventoryRecordResource extends Resource
                     ])->live(),
                 // END: TYPE OF RECORD
                 // START: RECORD DETAILS
-                Select::make('inventory_id')->label("item")->columnSpan(6)->required()
+                Select::make('ingredient_id')->label("item")->columnSpan(6)->required()
                     ->searchable()->options(
-                        Inventory::pluck('title', 'id')
+                        Ingredient::pluck('title', 'id')
                     )->live(),
                 TextInput::make('supplier_id_to_hide')->label('supplier')
                     ->columnSpan(6)
@@ -72,7 +72,7 @@ class InventoryRecordResource extends Resource
                     ])->searchable()->preload()
                     ->hidden(fn(Get $get) => $get("type") != "Increase"),
                 TextInput::make('quantity')->columnSpan(6)
-                    ->suffix(fn(Get $get) => $get("inventory_id") ? Inventory::find($get("inventory_id"))->inventoryUnit->title : "")
+                    ->suffix(fn(Get $get) => $get("ingredient_id") ? Ingredient::find($get("ingredient_id"))->inventoryUnit->title : "-")
                     ->numeric()->minValue(0)->required(),
                 // END: RECORD DETAILS
                 // START: CHECK IF THEY PAID.
@@ -97,10 +97,10 @@ class InventoryRecordResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('inventory.title')->label('Title')->sortable()->searchable(),
+                TextColumn::make('ingredient.title')->label('Title')->sortable()->searchable(),
                 TextColumn::make('supplier.title')->label('supplier')->sortable()->toggleable(),
                 TextColumn::make('quantity')->badge()->label('quantity')
-                    ->suffix(fn(InventoryRecord $record) => ' ' . $record->inventory->inventoryUnit->title)
+                    ->suffix(fn(InventoryRecord $record) => ' ' . $record->ingredient->inventoryUnit->title)
                     ->color(fn(InventoryRecord $record) => $record->type == "Increase" ?  "success" : "danger")
                     ->sortable(),
                 TextColumn::make('created_at')->label('Date')->datetime(),
@@ -108,9 +108,9 @@ class InventoryRecordResource extends Resource
             ->filters([
                 Filter::make('filter')
                 ->form([
-                    Select::make('inventories')
+                    Select::make('ingredients')
                         ->multiple()
-                        ->options(Inventory::pluck('title', 'id')),
+                        ->options(Ingredient::pluck('title', 'id')),
                     // START: TYPE OF RECORD
                     Select::make('type')->required()
                     ->native(false)->options([
@@ -147,10 +147,10 @@ class InventoryRecordResource extends Resource
                             }
                         )
                         ->when(
-                            $data['inventories'],
+                            $data['ingredients'],
                             function (Builder $query, $inventories)
                             {
-                                return $query->whereIn('inventory_id', $inventories);
+                                return $query->whereIn('ingredient_id', $inventories);
                             }
                         )
                         ->when(

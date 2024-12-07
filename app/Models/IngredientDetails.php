@@ -26,23 +26,18 @@ class IngredientDetails extends Model
             return;
         }
 
-        $inventory = $this->ingredient->inventories->first();
+        $ingredient = $this->ingredient;
 
-        $inventory->quantity = max(0, $inventory->quantity - $this->amount);
-        $inventory->save();
+        $ingredient->quantity = max(0, $ingredient->quantity - $this->amount);
+        $ingredient->save();
     }
 
     public function restock()
     {
-        if($this->ingredient->inventories->isEmpty())
-        {
-            return;
-        }
+        $ingredient = $this->ingredient;
 
-        $inventory = $this->ingredient->inventories->first();
-
-        $inventory->quantity += $this->amount;
-        $inventory->save();
+        $ingredient->quantity += $this->amount;
+        $ingredient->save();
     }
 
     // Define the relationship with the Ingredient model
