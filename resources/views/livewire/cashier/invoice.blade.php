@@ -1,17 +1,21 @@
 <div>
     {{-- Be like water. --}}
     @if($record->active)
-        <ul class="flex justify-between">
-            @foreach ($navigators as $key => $navigator)
-            <li class="mr-3">
-                <button class="inline-block border rounded py-2 px-4 
-                    @if ($selected_nav == $key) border-2 font-bold @endif" 
-                    wire:click="$set('selected_nav', {{$key}})">
-                    {{$navigator}}
-                </button>
-            </li>
-            @endforeach
-        </ul>
+    <div class="flex w-full pt-4">
+        @foreach ($navigators as $key => $navigator)
+            <x-filament::button
+                size="md"
+                color="gray"
+                class="flex-1"
+                color="{{$selected_nav == $key ? 'primary' : 'gray'}}"
+                wire:click="$set('selected_nav', {{ $key }})"
+            >
+                {{ $navigator }}
+            </x-filament::button>
+        @endforeach
+    </div>
+    
+        
         @switch($selected_nav)
             @case(1)
                 @livewire('invoice.new-orders', ['invoice' => $record])

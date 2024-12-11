@@ -192,10 +192,10 @@ class OrdersForm
         }
     }
 
-    public static function table(Table $table)
+    public static function table(Table $table, $filter)
     {
         return $table
-            ->query(Item::query())
+            ->query(Item::where('item_type_id', $filter['item_type_id'])->where('item_category_id', $filter['item_category_id']))
             ->columns([
                 Grid::make()
                     ->columns(1)
@@ -205,51 +205,6 @@ class OrdersForm
                             ->weight(FontWeight::SemiBold)
                             ->searchable()
                     ])
-            ])
-            ->filters([
-                Filter::make('category_filter')
-                ->form([
-                    Select::make('item_type_id')
-                        ->label('Item Type')
-                        ->options(ItemType::pluck('title', 'id'))
-                        ->searchable()
-                        ->live(),
-                    Select::make('item_category_id')
-                        ->label('Item Category')
-                        ->options(function ($get) {
-                            if ($item_type_id = $get('item_type_id')) {
-                                return ItemCategory::where('item_type_id', $item_type_id)->pluck('title', 'id');
-                            }
-                            return ItemCategory::pluck('title', 'id');
-                        })
-                        ->searchable()
-                        ->live(),
-                    Select::make('item_subcategory_id')
-                        ->label('Item Subcategory')
-                        ->options(function ($get) {
-                            if ($category_id = $get('item_category_id')) {
-                                return ItemSubcategory::where('item_category_id', $category_id)->pluck('title', 'id');
-                            }
-                            return ItemSubcategory::pluck('title', 'id');
-                        })
-                        ->searchable()
-                        ->live(),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query
-                        ->when(
-                            $data['item_type_id'],
-                            fn (Builder $query, $item_type_id): Builder => $query->where('item_type_id', $item_type_id)
-                        )
-                        ->when(
-                            $data['item_category_id'],
-                            fn (Builder $query, $category_id): Builder => $query->where('item_category_id', $category_id)
-                        )
-                        ->when(
-                            $data['item_subcategory_id'],
-                            fn (Builder $query, $subcategory_id): Builder => $query->where('item_subcategory_id', $subcategory_id)
-                        );
-                })
             ])
             ->contentGrid(['sm' => 2, 'md' => 2, 'xl' => 4]);
     }

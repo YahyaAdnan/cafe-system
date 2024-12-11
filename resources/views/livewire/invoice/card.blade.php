@@ -57,20 +57,31 @@
                 @endif
             </div>
         </div>
-
         <div class="w-1/2 flex justify-end">
-            <div class="flex flex-col">
+            <div class="flex flex-col gap-4">
                 @if($invoice->active)
-                    <a href="/invoices/{{$invoice->id}}/edit" class="inline-block border rounded py-2 px-4 border-2 mb-2">
-                        Edit
+                    <a href="/invoices/{{$invoice->id}}/edit">
+                        <x-filament::button
+                            size="lg"
+                            color="gray"
+                            class="w-full"
+                        >
+                            Edit
+                        </x-filament::button>
                     </a>
+        
                     @if($invoice->remaining == 0)
-                        <button class="inline-block border rounded py-2 px-4 border-2 b" wire:click="done">
+                        <x-filament::button
+                            size="lg"
+                            color="success"
+                            wire:click="done"
+                            class="w-full"
+                        >
                             Done
-                        </button>
+                        </x-filament::button>
                     @endif
                 @endif
             </div>
         </div>
-    </div>
+        
 </div>

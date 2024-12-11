@@ -19,6 +19,7 @@ use Filament\Forms\Components\Select;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Services\InvoiceAction;
+use App\Services\PaymentService;
 
 use Livewire\Component;
 
@@ -77,6 +78,10 @@ class Orders extends Component implements HasForms, HasTable
                             ->maxLength(64),
                     ]),
             ])
+            ->headerActions([
+                    PaymentService::showPayments($this->invoice),
+                    PaymentService::createPayemnt($this->invoice),
+                ])
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('delete')

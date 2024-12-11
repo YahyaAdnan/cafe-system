@@ -36,10 +36,10 @@ class Invoice extends Component
             $this->navigators[2] = 'Orders';
         }
 
-        if(Auth::user()->authorized('create payments'))
-        {
-            $this->navigators[3] = 'Payments';
-        }
+        // if(Auth::user()->authorized('create payments'))
+        // {
+        //     $this->navigators[3] = 'Payments';
+        // }
     }
 
     public function render()
