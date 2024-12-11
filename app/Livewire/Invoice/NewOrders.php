@@ -8,6 +8,8 @@ use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Setting;
 use App\Models\Printer;
+use App\Models\ItemType;
+use App\Models\ItemCategory;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -18,7 +20,6 @@ use Filament\Tables\Columns\Layout\Grid;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Filament\OrdersForm;
 use App\Services\EstimatePrice;
@@ -48,6 +49,9 @@ class NewOrders extends Component implements HasForms, HasTable
 
     public ?array $data = [];
     protected $printService;
+    public $render = 0;
+    public $filter;
+    public $itemTypes, $categories;
 
     public function mount(Invoice $invoice)
     {
@@ -59,6 +63,8 @@ class NewOrders extends Component implements HasForms, HasTable
         ];
         // adding a deualt item to the repeater
         // since this page is edit the repeaters defaultItems will not work
+        $this->itemTypes = ItemType::all();
+        $this->updateItemTypeId($this->itemTypes->first()->id);
         $this->form->fill($this->data);
     }
 
@@ -121,7 +127,7 @@ class NewOrders extends Component implements HasForms, HasTable
     
     public function table(Table $table): Table
     {
-        return OrdersForm::table($table)
+        return OrdersForm::table($table, $this->filter)
             ->recordAction(fn(Item $item) =>  $item->prices->count() > 1 ? 'special_select' : 'select')
             ->recordClasses('cursor-pointer hover:bg-gray-50')  // Make entire row clickable
             ->actions([
@@ -176,7 +182,7 @@ class NewOrders extends Component implements HasForms, HasTable
                     ->size(ActionSize::Large)
                     ->action(fn() => $this->create())
                     ->disabled(fn() => empty($this->data['orders'])),
-            ])->paginated([16, 20, 28, 32, 'all']);;
+            ])->paginated(['all']);
     }
 
     public function create()
@@ -199,11 +205,24 @@ class NewOrders extends Component implements HasForms, HasTable
         return redirect('invoices/' . $this->invoice->id);
     }
 
+    public function updateItemTypeId($item_type_id)
+    {
+        $this->filter['item_type_id'] = $item_type_id;
+        $this->categories = ItemCategory::where('item_type_id', $this->filter['item_type_id'])->get();
+        $this->filter['item_category_id'] = $this->categories->first()->id ?? null;
+        ray($this->filter['item_type_id']);
+        ray($this->filter['item_category_id']);
+    }
+
+    public function updateItemCategoryId($item_category_id)
+    {
+        $this->filter['item_category_id'] = $item_category_id;
+        ray($this->filter['item_category_id']);
+    }
 
 
     public function render()
     {
-
         return view('livewire.invoice.new-orders');
     }
 }

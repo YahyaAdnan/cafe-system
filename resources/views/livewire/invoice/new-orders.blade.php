@@ -40,12 +40,49 @@
             </div>
         @endforeach
     </div>
-    <div class="flex flex-col lg:flex-row gap-4 mt-10">
-        <!-- Table Section -->
-        <div class="w-full lg:w-3/8 mt-3">
+
+    <div class="flex flex-wrap p-4 border-t gap-2">
+        @foreach($itemTypes as $type)
+            <div class="group inline-flex items-center gap-1 px-1 py-2">
+                <x-filament::button
+                    type="submit"
+                    size="md"
+                    color="{{$type->id == $filter['item_type_id'] ? 'primary' : 'gray'}}"
+                    wire:click="updateItemTypeId({{ $type->id }})"
+                >
+                    {{ $type->title }}
+                </x-filament::button>
+            </div>
+        @endforeach
+    </div>
+    
+
+    <div class="flex flex-1 mt-4">                
+        <div class="w-1/4 p-4 border-r">
+            <h3 class="text-lg font-bold mb-4">Categories</h3>
+        
+            @foreach($categories as $category)
+                <div class="mb-2">
+                    <x-filament::button
+                        type="submit"
+                        size="sm"
+                        color="{{$category->id == $filter['item_category_id'] ? 'primary' : 'gray'}}"
+                        class="w-full"
+                        wire:click="updateItemCategoryId({{ $category->id }})"
+                    >
+                        {{ $category->title }}
+                    </x-filament::button>
+                </div>
+            @endforeach
+        </div>
+        
+        
+
+        <!-- Items Grid occupies the remaining space -->
+        <div class="flex-1 p-4">
             {{$this->table}}
         </div>
-    </div>
+
 </div>
 @assets
 <style>
