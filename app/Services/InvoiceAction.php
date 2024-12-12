@@ -14,7 +14,7 @@ class InvoiceAction
         $new_invoice = $old_invoice->dinning_in ? 
             GenerateInovice::dineIn([
                 'employee_id' => $old_invoice->employee_id, 
-                'table_id' => $old_invoice->old_invoice, 
+                'table_id' => $old_invoice->table_id, 
             ]) : GenerateInovice::dineOut([
                 'deliver_type_id' => $old_invoice->deliver_type_id, 
             ]);
