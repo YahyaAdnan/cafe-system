@@ -12,6 +12,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -47,7 +48,11 @@ class DailySaleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->sortable()->toggleable(true)->searchable(),
+                TextColumn::make('title')
+                    ->badge()
+                    ->color(fn(DailySale $dailySale) => $dailySale->active ? 'success' : 'warning')
+                    ->sortable()
+                    ->toggleable(true)->searchable(),
                 TextColumn::make('invoices_count')->counts('invoices')->toggleable(true)->sortable(),
                 TextColumn::make('invoices_sum_amount')->sum('invoices', 'amount')->badge()
                     ->color("success")->money('IQD')->toggleable()->sortable(true)->label("Total Amount"),
@@ -78,6 +83,11 @@ class DailySaleResource extends Resource
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
+            ])
+            ->headerActions([
+                Action::make('close')
+                ->requiresConfirmation()
+                ->action(fn (DailySale $dailySale) => $dailySale->where('active', 1)->first()->update(['active' => 0]))
             ])
             ->checkIfRecordIsSelectableUsing(
                 fn(DailySale $dailySale) => $dailySale->isDeletable()

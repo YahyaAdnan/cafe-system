@@ -49,6 +49,13 @@ class SettingSeeder extends Seeder
         ]);
 
         Setting::create([
+            'title' => 'Reset Time',
+            'description' => 'The Reset time for the Daily Sale Required for the accounting.',
+            'value' => '5:00',
+            'validation' => 'required|time',
+        ]);
+
+        Setting::create([
             'title' => 'Taxes',
             'description' => '',
             'value' => '5',

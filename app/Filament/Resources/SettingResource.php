@@ -14,6 +14,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextArea;
+use Filament\Forms\Components\TimePicker;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -92,6 +93,11 @@ class SettingResource extends Resource
                 return ColorPicker::make('value')->required();
             }
     
+            if($rule == 'time')
+            {
+                return TimePicker::make('value')->seconds(false)->required();
+            }
+
             // START: ADD VALIDATIONS FROM DATABASE
             if($rule == 'required')
             {
