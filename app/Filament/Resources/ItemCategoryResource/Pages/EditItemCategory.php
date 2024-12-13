@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ItemCategoryResource\Pages;
 
+use App\Models\ItemCategory;
 use App\Filament\Resources\ItemCategoryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -13,7 +14,8 @@ class EditItemCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->disabled(fn(ItemCategory $itemCategory) => !$itemCategory->isDeletable()),
         ];
     }
 }
