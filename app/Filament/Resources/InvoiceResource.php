@@ -25,9 +25,9 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Auth;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class InvoiceResource extends Resource
 {
@@ -172,7 +172,12 @@ class InvoiceResource extends Resource
                                 }
                             );
                     })
-            ]);
+                ])
+                ->bulkActions([
+                    FilamentExportBulkAction::make('export')
+                        ->defaultFormat('pdf')
+                        ->disableAdditionalColumns(),
+                ]);
     }
 
     

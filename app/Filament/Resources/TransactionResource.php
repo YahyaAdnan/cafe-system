@@ -19,6 +19,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class TransactionResource extends Resource
 {
@@ -102,7 +103,13 @@ class TransactionResource extends Resource
                             );
                         }
                     ),
-            ])->searchable();
+            ])
+            ->bulkActions([
+                FilamentExportBulkAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns(),
+            ])
+            ->searchable();
     }
 
     public static function getRelations(): array

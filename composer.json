@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "alperenersoy/filament-export": "^3.0",
+        "barryvdh/laravel-dompdf": "^2.2",
         "blade-ui-kit/blade-heroicons": "^2.3",
         "filament/filament": "^3.1",
         "guzzlehttp/guzzle": "^7.8",
@@ -26,7 +28,8 @@
         "robsontenorio/mary": "^1.24",
         "smalot/cups-ipp": "^0.5.0",
         "spatie/laravel-permission": "^6.3",
-        "spatie/laravel-ray": "^1.36"
+        "spatie/laravel-ray": "^1.36",
+        "spatie/simple-excel": "^3.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

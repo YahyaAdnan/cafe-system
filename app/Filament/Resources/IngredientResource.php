@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Get;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class IngredientResource extends Resource
 {
@@ -97,13 +98,10 @@ class IngredientResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                FilamentExportBulkAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns(),
             ])
-            ->checkIfRecordIsSelectableUsing(
-                fn(Ingredient $ingredient) => $ingredient->isDeletable()
-            )
             ->recordUrl(null);
     }
 

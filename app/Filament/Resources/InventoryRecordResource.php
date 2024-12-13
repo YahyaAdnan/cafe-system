@@ -26,6 +26,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class InventoryRecordResource extends Resource
 {
@@ -162,8 +163,10 @@ class InventoryRecordResource extends Resource
                         );
                 })   
             ])
-            ->actions([
-                // Tables\Actions\EditAction::make(),
+            ->bulkActions([
+                FilamentExportBulkAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns(),
             ])->recordUrl(null);
     }
 

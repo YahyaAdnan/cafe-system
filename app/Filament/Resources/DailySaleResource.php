@@ -20,6 +20,7 @@ use  App\Services\GenerateDailySale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class DailySaleResource extends Resource
 {
@@ -89,9 +90,11 @@ class DailySaleResource extends Resource
                 ->requiresConfirmation()
                 ->action(fn (DailySale $dailySale) => $dailySale->where('active', 1)->first()->update(['active' => 0]))
             ])
-            ->checkIfRecordIsSelectableUsing(
-                fn(DailySale $dailySale) => $dailySale->isDeletable()
-            )
+            ->bulkActions([
+                FilamentExportBulkAction::make('export')
+                    ->defaultFormat('pdf')
+                    ->disableAdditionalColumns(),
+            ])
             ->recordUrl(null);
     }
 
