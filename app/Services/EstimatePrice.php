@@ -33,15 +33,15 @@ class EstimatePrice
                 $result += $data['amount'];
             }
     
-            if (isset($data['extras']) && is_array($data['extras']))
-            {
-                $extras = Extra::whereIn('id', $data['extras'])->get();
+            // if (isset($data['extras']) && is_array($data['extras']))
+            // {
+            //     $extras = Extra::whereIn('id', $data['extras'])->get();
     
-                foreach ($extras as $key => $extra) 
-                {
-                    $result += $extra->amount;
-                }
-            }
+            //     foreach ($extras as $key => $extra) 
+            //     {
+            //         $result += $extra->amount;
+            //     }
+            // }
     
             if (isset($data['discount']))
             {

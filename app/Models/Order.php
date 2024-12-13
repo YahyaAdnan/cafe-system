@@ -57,7 +57,7 @@ class Order extends Model
         return EstimatePrice::run([
             'discount' => $this->discount_fixed,
             'amount' => $this->amount,
-            'extras' => $this->extras->pluck('id')->toArray(),
+            // 'extras' => $this->extras->pluck('id')->toArray(),
         ]);
     }
 

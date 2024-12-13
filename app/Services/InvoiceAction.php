@@ -56,7 +56,7 @@ class InvoiceAction
 
         return $merged;
     }
-
+    
     // $data {"orders" => collection(), "to" => Invoice()}
     public static function move($data) 
     {
