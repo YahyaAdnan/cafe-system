@@ -41,6 +41,19 @@ class Item extends Model
         return true;
     }
 
+    public function validateIngredient()
+    {
+        foreach($this->prices as $price)
+        {
+            if (!$price->validateIngredient())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function  getAssociatedRoomConfig()
     {
         $roomConfig = RoomConfig::where('roomable_type',ItemType::class)

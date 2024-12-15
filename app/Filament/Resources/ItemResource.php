@@ -9,7 +9,6 @@ use App\Models\ItemType;
 use App\Models\ItemCategory;
 use App\Models\ItemSubcategory;
 use App\Models\Ingredient;
-use App\Models\Extra;
 use Filament\Tables\Columns\Layout\Grid;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -28,10 +27,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Pages\Actions;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Get;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportBulkAction;
 
 class ItemResource extends Resource
 {
@@ -108,18 +107,18 @@ class ItemResource extends Resource
                     ->columnSpanFull(),
                 // END: REPEATER for Prices
                 // START: Select Extra
-                Select::make('extras')
-                    ->columnSpan(12)
-                    ->multiple()
-                    ->relationship(name: 'extras', titleAttribute: 'title')
-                    ->createOptionForm([
-                        TextInput::make('title')
-                            ->required()->minLength(3)->maxLength(32),
-                        TextInput::make('amount')
-                            ->suffix('IQD')->numeric()->minValue(0)
-                            ->required(),
-                    ])->searchable()
-                    ->preload()
+                // Select::make('extras')
+                //     ->columnSpan(12)
+                //     ->multiple()
+                //     ->relationship(name: 'extras', titleAttribute: 'title')
+                //     ->createOptionForm([
+                //         TextInput::make('title')
+                //             ->required()->minLength(3)->maxLength(32),
+                //         TextInput::make('amount')
+                //             ->suffix('IQD')->numeric()->minValue(0)
+                //             ->required(),
+                //     ])->searchable()
+                //     ->preload()
                 // END: Select Extra
             ])->columns(12);
     }
@@ -155,13 +154,9 @@ class ItemResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                FilamentExportBulkAction::make('export')
+                    ->defaultFormat('pdf'),
             ])
-            ->checkIfRecordIsSelectableUsing(
-                fn(Item $item) => $item->isDeletable()
-            )
             ->recordUrl(null);
     }
 

@@ -25,7 +25,7 @@ class ItemTypeResource extends Resource
     protected static ?string $model = ItemType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Item Settings';
+    protected static ?string $navigationGroup = 'Managment Settings';
 
 
     public static function canCreate(): bool

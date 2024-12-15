@@ -27,7 +27,7 @@ class ItemSubcategoryResource extends Resource
     protected static ?string $model = ItemSubcategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-    protected static ?string $navigationGroup = 'Item Settings';
+    protected static ?string $navigationGroup = 'Managment Settings';
 
     public static function canCreate(): bool
     {
