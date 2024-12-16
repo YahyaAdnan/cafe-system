@@ -251,3 +251,116 @@ This section handles critical delivery interactions ensuring timely delivery of 
 ## **1. Table**  
 The Table model represents the tables in a dining or delivery system, including seating capacity and notes for a restaurant or cafe environment. 
 
+### **Model: `Table`**
+
+```php 
+class Table extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'chairs',
+        'note',
+    ];
+
+    // Automatically ensures a placeholder table exists for Takeaway interactions.
+    public static function takeAway()
+    {
+        $table = Table::where('title', '#')->first();
+
+        if (!$table) {
+            $table = Table::create([
+                'title' => '#',
+                'chairs' => 0, 
+                'note' => null,
+            ]);
+        }
+
+        return $table;
+    }
+
+    // Counts active invoices for a table interaction
+    public function activeInvoicesCount()
+    {
+        return $this->invoices->where('active', 1)->count();
+    }
+}
+```
+
+Purpose
+- **`takeAway()`** function, Creates or fetches a table specifically designated for Takeaway interactions if no Takeaway identifier (#) already exists.
+- The **`activeInvoicesCount()`** method returns the number of active invoices associated with a particular table.
+
+## **2. Employee**  
+
+The **`Employee`** model represents the employees who manage tables and serve customers in the system. This model ensures that employees are associated with specific invoices when required, supporting efficient tracking of service responsibilities.
+
+### **Model: `Employee`**
+
+```php
+
+class Employee extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'active'
+    ];
+}
+```
+
+Purpose
+- **Employee Assignment**: When a table's invoice (dine-in) requires an employee, this model tracks the employee serving the table.
+- **Active Employees**: Only active employees (**`active = true`**) can be assigned to serve tables, ensuring operational efficiency.
+- This ensures proper assignment of staff and accountability for table service.
+
+## **3. Payment Method**  
+
+The **`PaymentMethod`** model represents the various payment methods available in the system, such as cash, credit card, or digital payments. This model helps manage and organize the types of payment options offered to customers.
+
+### **Model: `PaymentMethod`**
+
+```php
+class PaymentMethod extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+    ];
+}
+```
+
+purpose
+- The PaymentMethod model is used to list and manage the available payment methods in the system.
+- This model is essential for managing payments from customers and recording transaction-related expenses, ensuring accurate and organized financial tracking.
+
+## **4. Delivery Type
+
+The **`DeliveryType`** model represents the various methods by which orders are delivered to customers. This allows the system to handle multiple delivery services and manage their respective settings efficiently.
+
+### **Model: `DeliveryType`**
+
+```php 
+class DeliverType extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'cash'
+    ];
+}
+```
+
+purpose
+- This model ensures that the system can accommodate and differentiate between different delivery service providers.
+
+###**Feature Work**
+This model can be extended in the future to include additional attributes, such as:
+- Commission Rates: To track and manage the commission for each delivery service.
+- Delivery Charges: To specify service-specific delivery fees.
+
+
